@@ -5,13 +5,14 @@
  */
 
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
 
 const Navbar = () => {
   const { usuario, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [menuAbierto, setMenuAbierto] = useState(false);
 
   const handleLogout = () => {
@@ -29,6 +30,11 @@ const Navbar = () => {
   };
 
   const esAdmin = usuario?.rol === 'admin';
+
+  // Función para determinar si el link está activo
+  const esRutaActiva = ruta => {
+    return location.pathname === ruta || location.pathname.startsWith(ruta + '/');
+  };
 
   return (
     <nav className="navbar">
@@ -53,7 +59,7 @@ const Navbar = () => {
             // Menú para administradores: solo usuarios
             <Link
               to="/admin/usuarios"
-              className="navbar-link navbar-link-admin"
+              className={`navbar-link navbar-link-admin ${esRutaActiva('/admin/usuarios') ? 'active' : ''}`}
               onClick={cerrarMenu}
             >
               Usuarios
@@ -61,19 +67,32 @@ const Navbar = () => {
           ) : (
             // Menú para operarios: acceso a reportes y productos
             <>
-              <Link to="/dashboard" className="navbar-link" onClick={cerrarMenu}>
-                Dashboard
-              </Link>
-              <Link to="/reportes" className="navbar-link" onClick={cerrarMenu}>
+              <Link
+                to="/reportes"
+                className={`navbar-link ${esRutaActiva('/reportes') ? 'active' : ''}`}
+                onClick={cerrarMenu}
+              >
                 Reportes
               </Link>
-              <Link to="/estadisticas" className="navbar-link" onClick={cerrarMenu}>
+              <Link
+                to="/estadisticas"
+                className={`navbar-link ${esRutaActiva('/estadisticas') ? 'active' : ''}`}
+                onClick={cerrarMenu}
+              >
                 Estadísticas
               </Link>
-              <Link to="/productos" className="navbar-link" onClick={cerrarMenu}>
+              <Link
+                to="/productos"
+                className={`navbar-link ${esRutaActiva('/productos') ? 'active' : ''}`}
+                onClick={cerrarMenu}
+              >
                 Productos
               </Link>
-              <Link to="/categorias" className="navbar-link" onClick={cerrarMenu}>
+              <Link
+                to="/categorias"
+                className={`navbar-link ${esRutaActiva('/categorias') ? 'active' : ''}`}
+                onClick={cerrarMenu}
+              >
                 Categorías
               </Link>
             </>

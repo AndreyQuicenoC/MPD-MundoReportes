@@ -12,7 +12,6 @@ import PrivateRoute from './components/PrivateRoute';
 import RoleRoute from './components/RoleRoute';
 import Layout from './components/Layout';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
 import Reportes from './pages/Reportes';
 import NuevoReporte from './pages/NuevoReporte';
 import Estadisticas from './pages/Estadisticas';
@@ -32,7 +31,8 @@ const RoleBasedRedirect = () => {
     return <Navigate to="/admin/usuarios" replace />;
   }
 
-  return <Navigate to="/dashboard" replace />;
+  // Dashboard eliminado, redirigir a reportes
+  return <Navigate to="/reportes" replace />;
 };
 
 function App() {
@@ -75,14 +75,6 @@ function App() {
             <Route index element={<RoleBasedRedirect />} />
 
             {/* Rutas solo para operarios */}
-            <Route
-              path="dashboard"
-              element={
-                <RoleRoute allowedRoles={['usuario']}>
-                  <Dashboard />
-                </RoleRoute>
-              }
-            />
             <Route
               path="reportes"
               element={

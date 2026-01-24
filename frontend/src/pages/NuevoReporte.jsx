@@ -26,7 +26,8 @@ const NuevoReporte = () => {
 
   // Arrays dinámicos
   const [gastos, setGastos] = useState([{ descripcion: '', valor: 0, categoria: '' }]);
-  const [ventas, setVentas] = useState([{ producto: '', cantidad: 0 }]);
+  // Cambiado: ventas ahora es un objeto con ID de producto como clave
+  const [cantidadesProductos, setCantidadesProductos] = useState({});
 
   useEffect(() => {
     cargarDatos();
@@ -42,6 +43,13 @@ const NuevoReporte = () => {
 
       setProductos(prodData);
       setCategorias(catData);
+
+      // Inicializar cantidades en 0 para todos los productos
+      const cantidadesIniciales = {};
+      prodData.forEach(prod => {
+        cantidadesIniciales[prod.id] = 0;
+      });
+      setCantidadesProductos(cantidadesIniciales);
 
       // Base inicial es la base siguiente del reporte anterior
       if (reporteAnterior) {
@@ -70,18 +78,27 @@ const NuevoReporte = () => {
     setGastos(nuevosGastos);
   };
 
-  const agregarVenta = () => {
-    setVentas([...ventas, { producto: '', cantidad: 0 }]);
+  // Nuevas funciones para manejar cantidades de productos
+  const incrementarProducto = idProducto => {
+    setCantidadesProductos(prev => ({
+      ...prev,
+      [idProducto]: (prev[idProducto] || 0) + 1,
+    }));
   };
 
-  const eliminarVenta = index => {
-    setVentas(ventas.filter((_, i) => i !== index));
+  const decrementarProducto = idProducto => {
+    setCantidadesProductos(prev => ({
+      ...prev,
+      [idProducto]: Math.max(0, (prev[idProducto] || 0) - 1),
+    }));
   };
 
-  const actualizarVenta = (index, campo, valor) => {
-    const nuevasVentas = [...ventas];
-    nuevasVentas[index][campo] = valor;
-    setVentas(nuevasVentas);
+  const cambiarCantidadProducto = (idProducto, valor) => {
+    const cantidad = parseInt(valor) || 0;
+    setCantidadesProductos(prev => ({
+      ...prev,
+      [idProducto]: Math.max(0, cantidad),
+    }));
   };
 
   const calcularTotalGastos = () => {
@@ -119,19 +136,19 @@ const NuevoReporte = () => {
       return;
     }
 
-    // Validar que las ventas con cantidad tengan producto
-    const ventasInvalidas = ventas.some(v => parseInt(v.cantidad) > 0 && !v.producto);
-    if (ventasInvalidas) {
-      toast.error('Todas las ventas deben tener producto seleccionado');
-      return;
-    }
-
     try {
       setLoading(true);
 
-      // Filtrar gastos y ventas válidos
+      // Filtrar gastos válidos
       const gastosValidos = gastos.filter(g => parseFloat(g.valor) > 0 && g.descripcion.trim());
-      const ventasValidas = ventas.filter(v => parseInt(v.cantidad) > 0 && v.producto);
+
+      // Convertir cantidades de productos a array
+      const ventasValidas = Object.entries(cantidadesProductos)
+        .filter(([, cantidad]) => cantidad > 0)
+        .map(([idProducto, cantidad]) => ({
+          producto: parseInt(idProducto),
+          cantidad: cantidad,
+        }));
 
       const datos = {
         fecha,
@@ -144,10 +161,7 @@ const NuevoReporte = () => {
           valor: parseFloat(g.valor),
           categoria: g.categoria || null,
         })),
-        ventas_productos: ventasValidas.map(v => ({
-          producto: parseInt(v.producto),
-          cantidad: parseInt(v.cantidad),
-        })),
+        ventas_productos: ventasValidas,
       };
 
       await reportesService.crearReporte(datos);
@@ -315,49 +329,53 @@ const NuevoReporte = () => {
         <section className="form-section">
           <div className="section-header">
             <h2>Ventas de Productos</h2>
-            <button type="button" onClick={agregarVenta} className="btn-secondary">
-              + Agregar Producto
-            </button>
+            <small>Indica la cantidad vendida de cada producto</small>
           </div>
 
-          {ventas.map((venta, index) => (
-            <div key={index} className="item-row">
-              <div className="form-group flex-2">
-                <select
-                  value={venta.producto}
-                  onChange={e => actualizarVenta(index, 'producto', e.target.value)}
-                >
-                  <option value="">Seleccionar producto</option>
-                  {productos.map(prod => (
-                    <option key={prod.id} value={prod.id}>
-                      {prod.nombre} - {formatearMoneda(prod.precio_unitario)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="form-group flex-1">
-                <input
-                  type="number"
-                  placeholder="Cantidad"
-                  value={venta.cantidad}
-                  onChange={e => actualizarVenta(index, 'cantidad', e.target.value)}
-                  min="0"
-                />
-              </div>
-
-              {ventas.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => eliminarVenta(index)}
-                  className="btn-delete"
-                  title="Eliminar venta"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-          ))}
+          <div className="productos-grid">
+            {productos.length === 0 ? (
+              <p className="text-muted">
+                No hay productos disponibles. Crea productos en la sección de Productos.
+              </p>
+            ) : (
+              productos
+                .filter(p => p.activo)
+                .map(producto => (
+                  <div key={producto.id} className="producto-item">
+                    <div className="producto-info">
+                      <strong>{producto.nombre}</strong>
+                      <span className="producto-precio">
+                        ${Number(producto.precio_unitario).toLocaleString('es-CO')}
+                      </span>
+                    </div>
+                    <div className="producto-contador">
+                      <button
+                        type="button"
+                        className="btn-contador"
+                        onClick={() => decrementarProducto(producto.id)}
+                        disabled={!cantidadesProductos[producto.id]}
+                      >
+                        −
+                      </button>
+                      <input
+                        type="number"
+                        className="cantidad-input"
+                        value={cantidadesProductos[producto.id] || 0}
+                        onChange={e => cambiarCantidadProducto(producto.id, e.target.value)}
+                        min="0"
+                      />
+                      <button
+                        type="button"
+                        className="btn-contador"
+                        onClick={() => incrementarProducto(producto.id)}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                ))
+            )}
+          </div>
         </section>
 
         {/* Resumen */}
