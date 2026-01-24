@@ -5,6 +5,7 @@ Este documento explica cómo configurar Supabase como base de datos para el proy
 ## ¿Por qué Supabase?
 
 Supabase es una alternativa a Firebase de código abierto que proporciona:
+
 - **PostgreSQL gestionado** - Base de datos robusta y confiable
 - **Backups automáticos** - Respaldos diarios por 7 días (plan gratuito)
 - **Dashboard visual** - Interfaz web para administrar datos
@@ -60,6 +61,7 @@ Una vez creado el proyecto:
 ### 4. Configurar Variables de Entorno
 
 1. En la carpeta `backend/` del proyecto, copia el archivo `.env.example` a `.env`:
+
    ```bash
    cp backend/.env.example backend/.env
    ```
@@ -87,6 +89,7 @@ Una vez creado el proyecto:
 ### 5. Verificar la Conexión
 
 1. Activa el entorno virtual (si no está activado):
+
    ```bash
    # Windows
    cd backend
@@ -98,11 +101,13 @@ Una vez creado el proyecto:
    ```
 
 2. Verifica que Django se conecte correctamente:
+
    ```bash
    python manage.py migrate
    ```
-   
+
    Deberías ver:
+
    ```
    Operations to perform:
      Apply all migrations: admin, auth, contenttypes, sessions, ...
@@ -110,16 +115,18 @@ Una vez creado el proyecto:
    ```
 
 3. Crea un superusuario:
+
    ```bash
    python manage.py createsuperuser
    ```
-   
+
    Completa los datos:
    - Email: tu@email.com
    - Nombre: Tu Nombre
    - Password: (contraseña segura)
 
 4. Inicia el servidor:
+
    ```bash
    python manage.py runserver
    ```
@@ -158,9 +165,10 @@ Una vez creado el proyecto:
 
 - Ejecuta consultas SQL personalizadas
 - Ejemplos útiles:
+
   ```sql
   -- Ver total de ventas por mes
-  SELECT 
+  SELECT
     DATE_TRUNC('month', fecha) as mes,
     SUM(venta_total) as total_ventas
   FROM reportes_reportediario
@@ -168,7 +176,7 @@ Una vez creado el proyecto:
   ORDER BY mes DESC;
 
   -- Productos más vendidos
-  SELECT 
+  SELECT
     p.nombre,
     SUM(vp.cantidad) as total_vendido
   FROM reportes_ventaproducto vp
@@ -183,6 +191,7 @@ Una vez creado el proyecto:
 Si ya tienes datos en SQLite local y quieres migrarlos a Supabase:
 
 1. Exporta los datos desde SQLite:
+
    ```bash
    python manage.py dumpdata --natural-foreign --natural-primary > data.json
    ```
@@ -196,12 +205,12 @@ Si ya tienes datos en SQLite local y quieres migrarlos a Supabase:
 
 ## Limitaciones del Plan Gratuito
 
-| Recurso | Límite Gratuito | ¿Es suficiente? |
-|---------|----------------|-----------------|
-| Espacio en DB | 500 MB | ✅ Sí (miles de reportes) |
-| Transferencia | 1 GB/mes | ✅ Sí (uso moderado) |
-| Storage | 2 GB | ✅ Sí (sin archivos grandes) |
-| Pausado automático | Después de 1 semana de inactividad | ⚠️ Se reactiva al visitar |
+| Recurso            | Límite Gratuito                    | ¿Es suficiente?              |
+| ------------------ | ---------------------------------- | ---------------------------- |
+| Espacio en DB      | 500 MB                             | ✅ Sí (miles de reportes)    |
+| Transferencia      | 1 GB/mes                           | ✅ Sí (uso moderado)         |
+| Storage            | 2 GB                               | ✅ Sí (sin archivos grandes) |
+| Pausado automático | Después de 1 semana de inactividad | ⚠️ Se reactiva al visitar    |
 
 **Nota**: El proyecto se pausa si no se usa por 7 días, pero se reactiva automáticamente al hacer una petición (toma ~1-2 minutos).
 
@@ -235,6 +244,7 @@ Si ya tienes datos en SQLite local y quieres migrarlos a Supabase:
 Para desplegar en producción:
 
 1. Actualiza `backend/.env`:
+
    ```dotenv
    DEBUG=False
    ALLOWED_HOSTS=tu-dominio.com,www.tu-dominio.com
@@ -253,6 +263,7 @@ Para desplegar en producción:
 ## Soporte
 
 Si tienes problemas:
+
 1. Revisa la [documentación de Supabase](https://supabase.com/docs)
 2. Revisa los logs en Settings > Logs en tu proyecto de Supabase
 3. Verifica los mensajes de error de Django en la consola

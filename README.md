@@ -16,6 +16,7 @@ Mundo Reporte es un sistema diseñado para reemplazar el uso manual de hojas de 
 ## 🎯 Usuario Objetivo
 
 Sistema diseñado especialmente para adultos mayores y usuarios no técnicos, priorizando:
+
 - Claridad y simplicidad en la interfaz
 - Facilidad de uso
 - Formularios intuitivos
@@ -24,18 +25,21 @@ Sistema diseñado especialmente para adultos mayores y usuarios no técnicos, pr
 ## 🛠️ Tecnologías
 
 ### Backend
+
 - **Django 5.0+**: Framework web principal
 - **Django REST Framework**: API REST
 - **PostgreSQL**: Base de datos
 - **Gunicorn**: Servidor WSGI para producción
 
 ### Frontend
+
 - **React 18+**: Librería de interfaz de usuario
 - **JavaScript/TypeScript**: Lenguaje de programación
 - **Axios**: Cliente HTTP
 - **Chart.js**: Gráficos y visualizaciones
 
 ### Herramientas de Calidad
+
 - **Black**: Formateador de código Python
 - **Flake8**: Linter Python
 - **ESLint**: Linter JavaScript/TypeScript
@@ -207,10 +211,12 @@ npm run lint
 ## 🎨 Identidad Visual
 
 ### Color Principal
+
 - **Verde Oliva**: `#9B933B`
 - Uso: Navbar, botones primarios, elementos de identidad
 
 ### Colores Complementarios
+
 - Blanco: `#FFFFFF`
 - Gris claro: `#F5F5F5`
 - Gris oscuro: `#333333`
@@ -221,23 +227,28 @@ npm run lint
 ## 📊 Modelos Principales
 
 ### ReporteDiario
+
 - Registro diario de ventas y gastos
 - Cálculo automático de base siguiente
 - Relación con gastos y productos vendidos
 
 ### Gasto
+
 - Descripción, valor y categoría opcional
 - Asociado a un reporte diario
 
 ### Producto
+
 - Catálogo de productos con precio unitario
 - Estado activo/inactivo
 
 ### VentaProducto
+
 - Cantidad vendida por producto
 - Asociada a reporte diario
 
 ### CategoriaGasto
+
 - Categorías reutilizables para clasificar gastos
 - Estado activo/inactivo
 
@@ -265,11 +276,13 @@ El sistema genera métricas automáticas sobre:
 ### Recomendaciones
 
 **Backend**: Railway o Render
+
 - Configuración sencilla
 - HTTPS automático
 - PostgreSQL gestionado
 
 **Frontend**: Vercel o Netlify
+
 - Deploy automático desde Git
 - CDN incluido
 - Gratis para proyectos pequeños
@@ -277,12 +290,14 @@ El sistema genera métricas automáticas sobre:
 ### Variables de Entorno Requeridas
 
 **Backend**:
+
 - `SECRET_KEY`: Clave secreta Django
 - `DATABASE_URL`: URL de conexión PostgreSQL
 - `DEBUG`: False en producción
 - `ALLOWED_HOSTS`: Dominios permitidos
 
 **Frontend**:
+
 - `REACT_APP_API_URL`: URL del backend
 
 ## 📝 Convenciones de Commits
@@ -296,6 +311,7 @@ Descripción detallada si es necesaria
 ```
 
 **Tipos**:
+
 - `feat`: Nueva funcionalidad
 - `fix`: Corrección de bug
 - `docs`: Documentación
@@ -305,6 +321,7 @@ Descripción detallada si es necesaria
 - `chore`: Tareas de mantenimiento
 
 **Ejemplo**:
+
 ```
 feat(reportes): agregar cálculo automático de base siguiente
 
@@ -316,12 +333,14 @@ base_siguiente = base_inicial + venta - gastos - entrega
 ## 👥 Roles de Usuario
 
 ### Administrador
+
 - Gestiona usuarios
 - Crea y edita categorías de gastos
 - Crea y edita productos con precio
 - Consulta estadísticas globales
 
 ### Usuario Operativo
+
 - Registra reportes diarios
 - Consulta reportes históricos
 - Exporta información

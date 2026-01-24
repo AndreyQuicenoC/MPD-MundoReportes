@@ -13,6 +13,7 @@
 ## 📋 Cumplimiento de Lineamientos
 
 ### ✅ ENUNCIADOPROYECTO
+
 - Sistema completo de reportes diarios para tienda de pinturas
 - Cálculo automático de base siguiente: `base_inicial + venta - gastos - entrega`
 - Gestión de gastos con categorías
@@ -20,6 +21,7 @@
 - Estadísticas y análisis de datos
 
 ### ✅ ARQUITECTURA
+
 - **Backend:** Django 5.0.1 + Django REST Framework 3.14.0
 - **Frontend:** React 18 + Vite 5
 - **Base de Datos:** PostgreSQL
@@ -27,6 +29,7 @@
 - **Patrón:** Service Layer para lógica de negocio
 
 ### ✅ RESTRICCIONES
+
 - Python 3.11+
 - Django 5.0+
 - React 18+
@@ -35,6 +38,7 @@
 - Sin frameworks CSS (vanilla CSS con variables)
 
 ### ✅ CALIDADDECODIGO
+
 - **Backend:** Black (formateo), Flake8 (linting), Pylint
 - **Frontend:** ESLint, Prettier
 - **Tests:** Pytest (backend), Vitest (frontend)
@@ -42,6 +46,7 @@
 - Naming conventions: snake_case (Python), camelCase (JavaScript)
 
 ### ✅ CALIDADUIUX
+
 - **Color primario:** Verde Oliva #9B933B (identidad de marca)
 - Diseño limpio y profesional
 - Responsive design (móvil first)
@@ -50,6 +55,7 @@
 - Loading states
 
 ### ✅ SEGURIDAD
+
 - Autenticación JWT
 - Validación de entrada en backend y frontend
 - CORS configurado correctamente
@@ -58,6 +64,7 @@
 - Variables sensibles en .env
 
 ### ✅ DESPLIEGUE
+
 - Guías de instalación completas (INSTALL.md)
 - Variables de entorno documentadas
 - Migraciones de base de datos
@@ -65,6 +72,7 @@
 - Archivos .gitignore apropiados
 
 ### ✅ METRICASYGESTION
+
 - Git Flow implementado
 - Feature branches: `feature/forms`, `feature/statistics`
 - Commits profesionales en español
@@ -136,23 +144,27 @@ MPD-MundoReportes/
 ### Backend (Django)
 
 #### 1. **Usuarios**
+
 - Modelo custom de Usuario con email como username
 - Autenticación JWT
 - Roles: admin y user
 - Endpoints: login, perfil, cambio de contraseña
 
 #### 2. **Productos**
+
 - CRUD completo
 - Precio unitario
 - Estado activo/inactivo
 - Validaciones
 
 #### 3. **Gastos**
+
 - Gestión de categorías
 - Gastos asociados a reportes
 - Suma automática en reportes
 
 #### 4. **Reportes** (Core)
+
 - **Modelo ReporteDiario:**
   - `fecha`, `base_inicial`, `venta_total`, `entrega`
   - `total_gastos` (calculado)
@@ -172,6 +184,7 @@ MPD-MundoReportes/
   - `GET /api/reportes/exportar-excel/` - Exportar
 
 #### 5. **Estadísticas**
+
 - **ServicioEstadisticas:**
   - `estadisticas_ventas()` - Totales y promedios
   - `gastos_por_categoria()` - Agrupación
@@ -183,12 +196,14 @@ MPD-MundoReportes/
 ### Frontend (React)
 
 #### 1. **Autenticación**
+
 - Login con email y contraseña
 - Context global de autenticación
 - PrivateRoute para rutas protegidas
 - Refresh automático de tokens
 
 #### 2. **Nuevo Reporte** ⭐
+
 - Formulario dinámico con arrays
 - Carga automática de base inicial
 - Agregar/eliminar gastos
@@ -200,6 +215,7 @@ MPD-MundoReportes/
 - Resumen visual
 
 #### 3. **Estadísticas** ⭐
+
 - Tarjetas de resumen (totales, promedios)
 - Gráfico de pastel: Gastos por categoría
 - Gráfico de barras: Productos más vendidos
@@ -208,10 +224,12 @@ MPD-MundoReportes/
 - Chart.js integrado
 
 #### 4. **Dashboard**
+
 - Vista general del sistema
 - Navegación rápida
 
 #### 5. **Otras Páginas**
+
 - Listado de reportes
 - Gestión de productos
 - Gestión de categorías
@@ -221,13 +239,13 @@ MPD-MundoReportes/
 ## 🧪 Tests Implementados
 
 ### Backend (Pytest)
+
 - **reportes/tests.py:**
   - Crear reporte básico
   - Crear reporte con gastos
   - Crear reporte con ventas
   - Cálculo correcto de base_siguiente
   - Validación de reportes duplicados
-  
 - **estadisticas/tests.py:**
   - Estadísticas vacías
   - Estadísticas con datos
@@ -236,6 +254,7 @@ MPD-MundoReportes/
   - Productos más vendidos
 
 ### Frontend (Vitest)
+
 - Tests de utilidades de reportes
 - Setup con jsdom para testing de componentes
 
@@ -244,14 +263,16 @@ MPD-MundoReportes/
 ## 🎨 Diseño
 
 ### Identidad Visual
+
 - **Color primario:** #9B933B (Verde Oliva)
-- **Colores complementarios:** 
+- **Colores complementarios:**
   - Hover: #8B8531
   - Éxito: #4CAF50
   - Peligro: #F44336
   - Advertencia: #FF9800
 
 ### CSS
+
 - Variables CSS para theming
 - Sin frameworks (vanilla CSS)
 - Mobile-first responsive
@@ -263,6 +284,7 @@ MPD-MundoReportes/
 ## 📦 Dependencias
 
 ### Backend
+
 ```txt
 Django==5.0.1
 djangorestframework==3.14.0
@@ -278,6 +300,7 @@ flake8==7.0.0
 ```
 
 ### Frontend
+
 ```json
 {
   "react": "^18.2.0",
@@ -295,13 +318,16 @@ flake8==7.0.0
 ## 🌿 Git Workflow
 
 ### Ramas Principales
+
 - `main` - Rama principal estable
 
 ### Feature Branches
+
 - `feature/forms` - Implementación de formularios
 - `feature/statistics` - Gráficos y estadísticas
 
 ### Commits Destacados
+
 1. **Initial commit** - Configuración base
 2. **feat(backend)** - Apps Django completas
 3. **feat(frontend)** - Estructura React
@@ -311,6 +337,7 @@ flake8==7.0.0
 7. **merge** - Integraciones a main
 
 ### Convenciones
+
 - Mensajes en español
 - Formato: `tipo(alcance): descripción`
 - Tipos: feat, fix, test, docs, style, refactor, merge
@@ -323,7 +350,6 @@ flake8==7.0.0
 1. **Exportación:**
    - Excel con openpyxl ✅ (backend implementado)
    - PDF con reportlab
-   
 2. **CI/CD:**
    - GitHub Actions workflow
    - Tests automáticos
@@ -345,6 +371,7 @@ flake8==7.0.0
 ## 👨‍💻 Resumen Técnico
 
 ### Logros Principales
+
 ✅ Arquitectura desacoplada siguiendo mejores prácticas  
 ✅ Service Layer para lógica de negocio compleja  
 ✅ Cálculos automáticos en modelos (base_siguiente)  
@@ -354,9 +381,10 @@ flake8==7.0.0
 ✅ Git Flow con feature branches y merges  
 ✅ Documentación completa y profesional  
 ✅ Diseño responsive con identidad de marca  
-✅ Código limpio siguiendo guías de estilo  
+✅ Código limpio siguiendo guías de estilo
 
 ### Calidad de Código
+
 - Cobertura de tests en funcionalidades core
 - Linting configurado (Flake8, ESLint)
 - Formateo automático (Black, Prettier)
@@ -365,6 +393,7 @@ flake8==7.0.0
 - Naming conventions consistentes
 
 ### Seguridad
+
 - JWT con refresh tokens
 - Validaciones en backend y frontend
 - Variables de entorno para secrets

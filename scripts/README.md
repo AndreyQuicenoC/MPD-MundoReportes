@@ -16,6 +16,7 @@ venv\Scripts\python.exe manage.py runserver
 ### 1. test_usuarios_api.py
 
 Prueba completa del sistema de usuarios incluyendo:
+
 - ✅ Login de administrador
 - ✅ Creación de usuarios operarios
 - ✅ Login de operarios
@@ -28,6 +29,7 @@ Prueba completa del sistema de usuarios incluyendo:
 - ✅ Desactivación de usuarios
 
 **Ejecutar:**
+
 ```bash
 cd backend
 venv\Scripts\python.exe ..\scripts\test_usuarios_api.py
@@ -36,6 +38,7 @@ venv\Scripts\python.exe ..\scripts\test_usuarios_api.py
 ### 2. test_perfil.py
 
 Prueba enfocada en el módulo de perfil:
+
 - ✅ Autenticación
 - ✅ Obtener perfil
 - ✅ Actualizar nombre
@@ -46,6 +49,7 @@ Prueba enfocada en el módulo de perfil:
 - ✅ Intentar cambiar cédula (debe ser rechazada)
 
 **Ejecutar:**
+
 ```bash
 cd backend
 venv\Scripts\python.exe ..\scripts\test_perfil.py
@@ -54,6 +58,7 @@ venv\Scripts\python.exe ..\scripts\test_perfil.py
 ## Formato de Salida
 
 Los scripts utilizan códigos de color para facilitar la lectura:
+
 - 🟢 Verde: Prueba exitosa
 - 🔴 Rojo: Prueba fallida
 - 🔵 Azul: Información
@@ -67,18 +72,21 @@ Los scripts utilizan códigos de color para facilitar la lectura:
 ## Ejemplos de Uso
 
 ### Ejecutar todas las pruebas de usuarios:
+
 ```bash
 cd backend
 venv\Scripts\python.exe ..\scripts\test_usuarios_api.py
 ```
 
 ### Ejecutar solo pruebas de perfil:
+
 ```bash
 cd backend
 venv\Scripts\python.exe ..\scripts\test_perfil.py
 ```
 
 ### En CI/CD:
+
 ```bash
 # Si alguna prueba falla, el script retorna código de salida 1
 venv\Scripts\python.exe ..\scripts\test_usuarios_api.py && echo "Todas las pruebas pasaron"
@@ -99,23 +107,30 @@ venv\Scripts\python.exe ..\scripts\test_usuarios_api.py && echo "Todas las prueb
 ## Troubleshooting
 
 ### Error de conexión
+
 ```
 Error en login: HTTPConnectionPool(host='localhost', port=8000)
 ```
+
 **Solución**: Asegúrate de que el backend esté corriendo.
 
 ### Error 401 Unauthorized
+
 ```
 Login falló: 401
 ```
+
 **Solución**: Verifica las credenciales del superusuario o créalo nuevamente:
+
 ```bash
 cd backend
 venv\Scripts\python.exe manage.py crear_superusuario
 ```
 
 ### Error 404 Not Found
+
 ```
 Error: 404 - /api/auth/perfil/
 ```
+
 **Solución**: Verifica que las rutas del backend estén correctamente configuradas en `config/urls.py`.
