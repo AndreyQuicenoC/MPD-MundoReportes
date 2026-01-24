@@ -26,11 +26,13 @@ const Productos = () => {
     try {
       setLoading(true);
       const data = await productosService.obtenerProductos();
-      setProductos(data);
+      // Asegurar que sea un array
+      setProductos(Array.isArray(data) ? data : data?.results || []);
     } catch (error) {
       toast.error('Error al cargar productos');
       // eslint-disable-next-line no-console
       console.error(error);
+      setProductos([]); // Fallback a array vacío
     } finally {
       setLoading(false);
     }

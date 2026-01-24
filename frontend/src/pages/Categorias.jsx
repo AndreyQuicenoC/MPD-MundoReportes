@@ -26,11 +26,13 @@ const Categorias = () => {
     try {
       setLoading(true);
       const data = await categoriasService.obtenerCategorias();
-      setCategorias(data);
+      // Asegurar que sea un array
+      setCategorias(Array.isArray(data) ? data : data?.results || []);
     } catch (error) {
       toast.error('Error al cargar categorías');
       // eslint-disable-next-line no-console
       console.error(error);
+      setCategorias([]); // Fallback a array vacío
     } finally {
       setLoading(false);
     }

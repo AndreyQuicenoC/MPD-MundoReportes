@@ -41,12 +41,16 @@ const NuevoReporte = () => {
         reportesService.obtenerUltimoReporte(),
       ]);
 
-      setProductos(prodData);
-      setCategorias(catData);
+      // Asegurar que sean arrays
+      const productosArray = Array.isArray(prodData) ? prodData : prodData?.results || [];
+      const categoriasArray = Array.isArray(catData) ? catData : catData?.results || [];
+
+      setProductos(productosArray);
+      setCategorias(categoriasArray);
 
       // Inicializar cantidades en 0 para todos los productos
       const cantidadesIniciales = {};
-      prodData.forEach(prod => {
+      productosArray.forEach(prod => {
         cantidadesIniciales[prod.id] = 0;
       });
       setCantidadesProductos(cantidadesIniciales);

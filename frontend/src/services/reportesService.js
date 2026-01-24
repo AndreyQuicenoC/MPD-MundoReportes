@@ -53,8 +53,9 @@ const reportesService = {
    */
   obtenerUltimoReporte: async () => {
     try {
-      const response = await apiClient.get('/reportes/ultimo/');
-      return response.data;
+      const response = await apiClient.get('/reportes/', { params: { ordering: '-fecha' } });
+      const reportes = Array.isArray(response.data) ? response.data : response.data?.results || [];
+      return reportes.length > 0 ? reportes[0] : null;
     } catch (error) {
       // Si no hay reportes, retornar null
       if (error.response?.status === 404) {
