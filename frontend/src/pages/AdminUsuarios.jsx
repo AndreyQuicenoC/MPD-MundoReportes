@@ -38,7 +38,9 @@ const AdminUsuarios = () => {
         api.get('/auth/admin/usuarios/'),
         api.get('/auth/admin/usuarios/estadisticas/'),
       ]);
-      setUsuarios(usuariosRes.data);
+      // Manejar respuesta paginada del backend
+      const usuariosData = usuariosRes.data.results || usuariosRes.data;
+      setUsuarios(Array.isArray(usuariosData) ? usuariosData : []);
       setEstadisticas(statsRes.data);
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -95,13 +97,22 @@ const AdminUsuarios = () => {
     e.preventDefault();
 
     try {
+      // Limpiar datos antes de enviar: convertir strings vacíos a null
+      const dataToSend = {
+        ...formData,
+        cedula: formData.cedula || null,
+        edad: formData.edad ? parseInt(formData.edad, 10) : null,
+        fecha_ingreso: formData.fecha_ingreso || null,
+        fecha_fin: formData.fecha_fin || null,
+      };
+
       if (usuarioEditando) {
         // Actualizar usuario existente
-        await api.put(`/auth/admin/usuarios/${usuarioEditando.id}/`, formData);
+        await api.put(`/auth/admin/usuarios/${usuarioEditando.id}/`, dataToSend);
         toast.success('Usuario actualizado exitosamente');
       } else {
         // Crear nuevo usuario
-        await api.post('/auth/admin/usuarios/', formData);
+        await api.post('/auth/admin/usuarios/', dataToSend);
         toast.success('Usuario creado exitosamente');
       }
 
@@ -110,11 +121,30 @@ const AdminUsuarios = () => {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error al guardar usuario:', error);
+      // eslint-disable-next-line no-console
+      console.error('Respuesta del servidor:', error.response?.data);
       const errores = error.response?.data;
       if (errores) {
-        Object.keys(errores).forEach(campo => {
-          toast.error(`${campo}: ${errores[campo]}`);
-        });
+        // Si tiene estructura de error personalizado
+        if (errores.error && errores.mensaje) {
+          toast.error(errores.mensaje);
+          if (errores.detalles && Object.keys(errores.detalles).length > 0) {
+            Object.keys(errores.detalles).forEach(campo => {
+              const mensajes = Array.isArray(errores.detalles[campo])
+                ? errores.detalles[campo].join(', ')
+                : errores.detalles[campo];
+              toast.error(`${campo}: ${mensajes}`);
+            });
+          }
+        } else {
+          // Errores de validación directos
+          Object.keys(errores).forEach(campo => {
+            const mensajes = Array.isArray(errores[campo])
+              ? errores[campo].join(', ')
+              : errores[campo];
+            toast.error(`${campo}: ${mensajes}`);
+          });
+        }
       } else {
         toast.error('Error al guardar usuario');
       }

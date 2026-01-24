@@ -179,7 +179,7 @@ def test_cambiar_contrasena_exitoso():
     data = {
         "contrasena_actual": "11Bakuarya11",
         "contrasena_nueva": "11Bakuarya11Nueva",
-        "confirmar_contrasena": "11Bakuarya11Nueva"
+        "contrasena_confirmacion": "11Bakuarya11Nueva"
     }
     
     try:
@@ -193,7 +193,7 @@ def test_cambiar_contrasena_exitoso():
             data2 = {
                 "contrasena_actual": "11Bakuarya11Nueva",
                 "contrasena_nueva": "11Bakuarya11",
-                "confirmar_contrasena": "11Bakuarya11"
+                "contrasena_confirmacion": "11Bakuarya11"
             }
             response2 = requests.post(url, json=data2, headers=headers)
             if response2.status_code == 200:
@@ -221,7 +221,7 @@ def test_cambiar_contrasena_fallido():
     data = {
         "contrasena_actual": "ContraseñaIncorrecta",
         "contrasena_nueva": "NuevaContraseña123",
-        "confirmar_contrasena": "NuevaContraseña123"
+        "contrasena_confirmacion": "NuevaContraseña123"
     }
     
     try:

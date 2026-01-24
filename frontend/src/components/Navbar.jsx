@@ -85,7 +85,7 @@ const Navbar = () => {
 
         <div className="navbar-user">
           <Link to="/perfil" className="navbar-username" title="Mi Perfil" onClick={cerrarMenu}>
-            {usuario?.nombre}
+            Editar Perfil
           </Link>
           <button onClick={handleLogout} className="navbar-logout">
             Salir

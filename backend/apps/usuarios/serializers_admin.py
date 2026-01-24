@@ -54,6 +54,7 @@ class AdminCrearUsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
         fields = [
+            "id",
             "email",
             "nombre",
             "cedula",
@@ -65,6 +66,7 @@ class AdminCrearUsuarioSerializer(serializers.ModelSerializer):
             "rol",
             "is_active",
         ]
+        read_only_fields = ["id"]
 
     def validate(self, attrs):
         """Validar que las contraseñas coincidan."""
@@ -122,6 +124,7 @@ class AdminActualizarUsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
         fields = [
+            "id",
             "email",
             "nombre",
             "cedula",
@@ -133,6 +136,7 @@ class AdminActualizarUsuarioSerializer(serializers.ModelSerializer):
             "rol",
             "is_active",
         ]
+        read_only_fields = ["id"]
 
     def validate(self, attrs):
         """Validar contraseñas si se están actualizando."""

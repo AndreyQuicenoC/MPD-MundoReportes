@@ -16,12 +16,15 @@ from .views import (
     ListaUsuariosView,
     DetalleUsuarioView,
 )
-from .views_admin import AdminUsuarioViewSet, PerfilUsuarioViewSet
+from .views_admin import (
+    AdminUsuarioViewSet,
+    PerfilUsuarioAPIView,
+    CambiarContrasenaAPIView,
+)
 
 # Router para viewsets
 router = DefaultRouter()
 router.register(r"admin/usuarios", AdminUsuarioViewSet, basename="admin-usuarios")
-router.register(r"perfil", PerfilUsuarioViewSet, basename="perfil-usuario")
 
 app_name = "usuarios"
 
@@ -29,6 +32,11 @@ urlpatterns = [
     # Autenticación
     path("login/", LoginView.as_view(), name="login"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    # Perfil (vistas nuevas)
+    path("perfil/", PerfilUsuarioAPIView.as_view(), name="perfil"),
+    path(
+        "perfil/cambiar-contrasena/", CambiarContrasenaAPIView.as_view(), name="cambiar_contrasena"
+    ),
     # Perfil (vistas antiguas, mantener por compatibilidad)
     path("perfil-old/", PerfilView.as_view(), name="perfil-old"),
     path("cambiar-password/", CambioPasswordView.as_view(), name="cambiar_password"),

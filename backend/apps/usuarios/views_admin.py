@@ -8,6 +8,7 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 
 from .serializers_admin import (
@@ -116,73 +117,57 @@ class AdminUsuarioViewSet(viewsets.ModelViewSet):
         )
 
 
-class PerfilUsuarioViewSet(viewsets.ViewSet):
+class PerfilUsuarioAPIView(APIView):
     """
-    ViewSet para que usuarios gestionen su propio perfil.
+    API View para gestión del perfil del usuario autenticado.
 
     Endpoints:
     - GET /api/auth/perfil/ - Ver perfil actual
-    - PUT/PATCH /api/auth/perfil/ - Actualizar perfil
-    - POST /api/auth/perfil/cambiar-contrasena/ - Cambiar contraseña
+    - PUT /api/auth/perfil/ - Actualizar perfil completo
+    - PATCH /api/auth/perfil/ - Actualizar perfil parcialmente
     """
 
     permission_classes = [IsAuthenticated]
 
-    @action(detail=False, methods=["get"])
-    def list(self, request):
-        """
-        Obtener el perfil del usuario actual.
-
-        GET /api/auth/perfil/
-        """
+    def get(self, request):
+        """Obtener perfil del usuario autenticado."""
         serializer = PerfilUsuarioSerializer(request.user)
         return Response(serializer.data)
 
-    @action(detail=False, methods=["put"])
-    def update(self, request):
-        """
-        Actualizar el perfil del usuario actual.
-
-        PUT /api/auth/perfil/
-        """
+    def put(self, request):
+        """Actualizar perfil completo del usuario autenticado."""
         serializer = PerfilUsuarioSerializer(request.user, data=request.data, partial=False)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["patch"])
-    def partial_update(self, request):
-        """
-        Actualizar parcialmente el perfil del usuario actual.
-
-        PATCH /api/auth/perfil/
-        """
+    def patch(self, request):
+        """Actualizar perfil parcialmente del usuario autenticado."""
         serializer = PerfilUsuarioSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["post"])
-    def cambiar_contrasena(self, request):
-        """
-        Cambiar la contraseña del usuario actual.
 
-        POST /api/perfil/cambiar-contrasena/
-        Body: {
-            "contrasena_actual": "...",
-            "contrasena_nueva": "...",
-            "contrasena_confirmacion": "..."
-        }
-        """
+class CambiarContrasenaAPIView(APIView):
+    """
+    API View para cambiar la contraseña del usuario autenticado.
+
+    Endpoint:
+    - POST /api/auth/perfil/cambiar-contrasena/ - Cambiar contraseña
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """Cambiar contraseña del usuario autenticado."""
         serializer = CambiarContrasenaSerializer(data=request.data, context={"request": request})
-
         if serializer.is_valid():
             serializer.save()
             return Response(
                 {"mensaje": "Contraseña cambiada exitosamente"},
                 status=status.HTTP_200_OK,
             )
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

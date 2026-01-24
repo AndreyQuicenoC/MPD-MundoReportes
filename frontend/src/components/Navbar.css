@@ -1,6 +1,6 @@
 /* Navbar Styles - Diseño Moderno y Responsive */
 .navbar {
-  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  background: linear-gradient(135deg, #6f6a2a 0%, #7f7922 100%);
   color: #fff;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   position: sticky;
@@ -40,7 +40,7 @@
 .navbar-title {
   font-size: 1.5rem;
   font-weight: 700;
-  background: linear-gradient(90deg, #6b8e23, #8fbc8f);
+  background: linear-gradient(90deg, #ffffff, #ffffff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -55,7 +55,7 @@
 
 .navbar-link {
   color: #fff;
-  padding: 0.75rem 1.25rem;
+  padding: 0.7rem 1.25rem;
   border-radius: 8px;
   transition: all 0.3s ease;
   font-weight: 500;
@@ -83,15 +83,16 @@
 .navbar-link:hover {
   background-color: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
+  color: #fff;
 }
 
 .navbar-link-admin {
-  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+  background: linear-gradient(135deg, #b0a741 0%, #a29825 100%);
+  box-shadow: 0 4px 10px rgba(231, 200, 60, 0.3);
 }
 
 .navbar-link-admin:hover {
-  box-shadow: 0 6px 15px rgba(231, 76, 60, 0.5);
+  box-shadow: 0 6px 15px rgba(223, 192, 39, 0.5);
   transform: translateY(-2px);
 }
 
@@ -106,15 +107,16 @@
   font-weight: 600;
   color: #fff;
   text-decoration: none;
-  padding: 0.75rem 1.25rem;
+  padding: 0.7rem 1.25rem;
   border-radius: 8px;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(202, 197, 60, 0.374);
 }
 
 .navbar-username:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(194, 188, 21, 0.696);
   transform: translateY(-2px);
+  color: #fff;
 }
 
 .navbar-logout {
@@ -131,7 +133,7 @@
 
 .navbar-logout:hover {
   background: #fff;
-  color: #2c3e50;
+  color: #6f6a2a;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
 }

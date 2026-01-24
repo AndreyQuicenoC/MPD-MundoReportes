@@ -32,7 +32,7 @@ const Perfil = () => {
   const cargarPerfil = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/auth/perfil/list/');
+      const response = await api.get('/auth/perfil/');
       setPerfil(response.data);
       setFormData({
         nombre: response.data.nombre,
@@ -68,7 +68,7 @@ const Perfil = () => {
     e.preventDefault();
 
     try {
-      const response = await api.patch('/auth/perfil/partial_update/', formData);
+      const response = await api.patch('/auth/perfil/', formData);
       setPerfil(response.data);
       setModoEdicion(false);
       toast.success('Perfil actualizado exitosamente');
@@ -139,11 +139,6 @@ const Perfil = () => {
     <div className="perfil-container">
       <div className="perfil-header">
         <h1>Mi Perfil</h1>
-        {!modoEdicion && (
-          <button onClick={() => setModoEdicion(true)} className="btn btn-primary">
-            Editar Perfil
-          </button>
-        )}
       </div>
 
       <div className="perfil-content">
@@ -244,6 +239,11 @@ const Perfil = () => {
                 <span>{new Date(perfil.date_joined).toLocaleDateString()}</span>
               </div>
             </div>
+          )}
+          {!modoEdicion && (
+            <button onClick={() => setModoEdicion(true)} className="btn btn-primary">
+              Editar Perfil
+            </button>
           )}
         </div>
 
