@@ -39,7 +39,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "verify-api": "node verify-api.mjs",
-    "test:creacion": "node tests/test-creacion.mjs"
+    "test:creacion": "node tests/test-creacion.mjs",
+    "test:estadisticas": "node tests/test-estadisticas.mjs"
   },
   "eslintConfig": {
     "extends": [

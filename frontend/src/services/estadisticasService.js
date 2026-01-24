@@ -69,7 +69,9 @@ const estadisticasService = {
    * @returns {Promise} Productos más vendidos
    */
   getProductosMasVendidos: async (params = {}) => {
-    const response = await apiClient.get('/estadisticas/productos/mas-vendidos/', { params });
+    const response = await apiClient.get('/estadisticas/productos/mas-vendidos/', {
+      params: { ...params, limite: params.limite || 100 },
+    });
     return response.data;
   },
 

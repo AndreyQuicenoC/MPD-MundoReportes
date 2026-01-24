@@ -105,7 +105,7 @@ const Reportes = () => {
           <div className="dashboard-card">
             <h3>Promedio Diario</h3>
             <p className="dashboard-value">
-              ${Number(dashboard.promedio_ventas_diarias).toLocaleString('es-CO')}
+              ${Math.round(Number(dashboard.promedio_ventas_diarias)).toLocaleString('es-CO')}
             </p>
           </div>
 
@@ -141,8 +141,8 @@ const Reportes = () => {
               ) : (
                 reportes.map(reporte => (
                   <tr key={reporte.id}>
-                    <td>{new Date(reporte.fecha).toLocaleDateString('es-CO')}</td>
-                    <td>${Number(reporte.base_inicial).toLocaleString('es-CO')}</td>
+                    <td>{new Date(reporte.fecha + 'T00:00:00').toLocaleDateString('es-CO')}</td>
+                    <td>${Number(reporte.base_inicial || 0).toLocaleString('es-CO')}</td>
                     <td>${Number(reporte.venta_total).toLocaleString('es-CO')}</td>
                     <td>${Number(reporte.total_gastos).toLocaleString('es-CO')}</td>
                     <td>${Number(reporte.base_siguiente).toLocaleString('es-CO')}</td>

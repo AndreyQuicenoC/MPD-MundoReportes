@@ -134,6 +134,7 @@ class ReporteDiarioListaSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "fecha",
+            "base_inicial",
             "venta_total",
             "total_gastos",
             "base_siguiente",

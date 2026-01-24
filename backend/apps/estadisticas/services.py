@@ -47,14 +47,19 @@ class ServicioEstadisticas:
             venta_maxima=Max("venta_total"),
             venta_minima=Min("venta_total"),
             cantidad_reportes=Count("id"),
+            total_gastos=Sum("total_gastos"),
+            total_entregas=Sum("entrega"),
         )
 
         return {
-            "total_ventas": agregados["total_ventas"] or Decimal("0.00"),
-            "promedio_ventas": agregados["promedio_ventas"] or Decimal("0.00"),
-            "venta_maxima": agregados["venta_maxima"] or Decimal("0.00"),
-            "venta_minima": agregados["venta_minima"] or Decimal("0.00"),
+            "total_ventas": float(agregados["total_ventas"] or Decimal("0.00")),
+            "promedio_ventas": float(agregados["promedio_ventas"] or Decimal("0.00")),
+            "venta_maxima": float(agregados["venta_maxima"] or Decimal("0.00")),
+            "venta_minima": float(agregados["venta_minima"] or Decimal("0.00")),
             "cantidad_reportes": agregados["cantidad_reportes"] or 0,
+            "total_gastos": float(agregados["total_gastos"] or Decimal("0.00")),
+            "total_entregas": float(agregados["total_entregas"] or Decimal("0.00")),
+            "total_reportes": agregados["cantidad_reportes"] or 0,
             "periodo": {
                 "fecha_inicio": fecha_inicio,
                 "fecha_fin": fecha_fin,
@@ -83,7 +88,7 @@ class ServicioEstadisticas:
 
         # Calcular métricas de reportes
         agregados_reportes = reportes.aggregate(
-            total_gastos=Sum("total_gastos"),
+            suma_gastos=Sum("total_gastos"),
             promedio_gastos=Avg("total_gastos"),
             gasto_maximo=Max("total_gastos"),
             gasto_minimo=Min("total_gastos"),
@@ -94,10 +99,10 @@ class ServicioEstadisticas:
         cantidad_gastos = gastos.count()
 
         return {
-            "total_gastos": agregados_reportes["total_gastos"] or Decimal("0.00"),
-            "promedio_gastos": agregados_reportes["promedio_gastos"] or Decimal("0.00"),
-            "gasto_maximo": agregados_reportes["gasto_maximo"] or Decimal("0.00"),
-            "gasto_minimo": agregados_reportes["gasto_minimo"] or Decimal("0.00"),
+            "total_gastos": float(agregados_reportes["suma_gastos"] or Decimal("0.00")),
+            "promedio_gastos": float(agregados_reportes["promedio_gastos"] or Decimal("0.00")),
+            "gasto_maximo": float(agregados_reportes["gasto_maximo"] or Decimal("0.00")),
+            "gasto_minimo": float(agregados_reportes["gasto_minimo"] or Decimal("0.00")),
             "cantidad_gastos": cantidad_gastos,
             "periodo": {
                 "fecha_inicio": fecha_inicio,
@@ -141,7 +146,7 @@ class ServicioEstadisticas:
         resultado = [
             {
                 "categoria": item["categoria__nombre"],
-                "total": item["total"],
+                "total": float(item["total"]),
                 "cantidad": item["cantidad"],
             }
             for item in gastos_categorizados
@@ -152,7 +157,7 @@ class ServicioEstadisticas:
             resultado.append(
                 {
                     "categoria": "Sin categoría",
-                    "total": gastos_sin_categoria["total"],
+                    "total": float(gastos_sin_categoria["total"]),
                     "cantidad": gastos_sin_categoria["cantidad"],
                 }
             )
@@ -188,10 +193,11 @@ class ServicioEstadisticas:
 
         return [
             {
-                "mes": item["mes"].strftime("%Y-%m"),
-                "total_ventas": item["total_ventas"],
-                "total_gastos": item["total_gastos"],
-                "utilidad": item["total_ventas"] - item["total_gastos"],
+                "mes": item["mes"].month,
+                "anio": item["mes"].year,
+                "total_ventas": float(item["total_ventas"] or 0),
+                "total_gastos": float(item["total_gastos"] or 0),
+                "utilidad": float((item["total_ventas"] or 0) - (item["total_gastos"] or 0)),
                 "cantidad_reportes": item["cantidad_reportes"],
             }
             for item in ventas_mensuales
@@ -230,7 +236,7 @@ class ServicioEstadisticas:
             {
                 "producto": item["producto__nombre"],
                 "cantidad_total": item["cantidad_total"],
-                "valor_total": item["valor_total"],
+                "valor_total": float(item["valor_total"] or 0),
             }
             for item in productos_vendidos
         ]

@@ -89,18 +89,6 @@
   background: rgba(255, 255, 255, 0.95);
 }
 
-.login-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #6f6a2a, #ffd700, #6f6a2a);
-  background-size: 200% 100%;
-  animation: gradientShift 3s ease infinite;
-  border-radius: 20px 20px 0 0;
-}
 
 .login-header {
   text-align: center;

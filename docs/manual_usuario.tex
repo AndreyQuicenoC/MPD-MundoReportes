@@ -1,0 +1,414 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{tikz}
+\usepackage{fontawesome5}
+\usepackage{tabularx}
+\usepackage{booktabs}
+
+\geometry{margin=2.5cm}
+\definecolor{primary}{RGB}{155,147,59}
+\definecolor{secondary}{RGB}{107,142,35}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primary,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+\title{%
+  \begin{center}
+    \includegraphics[width=0.3\textwidth]{logo.png}\\[1cm]
+    {\Huge\bfseries Manual de Usuario}\\[0.5cm]
+    {\Large Sistema Mundo Reporte}\\[0.3cm]
+    {\large Versión 1.1.0}
+  \end{center}
+}
+\author{Mundo Reporte}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{Introducción}
+
+Bienvenido al Sistema Mundo Reporte, una solución integral para la gestión diaria de reportes de ventas, gastos y análisis estadísticos de su negocio.
+
+\subsection{¿Para quién es este manual?}
+
+Este manual está diseñado para \textbf{operarios} del sistema, es decir, usuarios que registran reportes diarios de ventas y gastos.
+
+\subsection{Características principales}
+
+\begin{itemize}
+    \item \faCheckCircle~ Registro rápido de reportes diarios
+    \item \faChartLine~ Estadísticas automáticas de ventas
+    \item \faShoppingCart~ Gestión de productos
+    \item \faClipboardList~ Control de gastos por categoría
+    \item \faLock~ Sistema seguro con autenticación
+\end{itemize}
+
+\newpage
+
+\section{Inicio de Sesión}
+
+\subsection{Acceder al Sistema}
+
+\begin{tcolorbox}[colback=primary!10,colframe=primary,title=Paso 1: Abrir el Sistema]
+Abra su navegador web (Chrome, Firefox, Edge) y visite la dirección:
+
+\texttt{https://mundoreporte.com}
+\end{tcolorbox}
+
+\subsection{Ingresar Credenciales}
+
+\begin{center}
+\begin{tikzpicture}
+\node[draw,rectangle,minimum width=8cm,minimum height=6cm,fill=gray!10] (login) {};
+\node[above=0.5cm of login] {\Large\textbf{Inicio de Sesión}};
+\node[below=2cm of login.north] (email) {Email: \underline{\hspace{5cm}}};
+\node[below=0.8cm of email] (pass) {Contraseña: \underline{\hspace{5cm}}};
+\node[below=1cm of pass,draw,fill=primary,text=white,minimum width=3cm] {\textbf{Ingresar}};
+\end{tikzpicture}
+\end{center}
+
+\begin{enumerate}
+    \item Ingrese su \textbf{correo electrónico}
+    \item Ingrese su \textbf{contraseña}
+    \item Haga clic en \fbox{Ingresar}
+\end{enumerate}
+
+\newpage
+
+\section{Página Principal: Reportes}
+
+Al ingresar, verá el \textbf{Dashboard de Reportes} con métricas del mes actual.
+
+\subsection{Dashboard de Métricas}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\rowcolor{primary!20}
+\textbf{Ventas del Mes} & \textbf{Gastos del Mes} & \textbf{Promedio Diario} & \textbf{Reportes} \\
+\hline
+\$10.550.000 & \$1.340.000 & \$3.517.000 & 3 \\
+\hline
+\end{tabular}
+\end{center}
+
+Estas tarjetas muestran:
+\begin{itemize}
+    \item \textbf{Ventas del Mes}: Total de ventas del mes actual
+    \item \textbf{Gastos del Mes}: Total de gastos registrados
+    \item \textbf{Promedio Diario}: Promedio de ventas por reporte
+    \item \textbf{Reportes Registrados}: Cantidad de reportes del mes
+\end{itemize}
+
+\subsection{Tabla de Reportes}
+
+Debajo del dashboard, encontrará una tabla con todos sus reportes:
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|l|X|X|X|X|l|}
+\hline
+\rowcolor{primary!20}
+\textbf{Fecha} & \textbf{Base Inicial} & \textbf{Venta Total} & \textbf{Gastos} & \textbf{Base Sig.} & \textbf{Acciones} \\
+\hline
+25/1/2026 & \$600.000 & \$4.550.000 & \$495.000 & \$1.655.000 & \footnotesize Ver | Editar | Eliminar \\
+\hline
+\end{tabularx}
+\end{center}
+
+\newpage
+
+\section{Crear Nuevo Reporte}
+
+\subsection{Acceder al Formulario}
+
+\begin{tcolorbox}[colback=secondary!10,colframe=secondary,title=\faPlus~ Botón Nuevo Reporte]
+En la esquina superior derecha, haga clic en el botón:
+
+\fbox{\textcolor{white}{\colorbox{primary}{\textbf{+ Nuevo Reporte}}}}
+\end{tcolorbox}
+
+\subsection{Datos Básicos del Reporte}
+
+\begin{enumerate}
+    \item \textbf{Fecha}: Seleccione la fecha del reporte
+    \item \textbf{Base Inicial}: Dinero en caja al inicio del día (se carga automáticamente del reporte anterior)
+    \item \textbf{Venta Total}: Total de dinero recibido por ventas
+    \item \textbf{Entrega}: Dinero entregado al dueño o banco
+    \item \textbf{Observación}: Notas adicionales (opcional)
+\end{enumerate}
+
+\subsection{Registrar Gastos}
+
+\begin{tcolorbox}[colback=yellow!10,colframe=orange,title=\faExclamationTriangle~ Importante]
+Los gastos se registran en la sección \textbf{Gastos}.
+\end{tcolorbox}
+
+\textbf{Pasos para agregar un gasto:}
+
+\begin{enumerate}
+    \item Haga clic en \fbox{\textbf{\faPlus~ Agregar Gasto}}
+    \item Complete los campos:
+        \begin{itemize}
+            \item \textbf{Descripción}: ¿Qué se compró? (Ej: "Arriendo local")
+            \item \textbf{Valor}: Monto del gasto
+            \item \textbf{Categoría}: Seleccione una categoría (Ej: "Servicios")
+        \end{itemize}
+    \item Repita para cada gasto del día
+\end{enumerate}
+
+\subsection{Registrar Ventas de Productos}
+
+En la sección \textbf{Ventas de Productos}, verá una lista de todos los productos disponibles:
+
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline
+\rowcolor{primary!20}
+\textbf{Producto} & \textbf{Precio} & \textbf{Cantidad Vendida} \\
+\hline
+Arepa & \$2.000 & \fbox{5} \\
+Empanada & \$2.500 & \fbox{10} \\
+Jugo Natural & \$3.000 & \fbox{8} \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+    \item Ingrese la \textbf{cantidad vendida} de cada producto
+    \item El sistema calcula automáticamente el total por producto
+    \item Deje en 0 los productos no vendidos
+\end{itemize}
+
+\subsection{Resumen y Guardar}
+
+Al final del formulario, verá un resumen automático:
+
+\begin{center}
+\begin{tcolorbox}[colback=primary!5,colframe=primary,width=10cm]
+\textbf{Resumen}\\[0.3cm]
+Base Inicial: \hfill \$500.000\\
+Venta Total: \hfill \$4.550.000\\
+Total Gastos: \hfill -\$495.000\\
+Entrega: \hfill -\$1.900.000\\
+\midrule
+\textbf{Base Siguiente:} \hfill \textbf{\$2.655.000}
+\end{tcolorbox}
+\end{center}
+
+\begin{tcolorbox}[colback=green!10,colframe=green!50!black,title=\faCheckCircle~ Guardar]
+\begin{enumerate}
+    \item Revise que todos los datos sean correctos
+    \item Haga clic en \fbox{\textcolor{white}{\colorbox{green}{\textbf{\checkmark~ Guardar Reporte}}}}
+    \item O haga clic en \fbox{\textcolor{white}{\colorbox{red}{\textbf{\texttimes~ Cancelar}}}} para descartar
+\end{enumerate}
+\end{tcolorbox}
+
+\newpage
+
+\section{Estadísticas}
+
+\subsection{Acceder a Estadísticas}
+
+En el menú lateral, haga clic en \textbf{Estadísticas} \faChartBar.
+
+\subsection{Filtros de Período}
+
+Puede filtrar las estadísticas por rango de fechas:
+
+\begin{enumerate}
+    \item \textbf{Fecha Inicio}: Seleccione la fecha inicial
+    \item \textbf{Fecha Fin}: Seleccione la fecha final
+    \item Haga clic en \fbox{Filtrar}
+\end{enumerate}
+
+\subsection{Gráficos Disponibles}
+
+\subsubsection{Gastos por Categoría}
+
+Gráfico circular que muestra la distribución de gastos:
+
+\begin{itemize}
+    \item \textcolor{primary}{\faCircle} Servicios Públicos
+    \item \textcolor{secondary}{\faCircle} Arriendo
+    \item \textcolor{blue}{\faCircle} Transporte
+    \item \textcolor{orange}{\faCircle} Otros
+\end{itemize}
+
+\subsubsection{Productos Más Vendidos}
+
+Gráfico de barras mostrando los productos con más ventas.
+
+\subsubsection{Evolución de Ventas}
+
+Gráfico de barras con el acumulado mensual de ventas.
+
+\newpage
+
+\section{Gestión de Productos}
+
+\subsection{Ver Productos}
+
+En el menú, seleccione \textbf{Productos} \faShoppingCart.
+
+\subsection{Crear Producto}
+
+\begin{enumerate}
+    \item Haga clic en \fbox{\textbf{+ Nuevo Producto}}
+    \item Complete los campos:
+        \begin{itemize}
+            \item \textbf{Nombre}: Nombre del producto
+            \item \textbf{Precio}: Precio de venta
+            \item \textbf{Descripción}: Detalles (opcional)
+        \end{itemize}
+    \item Haga clic en \fbox{Guardar}
+\end{enumerate}
+
+\subsection{Editar o Eliminar}
+
+En la tabla de productos, cada fila tiene botones:
+\begin{itemize}
+    \item \fbox{Editar}: Modificar el producto
+    \item \fbox{Eliminar}: Desactivar el producto
+\end{itemize}
+
+\newpage
+
+\section{Gestión de Categorías}
+
+\subsection{Ver Categorías}
+
+En el menú, seleccione \textbf{Categorías} \faList.
+
+\subsection{Crear Categoría}
+
+\begin{enumerate}
+    \item Haga clic en \fbox{\textbf{+ Nueva Categoría}}
+    \item Complete:
+        \begin{itemize}
+            \item \textbf{Nombre}: Nombre de la categoría
+            \item \textbf{Descripción}: Detalles opcionales
+        \end{itemize}
+    \item Haga clic en \fbox{Crear}
+\end{enumerate}
+
+\newpage
+
+\section{Perfil de Usuario}
+
+\subsection{Acceder al Perfil}
+
+\begin{enumerate}
+    \item Haga clic en su nombre en la esquina superior derecha
+    \item Seleccione \textbf{Perfil} \faUser
+\end{enumerate}
+
+\subsection{Cambiar Contraseña}
+
+\begin{tcolorbox}[colback=blue!10,colframe=blue,title=\faLock~ Cambiar Contraseña]
+\begin{enumerate}
+    \item Ingrese su \textbf{contraseña actual}
+    \item Ingrese la \textbf{nueva contraseña}
+    \item Confirme la \textbf{nueva contraseña}
+    \item Haga clic en \fbox{Cambiar Contraseña}
+\end{enumerate}
+\end{tcolorbox}
+
+\newpage
+
+\section{Cerrar Sesión}
+
+\begin{tcolorbox}[colback=red!10,colframe=red,title=\faSignOutAlt~ Salir del Sistema]
+Para cerrar sesión de forma segura:
+
+\begin{enumerate}
+    \item Haga clic en su nombre en la esquina superior
+    \item Seleccione \textbf{Cerrar Sesión}
+    \item Confirme la acción
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{center}
+\textbf{¡Importante!} Siempre cierre sesión al terminar de usar el sistema, especialmente en computadoras compartidas.
+\end{center}
+
+\newpage
+
+\section{Preguntas Frecuentes}
+
+\subsection{¿Qué hago si olvidé mi contraseña?}
+
+Contacte al administrador del sistema para que restablezca su contraseña.
+
+\subsection{¿Puedo editar un reporte ya guardado?}
+
+Sí, desde la tabla de reportes, haga clic en \fbox{Editar} en el reporte que desea modificar.
+
+\subsection{¿Los datos se guardan automáticamente?}
+
+No, debe hacer clic en \fbox{Guardar Reporte} para que los cambios se almacenen.
+
+\subsection{¿Puedo ver reportes de meses anteriores?}
+
+Sí, la tabla de reportes muestra todos los registros históricos. Puede filtrar por fechas en Estadísticas.
+
+\subsection{¿Qué es la "Base Siguiente"?}
+
+Es el dinero que queda en caja al final del día, calculado como:
+
+\[
+\text{Base Siguiente} = \text{Base Inicial} + \text{Ventas} - \text{Gastos} - \text{Entrega}
+\]
+
+Esta será la "Base Inicial" del próximo día.
+
+\newpage
+
+\section{Soporte Técnico}
+
+\subsection{Contacto}
+
+Si tiene problemas técnicos o preguntas:
+
+\begin{itemize}
+    \item \faEnvelope~ Email: soporte@mundoreporte.com
+    \item \faPhone~ Teléfono: +57 300 123 4567
+    \item \faClock~ Horario: Lunes a Viernes, 8:00 AM - 5:00 PM
+\end{itemize}
+
+\subsection{Requisitos del Sistema}
+
+\begin{itemize}
+    \item Navegador web actualizado (Chrome, Firefox, Edge, Safari)
+    \item Conexión a Internet
+    \item Resolución mínima: 1024x768
+\end{itemize}
+
+\vfill
+
+\begin{center}
+\rule{0.5\textwidth}{0.4pt}
+
+\textbf{Mundo Reporte} - Sistema de Gestión de Reportes Diarios
+
+Versión 1.1.0 | \today
+
+\textcopyright~ 2026 Todos los derechos reservados
+\end{center}
+
+\end{document}

@@ -12,6 +12,10 @@ const Footer = () => {
   const esAdmin = usuario?.rol === 'admin';
   const currentYear = new Date().getFullYear();
 
+  const cerrarMenu = () => {
+    setMenuAbierto(false);
+  };
+
   return (
     <footer className="footer">
       <div className="footer-container">
@@ -41,10 +45,7 @@ const Footer = () => {
             ) : (
               <>
                 <li>
-                  <Link to="/dashboard">Dashboard</Link>
-                </li>
-                <li>
-                  <Link to="/reportes">Reportes</Link>
+                  <Link to="/dashboard">Reportes</Link>
                 </li>
                 <li>
                   <Link to="/productos">Productos</Link>
@@ -55,6 +56,15 @@ const Footer = () => {
                 <li>
                   <Link to="/perfil">Mi Perfil</Link>
                 </li>
+                <li>
+                    <a
+                        href="/docs/manual_usuario.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Manual de Usuario
+                    </a>
+                </li>
               </>
             )}
           </ul>
@@ -64,16 +74,20 @@ const Footer = () => {
           <h3 className="footer-title">Información</h3>
           <ul className="footer-links">
             <li>
-              <span>Contacto: info@mundopinturasdiana.com</span>
+              <span>Contacto: mundopinturasdiana@gmail.com</span>
             </li>
             <li>
-              <span>Teléfono: +57 300 123 4567</span>
+              <span>Soporte: andreyquic@gmail.com</span>
+            </li>
+            <li>
+              <span>Teléfono: +57 312 248 6627</span>
             </li>
             <li>
               <span>Ubicación: Colombia</span>
             </li>
             <li>
-              <span>Horario: Lun - Sáb, 8am - 6pm</span>
+              <span>Horario: Lun - Sáb, 8am - 5pm</span>
+              <span>Horario: Dom, 8am - 12pm</span>
             </li>
           </ul>
         </div>

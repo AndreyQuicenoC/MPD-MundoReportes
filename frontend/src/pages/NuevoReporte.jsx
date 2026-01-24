@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { reportesService } from '../services/reportesService';
 import { productosService } from '../services/productosService';
 import { categoriasService } from '../services/categoriasService';
@@ -8,11 +8,12 @@ import { calcularBaseSiguiente, formatearMoneda } from '../utils/reportes';
 import './NuevoReporte.css';
 
 /**
- * Página de creación de nuevo reporte diario.
+ * Página de creación/edición de reporte diario.
  * Incluye formulario completo con gastos y ventas de productos.
  */
-const NuevoReporte = () => {
+const NuevoReporte = ({ esEdicion = false }) => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
@@ -35,10 +36,9 @@ const NuevoReporte = () => {
 
   const cargarDatos = async () => {
     try {
-      const [prodData, catData, reporteAnterior] = await Promise.all([
+      const [prodData, catData] = await Promise.all([
         productosService.obtenerProductos(),
         categoriasService.obtenerCategorias(),
-        reportesService.obtenerUltimoReporte(),
       ]);
 
       // Asegurar que sean arrays
@@ -53,11 +53,46 @@ const NuevoReporte = () => {
       productosArray.forEach(prod => {
         cantidadesIniciales[prod.id] = 0;
       });
-      setCantidadesProductos(cantidadesIniciales);
 
-      // Base inicial es la base siguiente del reporte anterior
-      if (reporteAnterior) {
-        setBaseInicial(reporteAnterior.base_siguiente);
+      if (esEdicion && id) {
+        // Cargar datos del reporte existente
+        const reporteData = await reportesService.getReporte(id);
+        
+        // Cargar datos básicos
+        setFecha(reporteData.fecha);
+        setBaseInicial(reporteData.base_inicial || 0);
+        setVentaTotal(reporteData.venta_total || 0);
+        setEntrega(reporteData.entrega || 0);
+        setObservacion(reporteData.observacion || '');
+
+        // Cargar gastos
+        if (reporteData.gastos && reporteData.gastos.length > 0) {
+          setGastos(
+            reporteData.gastos.map(g => ({
+              descripcion: g.descripcion,
+              valor: g.valor,
+              categoria: g.categoria || '',
+            }))
+          );
+        }
+
+        // Cargar ventas de productos
+        if (reporteData.ventas_productos && reporteData.ventas_productos.length > 0) {
+          const cantidadesReporte = { ...cantidadesIniciales };
+          reporteData.ventas_productos.forEach(venta => {
+            cantidadesReporte[venta.producto] = venta.cantidad;
+          });
+          setCantidadesProductos(cantidadesReporte);
+        } else {
+          setCantidadesProductos(cantidadesIniciales);
+        }
+      } else {
+        // Modo creación: cargar último reporte para base inicial
+        setCantidadesProductos(cantidadesIniciales);
+        const reporteAnterior = await reportesService.obtenerUltimoReporte();
+        if (reporteAnterior) {
+          setBaseInicial(reporteAnterior.base_siguiente);
+        }
       }
     } catch (error) {
       toast.error('Error al cargar datos iniciales');
@@ -168,8 +203,13 @@ const NuevoReporte = () => {
         ventas_productos: ventasValidas,
       };
 
-      await reportesService.crearReporte(datos);
-      toast.success('Reporte creado exitosamente');
+      if (esEdicion && id) {
+        await reportesService.updateReporte(id, datos);
+        toast.success('Reporte actualizado exitosamente');
+      } else {
+        await reportesService.crearReporte(datos);
+        toast.success('Reporte creado exitosamente');
+      }
       navigate('/reportes');
     } catch (error) {
       if (error.response?.data) {
@@ -178,7 +218,7 @@ const NuevoReporte = () => {
           toast.error(`${campo}: ${errores[campo]}`);
         });
       } else {
-        toast.error('Error al crear el reporte');
+        toast.error(esEdicion ? 'Error al actualizar el reporte' : 'Error al crear el reporte');
       }
       // eslint-disable-next-line no-console
       console.error(error);
@@ -197,7 +237,7 @@ const NuevoReporte = () => {
 
   return (
     <div className="nuevo-reporte-container">
-      <h1>Nuevo Reporte Diario</h1>
+      <h1>{esEdicion ? 'Editar Reporte Diario' : 'Nuevo Reporte Diario'}</h1>
 
       <form onSubmit={handleSubmit} className="reporte-form">
         {/* Datos básicos */}
@@ -269,8 +309,8 @@ const NuevoReporte = () => {
         <section className="form-section">
           <div className="section-header">
             <h2>Gastos del Día</h2>
-            <button type="button" onClick={agregarGasto} className="btn-secondary">
-              + Agregar Gasto
+            <button type="button" onClick={agregarGasto} className="btn btn-add">
+              ➕ Agregar Gasto
             </button>
           </div>
 
@@ -411,11 +451,11 @@ const NuevoReporte = () => {
 
         {/* Botones */}
         <div className="form-actions">
-          <button type="button" onClick={() => navigate('/reportes')} className="btn-secondary">
-            Cancelar
+          <button type="button" onClick={() => navigate('/reportes')} className="btn btn-secondary">
+            ✕ Cancelar
           </button>
-          <button type="submit" disabled={loading} className="btn-primary">
-            {loading ? 'Guardando...' : 'Guardar Reporte'}
+          <button type="submit" disabled={loading} className="btn btn-primary">
+            {loading ? '⏳ Guardando...' : '✓ Guardar Reporte'}
           </button>
         </div>
       </form>

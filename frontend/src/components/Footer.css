@@ -41,7 +41,7 @@
 }
 
 .footer-description {
-  color: #b0b0b0;
+  color: #cacaca;
   line-height: 1.6;
   margin-bottom: 0.75rem;
   font-size: 0.95rem;
@@ -58,7 +58,7 @@
 }
 
 .footer-links a {
-  color: #c0c0c0;
+  color: #ececec;
   text-decoration: none;
   transition: all 0.3s ease;
   display: inline-block;
@@ -66,12 +66,12 @@
 }
 
 .footer-links a:hover {
-  color: #6b8e23;
+  color: #ffdf42;
   transform: translateX(5px);
 }
 
 .footer-links span {
-  color: #b0b0b0;
+  color: #d3d3d3;
   font-size: 0.95rem;
   display: block;
 }

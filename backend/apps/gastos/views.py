@@ -23,7 +23,7 @@ class ListaCategoriasView(generics.ListAPIView):
     """
 
     queryset = CategoriaGasto.objects.all()
-    serializer_class = CategoriaGastoListaSerializer
+    serializer_class = CategoriaGastoSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ["activa"]

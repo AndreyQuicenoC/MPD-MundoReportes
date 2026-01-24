@@ -40,6 +40,7 @@ const Estadisticas = () => {
   const [gastosPorCategoria, setGastosPorCategoria] = useState([]);
   const [productosMasVendidos, setProductosMasVendidos] = useState([]);
   const [ventasPorMes, setVentasPorMes] = useState([]);
+  const [periodoVentas, setPeriodoVentas] = useState('mensual'); // mensual, semanal, diario
 
   // Filtros
   const [fechaInicio, setFechaInicio] = useState('');
@@ -111,11 +112,11 @@ const Estadisticas = () => {
   };
 
   const productosData = {
-    labels: productosMasVendidos.map(p => p.producto__nombre),
+    labels: productosMasVendidos.map(p => p.producto),
     datasets: [
       {
         label: 'Cantidad Vendida',
-        data: productosMasVendidos.map(p => p.total_cantidad),
+        data: productosMasVendidos.map(p => p.cantidad_total),
         backgroundColor: '#9B933B',
       },
     ],
@@ -234,10 +235,10 @@ const Estadisticas = () => {
         </div>
 
         <div className="chart-card full-width">
-          <h2>Evolución de Ventas</h2>
+          <h2>Evolución de Ventas (Acumulado Mensual)</h2>
           <div className="chart-container">
             {ventasPorMes.length > 0 ? (
-              <Line data={ventasData} options={chartOptions} />
+              <Bar data={ventasData} options={chartOptions} />
             ) : (
               <p className="no-data">No hay datos de ventas mensuales</p>
             )}

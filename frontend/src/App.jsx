@@ -15,6 +15,7 @@ import Layout from './components/Layout';
 import Login from './pages/Login';
 import Reportes from './pages/Reportes';
 import NuevoReporte from './pages/NuevoReporte';
+import DetalleReporte from './pages/DetalleReporte';
 import Estadisticas from './pages/Estadisticas';
 import Productos from './pages/Productos';
 import Categorias from './pages/Categorias';
@@ -90,6 +91,22 @@ function App() {
               element={
                 <RoleRoute allowedRoles={['usuario']}>
                   <NuevoReporte />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="reportes/:id"
+              element={
+                <RoleRoute allowedRoles={['usuario']}>
+                  <DetalleReporte />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="reportes/:id/editar"
+              element={
+                <RoleRoute allowedRoles={['usuario']}>
+                  <NuevoReporte esEdicion={true} />
                 </RoleRoute>
               }
             />
