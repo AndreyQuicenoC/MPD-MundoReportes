@@ -1,0 +1,18 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo circular -->
+  <circle cx="100" cy="100" r="95" fill="#9B933B" opacity="0.1"/>
+  
+  <!-- Icono de documento/reporte -->
+  <rect x="60" y="40" width="80" height="110" rx="5" fill="none" stroke="#9B933B" stroke-width="4"/>
+  
+  <!-- Líneas del reporte -->
+  <line x1="70" y1="60" x2="130" y2="60" stroke="#9B933B" stroke-width="3" stroke-linecap="round"/>
+  <line x1="70" y1="75" x2="130" y2="75" stroke="#9B933B" stroke-width="3" stroke-linecap="round"/>
+  <line x1="70" y1="90" x2="110" y2="90" stroke="#9B933B" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Gráfica simple -->
+  <polyline points="70,120 85,110 100,125 115,105 130,115" fill="none" stroke="#9B933B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Signo de pesos colombiano simplificado -->
+  <text x="100" y="175" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#9B933B" text-anchor="middle">$</text>
+</svg>
