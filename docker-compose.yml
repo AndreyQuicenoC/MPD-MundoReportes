@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: mundoreporte-backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - db
+    volumes:
+      - static_volume:/app/staticfiles
+    networks:
+      - mundoreporte-network
+
+  frontend:
+    build: ./frontend
+    container_name: mundoreporte-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - mundoreporte-network
+
+  db:
+    image: postgres:15-alpine
+    container_name: mundoreporte-db
+    environment:
+      POSTGRES_DB: mundoreporte
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - mundoreporte-network
+
+volumes:
+  postgres_data:
+  static_volume:
+
+networks:
+  mundoreporte-network:
+    driver: bridge

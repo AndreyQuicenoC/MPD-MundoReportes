@@ -30,12 +30,12 @@
 
 ### ROI Estimado
 
-| Beneficio | Antes | Después | Ahorro |
-|-----------|-------|---------|--------|
-| Tiempo de cierre diario | 30-45 min | 10-15 min | **30 min/día** |
-| Errores de cálculo | 2-3/mes | 0 | **100% reducción** |
-| Tiempo en reportes mensuales | 4-6 horas | 10 min | **~5 horas/mes** |
-| Acceso a datos históricos | Limitado | Inmediato | **Instantáneo** |
+| Beneficio                    | Antes     | Después   | Ahorro             |
+| ---------------------------- | --------- | --------- | ------------------ |
+| Tiempo de cierre diario      | 30-45 min | 10-15 min | **30 min/día**     |
+| Errores de cálculo           | 2-3/mes   | 0         | **100% reducción** |
+| Tiempo en reportes mensuales | 4-6 horas | 10 min    | **~5 horas/mes**   |
+| Acceso a datos históricos    | Limitado  | Inmediato | **Instantáneo**    |
 
 ### Impacto Operacional
 
@@ -153,21 +153,21 @@
 
 ### Costos Operacionales Mensuales
 
-| Concepto | Costo Mensual |
-|----------|--------------|
+| Concepto         | Costo Mensual      |
+| ---------------- | ------------------ |
 | Hosting Supabase | USD $25 (Plan Pro) |
-| Dominio | USD $1-2/mes |
-| Mantenimiento | Variable |
+| Dominio          | USD $1-2/mes       |
+| Mantenimiento    | Variable           |
 
-*Nota: Plan inicial gratuito disponible para hasta 500MB base de datos*
+_Nota: Plan inicial gratuito disponible para hasta 500MB base de datos_
 
 ### Comparación con Alternativas
 
-| Opción | Costo Mensual | Personalización | Soporte |
-|--------|--------------|-----------------|---------|
-| Mundo Reporte | ~USD $25 | ✅ Total | ✅ Directo |
-| SaaS Genérico | USD $50-200 | ❌ Limitada | ⚠️ Email |
-| Excel Manual | $0 | ✅ Manual | ❌ Sin soporte |
+| Opción        | Costo Mensual | Personalización | Soporte        |
+| ------------- | ------------- | --------------- | -------------- |
+| Mundo Reporte | ~USD $25      | ✅ Total        | ✅ Directo     |
+| SaaS Genérico | USD $50-200   | ❌ Limitada     | ⚠️ Email       |
+| Excel Manual  | $0            | ✅ Manual       | ❌ Sin soporte |
 
 ---
 
@@ -252,7 +252,8 @@ Se entregarán credenciales personalizadas a cada usuario durante la capacitaci�
 
 ### Caso 1: Cierre de Caja Diario
 
-**Antes**: 
+**Antes**:
+
 - Operario contaba efectivo manualmente
 - Anotaba en cuaderno
 - Calculaba con calculadora
@@ -260,6 +261,7 @@ Se entregarán credenciales personalizadas a cada usuario durante la capacitaci�
 - Errores frecuentes
 
 **Después**:
+
 - Operario ingresa cifras en formulario
 - Sistema calcula automáticamente
 - Base siguiente lista para mañana
@@ -269,6 +271,7 @@ Se entregarán credenciales personalizadas a cada usuario durante la capacitaci�
 ### Caso 2: Reporte Mensual para Gerencia
 
 **Antes**:
+
 - Revisar cuadernos de 30 días
 - Sumar manualmente en Excel
 - Crear gráficos manualmente
@@ -276,6 +279,7 @@ Se entregarán credenciales personalizadas a cada usuario durante la capacitaci�
 - Datos pueden tener errores
 
 **Después**:
+
 - Acceder a "Estadísticas"
 - Seleccionar mes en filtro
 - Visualizar gráficos automáticos
@@ -285,11 +289,13 @@ Se entregarán credenciales personalizadas a cada usuario durante la capacitaci�
 ### Caso 3: Identificar Productos Más Rentables
 
 **Antes**:
+
 - No había forma fácil de saberlo
 - Intuición del operario
 - Sin datos concretos
 
 **Después**:
+
 - Gráfico "Productos Más Vendidos"
 - Ranking automático
 - Decisiones basadas en datos
@@ -324,6 +330,6 @@ Mundo Reporte representa una **inversión estratégica** en la modernización de
 ---
 
 **Mundo Reporte v1.1.0**  
-*Transformando datos en decisiones*
+_Transformando datos en decisiones_
 
 © 2026 - Todos los derechos reservados
