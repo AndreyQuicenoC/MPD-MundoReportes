@@ -11,7 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Producto
 from .serializers import ProductoSerializer, ProductoListaSerializer
-from apps.usuarios.permissions import EsAdministrador
+from apps.usuarios.permissions import EsAdministrador, EsOperarioOAdmin
 
 
 class ListaProductosView(generics.ListAPIView):
@@ -36,12 +36,12 @@ class CrearProductoView(generics.CreateAPIView):
     """
     Vista para crear un nuevo producto.
 
-    Solo administradores pueden crear productos.
+    Administradores y operarios pueden crear productos.
     """
 
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
-    permission_classes = [IsAuthenticated, EsAdministrador]
+    permission_classes = [EsOperarioOAdmin]
 
     def create(self, request, *args, **kwargs):
         """
@@ -71,7 +71,7 @@ class DetalleProductoView(generics.RetrieveUpdateDestroyAPIView):
     Vista para ver, actualizar o eliminar un producto.
 
     Usuarios autenticados pueden ver.
-    Solo administradores pueden modificar o eliminar.
+    Administradores y operarios pueden modificar o eliminar.
     """
 
     queryset = Producto.objects.all()
@@ -86,7 +86,7 @@ class DetalleProductoView(generics.RetrieveUpdateDestroyAPIView):
             list: Lista de permisos
         """
         if self.request.method in ["PUT", "PATCH", "DELETE"]:
-            return [IsAuthenticated(), EsAdministrador()]
+            return [IsAuthenticated(), EsOperarioOAdmin()]
         return [IsAuthenticated()]
 
     def destroy(self, request, *args, **kwargs):

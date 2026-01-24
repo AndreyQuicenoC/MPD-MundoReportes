@@ -12,7 +12,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import CategoriaGasto
 from .serializers import CategoriaGastoSerializer, CategoriaGastoListaSerializer
-from apps.usuarios.permissions import EsAdministrador
+from apps.usuarios.permissions import EsAdministrador, EsOperarioOAdmin
 
 
 class ListaCategoriasView(generics.ListAPIView):
@@ -36,12 +36,12 @@ class CrearCategoriaView(generics.CreateAPIView):
     """
     Vista para crear una nueva categoría de gasto.
 
-    Solo administradores pueden crear categorías.
+    Administradores y operarios pueden crear categorías.
     """
 
     queryset = CategoriaGasto.objects.all()
     serializer_class = CategoriaGastoSerializer
-    permission_classes = [IsAuthenticated, EsAdministrador]
+    permission_classes = [EsOperarioOAdmin]
 
     def create(self, request, *args, **kwargs):
         """
@@ -71,7 +71,7 @@ class DetalleCategoriaView(generics.RetrieveUpdateDestroyAPIView):
     Vista para ver, actualizar o eliminar una categoría.
 
     Usuarios autenticados pueden ver.
-    Solo administradores pueden modificar o eliminar.
+    Administradores y operarios pueden modificar o eliminar.
     """
 
     queryset = CategoriaGasto.objects.all()
@@ -86,7 +86,7 @@ class DetalleCategoriaView(generics.RetrieveUpdateDestroyAPIView):
             list: Lista de permisos
         """
         if self.request.method in ["PUT", "PATCH", "DELETE"]:
-            return [IsAuthenticated(), EsAdministrador()]
+            return [IsAuthenticated(), EsOperarioOAdmin()]
         return [IsAuthenticated()]
 
     def destroy(self, request, *args, **kwargs):

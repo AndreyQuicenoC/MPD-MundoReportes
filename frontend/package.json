@@ -38,7 +38,8 @@
     "format": "prettier --write \"src/**/*.{js,jsx,css}\"",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify-api": "node verify-api.mjs"
+    "verify-api": "node verify-api.mjs",
+    "test:creacion": "node tests/test-creacion.mjs"
   },
   "eslintConfig": {
     "extends": [
