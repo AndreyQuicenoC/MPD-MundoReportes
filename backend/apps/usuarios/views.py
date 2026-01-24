@@ -39,15 +39,27 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         Returns:
             dict: Tokens y datos del usuario
         """
-        data = super().validate(attrs)
+        import logging
+        logger = logging.getLogger(__name__)
+        
+        logger.info(f"🔐 [LOGIN] Intento de login con email: {attrs.get('email', attrs.get('username', 'N/A'))}")
+        
+        try:
+            data = super().validate(attrs)
+            logger.info(f"✅ [LOGIN] Validación exitosa para usuario: {self.user.email}")
+        except Exception as e:
+            logger.error(f"❌ [LOGIN] Error en validación: {str(e)}")
+            raise
 
         # Verificar si el usuario puede acceder al sistema después de validar credenciales
         if not self.user.puede_acceder():
             from rest_framework.exceptions import PermissionDenied
 
             if not self.user.is_active:
+                logger.warning(f"⚠️ [LOGIN] Usuario inactivo: {self.user.email}")
                 raise PermissionDenied("Tu cuenta ha sido desactivada. Contacta al administrador.")
             else:
+                logger.warning(f"⚠️ [LOGIN] Período de acceso finalizado: {self.user.email}")
                 raise PermissionDenied(
                     "Tu período de acceso ha finalizado. Contacta al administrador."
                 )

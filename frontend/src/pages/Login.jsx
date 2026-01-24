@@ -23,15 +23,20 @@ const Login = () => {
       return;
     }
 
+    console.log('🔐 [LOGIN PAGE] Intentando login:', { email, password: '***' });
     setLoading(true);
 
     try {
+      console.log('🔐 [LOGIN PAGE] Llamando a login()...');
       await login(email, password);
+      console.log('✅ [LOGIN PAGE] Login exitoso');
       toast.success('¡Bienvenido a Mundo Reporte!');
       navigate('/dashboard');
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error('Error de login:', error);
+      console.error('❌ [LOGIN PAGE] Error completo:', error);
+      console.error('❌ [LOGIN PAGE] Response data:', error.response?.data);
+      console.error('❌ [LOGIN PAGE] Response status:', error.response?.status);
       const mensaje =
         error.response?.data?.detail || 'Error al iniciar sesión. Verifique sus credenciales.';
       toast.error(mensaje);
