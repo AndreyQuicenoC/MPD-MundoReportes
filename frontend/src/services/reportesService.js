@@ -1,6 +1,6 @@
 /**
  * Servicio de reportes.
- * 
+ *
  * Maneja todas las operaciones CRUD de reportes diarios.
  */
 
@@ -9,7 +9,7 @@ import apiClient from './api';
 const reportesService = {
   /**
    * Obtener todos los reportes con filtros opcionales.
-   * 
+   *
    * @param {Object} params - Parámetros de filtro (fecha_inicio, fecha_fin, etc.)
    * @returns {Promise} Lista de reportes
    */
@@ -20,7 +20,7 @@ const reportesService = {
 
   /**
    * Obtener detalle de un reporte específico.
-   * 
+   *
    * @param {number} id - ID del reporte
    * @returns {Promise} Detalle del reporte
    */
@@ -31,7 +31,7 @@ const reportesService = {
 
   /**
    * Crear un nuevo reporte.
-   * 
+   *
    * @param {Object} data - Datos del reporte
    * @returns {Promise} Reporte creado
    */
@@ -42,7 +42,7 @@ const reportesService = {
 
   /**
    * Actualizar un reporte existente.
-   * 
+   *
    * @param {number} id - ID del reporte
    * @param {Object} data - Datos actualizados
    * @returns {Promise} Reporte actualizado
@@ -54,7 +54,7 @@ const reportesService = {
 
   /**
    * Eliminar un reporte.
-   * 
+   *
    * @param {number} id - ID del reporte
    * @returns {Promise} Confirmación
    */
@@ -65,7 +65,7 @@ const reportesService = {
 
   /**
    * Obtener estadísticas de un reporte.
-   * 
+   *
    * @param {number} id - ID del reporte
    * @returns {Promise} Estadísticas del reporte
    */
@@ -76,3 +76,4 @@ const reportesService = {
 };
 
 export default reportesService;
+export { reportesService };

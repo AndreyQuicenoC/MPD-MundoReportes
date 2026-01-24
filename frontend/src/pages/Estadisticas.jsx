@@ -1,13 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { estadisticasService } from '../services/estadisticasService';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title } from 'chart.js';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  Title,
+} from 'chart.js';
 import { Pie, Bar, Line } from 'react-chartjs-2';
 import toast from 'react-hot-toast';
 import { formatearMoneda } from '../utils/reportes';
 import './Estadisticas.css';
 
 // Registrar componentes de Chart.js
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title);
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  Title
+);
 
 /**
  * Página de estadísticas y análisis de datos.
@@ -24,11 +45,7 @@ const Estadisticas = () => {
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
 
-  useEffect(() => {
-    cargarEstadisticas();
-  }, []);
-
-  const cargarEstadisticas = async () => {
+  const cargarEstadisticas = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -49,13 +66,18 @@ const Estadisticas = () => {
       setVentasPorMes(ventas);
     } catch (error) {
       toast.error('Error al cargar estadísticas');
+      // eslint-disable-next-line no-console
       console.error(error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [fechaInicio, fechaFin]);
 
-  const handleFiltrar = (e) => {
+  useEffect(() => {
+    cargarEstadisticas();
+  }, [cargarEstadisticas]);
+
+  const handleFiltrar = e => {
     e.preventDefault();
     cargarEstadisticas();
   };
@@ -78,40 +100,33 @@ const Estadisticas = () => {
   };
 
   const gastosData = {
-    labels: gastosPorCategoria.map((g) => g.categoria || 'Sin Categoría'),
+    labels: gastosPorCategoria.map(g => g.categoria || 'Sin Categoría'),
     datasets: [
       {
         label: 'Total Gastos',
-        data: gastosPorCategoria.map((g) => g.total),
-        backgroundColor: [
-          '#9B933B',
-          '#D4AF37',
-          '#C9AE5D',
-          '#8B7E39',
-          '#A89842',
-          '#BFB35E',
-        ],
+        data: gastosPorCategoria.map(g => g.total),
+        backgroundColor: ['#9B933B', '#D4AF37', '#C9AE5D', '#8B7E39', '#A89842', '#BFB35E'],
       },
     ],
   };
 
   const productosData = {
-    labels: productosMasVendidos.map((p) => p.producto__nombre),
+    labels: productosMasVendidos.map(p => p.producto__nombre),
     datasets: [
       {
         label: 'Cantidad Vendida',
-        data: productosMasVendidos.map((p) => p.total_cantidad),
+        data: productosMasVendidos.map(p => p.total_cantidad),
         backgroundColor: '#9B933B',
       },
     ],
   };
 
   const ventasData = {
-    labels: ventasPorMes.map((v) => `${v.mes}/${v.anio}`),
+    labels: ventasPorMes.map(v => `${v.mes}/${v.anio}`),
     datasets: [
       {
         label: 'Ventas Totales',
-        data: ventasPorMes.map((v) => v.total_ventas),
+        data: ventasPorMes.map(v => v.total_ventas),
         borderColor: '#9B933B',
         backgroundColor: 'rgba(155, 147, 59, 0.1)',
         tension: 0.4,
@@ -140,7 +155,7 @@ const Estadisticas = () => {
               type="date"
               id="fechaInicio"
               value={fechaInicio}
-              onChange={(e) => setFechaInicio(e.target.value)}
+              onChange={e => setFechaInicio(e.target.value)}
             />
           </div>
 
@@ -150,7 +165,7 @@ const Estadisticas = () => {
               type="date"
               id="fechaFin"
               value={fechaFin}
-              onChange={(e) => setFechaFin(e.target.value)}
+              onChange={e => setFechaFin(e.target.value)}
             />
           </div>
 

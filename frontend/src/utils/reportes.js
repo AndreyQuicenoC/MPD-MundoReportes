@@ -7,7 +7,7 @@
  * @param {Object|null} reporteAnterior - Reporte anterior o null
  * @returns {number} Base inicial
  */
-export const calcularBaseInicial = (reporteAnterior) => {
+export const calcularBaseInicial = reporteAnterior => {
   return reporteAnterior?.base_siguiente || 0;
 };
 
@@ -29,7 +29,7 @@ export const calcularBaseSiguiente = (baseInicial, venta, gastos, entrega) => {
  * @param {number} valor - Valor a formatear
  * @returns {string} Valor formateado
  */
-export const formatearMoneda = (valor) => {
+export const formatearMoneda = valor => {
   return new Intl.NumberFormat('es-CO', {
     style: 'currency',
     currency: 'COP',

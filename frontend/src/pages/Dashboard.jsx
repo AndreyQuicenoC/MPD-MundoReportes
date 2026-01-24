@@ -21,6 +21,7 @@ const Dashboard = () => {
       const data = await estadisticasService.getDashboard();
       setDashboard(data);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error al cargar dashboard:', error);
       toast.error('Error al cargar el dashboard');
     } finally {
@@ -49,17 +50,23 @@ const Dashboard = () => {
       <div className="dashboard-grid">
         <div className="dashboard-card">
           <h3>Ventas del Mes</h3>
-          <p className="dashboard-value">${Number(dashboard.total_ventas_mes).toLocaleString('es-CO')}</p>
+          <p className="dashboard-value">
+            ${Number(dashboard.total_ventas_mes).toLocaleString('es-CO')}
+          </p>
         </div>
 
         <div className="dashboard-card">
           <h3>Gastos del Mes</h3>
-          <p className="dashboard-value">${Number(dashboard.total_gastos_mes).toLocaleString('es-CO')}</p>
+          <p className="dashboard-value">
+            ${Number(dashboard.total_gastos_mes).toLocaleString('es-CO')}
+          </p>
         </div>
 
         <div className="dashboard-card">
           <h3>Promedio Diario</h3>
-          <p className="dashboard-value">${Number(dashboard.promedio_ventas_diarias).toLocaleString('es-CO')}</p>
+          <p className="dashboard-value">
+            ${Number(dashboard.promedio_ventas_diarias).toLocaleString('es-CO')}
+          </p>
         </div>
 
         <div className="dashboard-card">

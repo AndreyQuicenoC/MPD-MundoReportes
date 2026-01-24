@@ -18,7 +18,7 @@ const categoriasService = {
    * @param {number} id - ID de la categoría
    * @returns {Promise<Object>} Datos de la categoría
    */
-  obtenerCategoria: async (id) => {
+  obtenerCategoria: async id => {
     const response = await api.get(`/api/gastos/categorias/${id}/`);
     return response.data;
   },
@@ -28,7 +28,7 @@ const categoriasService = {
    * @param {Object} datos - Datos de la categoría
    * @returns {Promise<Object>} Categoría creada
    */
-  crearCategoria: async (datos) => {
+  crearCategoria: async datos => {
     const response = await api.post('/api/gastos/categorias/', datos);
     return response.data;
   },
@@ -49,7 +49,7 @@ const categoriasService = {
    * @param {number} id - ID de la categoría
    * @returns {Promise<void>}
    */
-  eliminarCategoria: async (id) => {
+  eliminarCategoria: async id => {
     await api.delete(`/api/gastos/categorias/${id}/`);
   },
 };

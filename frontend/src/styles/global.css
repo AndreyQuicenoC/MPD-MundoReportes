@@ -5,48 +5,49 @@
 
 :root {
   /* Colores principales */
-  --color-primary: #9B933B;
-  --color-primary-dark: #6F6A2A;
-  --color-primary-light: #B0AA4D;
-  
+  --color-primary: #9b933b;
+  --color-primary-dark: #6f6a2a;
+  --color-primary-light: #b0aa4d;
+
   /* Colores complementarios */
-  --color-white: #FFFFFF;
-  --color-gray-light: #F5F5F5;
-  --color-gray-medium: #CCCCCC;
+  --color-white: #ffffff;
+  --color-gray-light: #f5f5f5;
+  --color-gray-medium: #cccccc;
   --color-gray-dark: #333333;
-  
+
   /* Colores de estado */
-  --color-error: #C94A4A;
-  --color-warning: #E0C65A;
-  --color-success: #6B8E23;
-  --color-info: #5B9BD5;
-  
+  --color-error: #c94a4a;
+  --color-warning: #e0c65a;
+  --color-success: #6b8e23;
+  --color-info: #5b9bd5;
+
   /* Tipografía */
-  --font-family: 'Inter', 'Roboto', 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family:
+    'Inter', 'Roboto', 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-size-base: 16px;
   --font-size-small: 14px;
   --font-size-large: 18px;
   --font-size-h1: 32px;
   --font-size-h2: 24px;
   --font-size-h3: 20px;
-  
+
   /* Espaciado */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 32px;
-  
+
   /* Bordes */
   --border-radius: 8px;
   --border-radius-sm: 4px;
   --border-radius-lg: 12px;
-  
+
   /* Sombras */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-  
+
   /* Transiciones */
   --transition-fast: 150ms ease-in-out;
   --transition-normal: 250ms ease-in-out;
@@ -73,7 +74,12 @@ body {
 }
 
 /* Tipografía */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 600;
   line-height: 1.2;
   margin-bottom: var(--spacing-md);
@@ -155,7 +161,7 @@ a:hover {
 }
 
 .btn-danger:hover:not(:disabled) {
-  background-color: #B03A3A;
+  background-color: #b03a3a;
 }
 
 .btn-large {
@@ -274,7 +280,7 @@ a:hover {
 .alert-warning {
   background-color: rgba(224, 198, 90, 0.1);
   border: 1px solid var(--color-warning);
-  color: #8B7A1E;
+  color: #8b7a1e;
 }
 
 .alert-info {
@@ -300,8 +306,12 @@ a:hover {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Utilidades */
@@ -313,15 +323,31 @@ a:hover {
   text-align: right;
 }
 
-.mt-0 { margin-top: 0; }
-.mt-1 { margin-top: var(--spacing-sm); }
-.mt-2 { margin-top: var(--spacing-md); }
-.mt-3 { margin-top: var(--spacing-lg); }
+.mt-0 {
+  margin-top: 0;
+}
+.mt-1 {
+  margin-top: var(--spacing-sm);
+}
+.mt-2 {
+  margin-top: var(--spacing-md);
+}
+.mt-3 {
+  margin-top: var(--spacing-lg);
+}
 
-.mb-0 { margin-bottom: 0; }
-.mb-1 { margin-bottom: var(--spacing-sm); }
-.mb-2 { margin-bottom: var(--spacing-md); }
-.mb-3 { margin-bottom: var(--spacing-lg); }
+.mb-0 {
+  margin-bottom: 0;
+}
+.mb-1 {
+  margin-bottom: var(--spacing-sm);
+}
+.mb-2 {
+  margin-bottom: var(--spacing-md);
+}
+.mb-3 {
+  margin-bottom: var(--spacing-lg);
+}
 
 .d-flex {
   display: flex;
@@ -355,19 +381,19 @@ a:hover {
     --font-size-h2: 20px;
     --font-size-h3: 18px;
   }
-  
+
   .container {
     padding: 0 var(--spacing-sm);
   }
-  
+
   .card {
     padding: var(--spacing-md);
   }
-  
+
   .table {
     font-size: var(--font-size-small);
   }
-  
+
   .table th,
   .table td {
     padding: var(--spacing-sm);

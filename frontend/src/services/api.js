@@ -1,6 +1,6 @@
 /**
  * Cliente HTTP configurado para la API de Mundo Reporte.
- * 
+ *
  * Proporciona una instancia de axios con configuración base
  * y manejo automático de tokens de autenticación.
  */

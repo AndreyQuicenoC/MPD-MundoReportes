@@ -1,6 +1,6 @@
 /**
  * Componente principal de la aplicación.
- * 
+ *
  * Configura las rutas, contexto de autenticación y layout global.
  */
 
@@ -22,7 +22,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Toaster 
+        <Toaster
           position="top-right"
           toastOptions={{
             duration: 4000,
@@ -46,7 +46,7 @@ function App() {
         />
         <Routes>
           <Route path="/login" element={<Login />} />
-          
+
           <Route
             path="/"
             element={
@@ -63,7 +63,7 @@ function App() {
             <Route path="productos" element={<Productos />} />
             <Route path="categorias" element={<Categorias />} />
           </Route>
-          
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

@@ -18,7 +18,7 @@ const productosService = {
    * @param {number} id - ID del producto
    * @returns {Promise<Object>} Datos del producto
    */
-  obtenerProducto: async (id) => {
+  obtenerProducto: async id => {
     const response = await api.get(`/api/productos/${id}/`);
     return response.data;
   },
@@ -28,7 +28,7 @@ const productosService = {
    * @param {Object} datos - Datos del producto
    * @returns {Promise<Object>} Producto creado
    */
-  crearProducto: async (datos) => {
+  crearProducto: async datos => {
     const response = await api.post('/api/productos/', datos);
     return response.data;
   },
@@ -49,7 +49,7 @@ const productosService = {
    * @param {number} id - ID del producto
    * @returns {Promise<void>}
    */
-  eliminarProducto: async (id) => {
+  eliminarProducto: async id => {
     await api.delete(`/api/productos/${id}/`);
   },
 };

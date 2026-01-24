@@ -49,6 +49,7 @@ const NuevoReporte = () => {
       }
     } catch (error) {
       toast.error('Error al cargar datos iniciales');
+      // eslint-disable-next-line no-console
       console.error(error);
     } finally {
       setLoading(false);
@@ -59,7 +60,7 @@ const NuevoReporte = () => {
     setGastos([...gastos, { descripcion: '', valor: 0, categoria: '' }]);
   };
 
-  const eliminarGasto = (index) => {
+  const eliminarGasto = index => {
     setGastos(gastos.filter((_, i) => i !== index));
   };
 
@@ -73,7 +74,7 @@ const NuevoReporte = () => {
     setVentas([...ventas, { producto: '', cantidad: 0 }]);
   };
 
-  const eliminarVenta = (index) => {
+  const eliminarVenta = index => {
     setVentas(ventas.filter((_, i) => i !== index));
   };
 
@@ -97,7 +98,7 @@ const NuevoReporte = () => {
     );
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
 
     // Validaciones
@@ -112,16 +113,14 @@ const NuevoReporte = () => {
     }
 
     // Validar que los gastos con valor tengan descripción
-    const gastosInvalidos = gastos.some(
-      (g) => parseFloat(g.valor) > 0 && !g.descripcion.trim()
-    );
+    const gastosInvalidos = gastos.some(g => parseFloat(g.valor) > 0 && !g.descripcion.trim());
     if (gastosInvalidos) {
       toast.error('Todos los gastos deben tener descripción');
       return;
     }
 
     // Validar que las ventas con cantidad tengan producto
-    const ventasInvalidas = ventas.some((v) => parseInt(v.cantidad) > 0 && !v.producto);
+    const ventasInvalidas = ventas.some(v => parseInt(v.cantidad) > 0 && !v.producto);
     if (ventasInvalidas) {
       toast.error('Todas las ventas deben tener producto seleccionado');
       return;
@@ -131,8 +130,8 @@ const NuevoReporte = () => {
       setLoading(true);
 
       // Filtrar gastos y ventas válidos
-      const gastosValidos = gastos.filter((g) => parseFloat(g.valor) > 0 && g.descripcion.trim());
-      const ventasValidas = ventas.filter((v) => parseInt(v.cantidad) > 0 && v.producto);
+      const gastosValidos = gastos.filter(g => parseFloat(g.valor) > 0 && g.descripcion.trim());
+      const ventasValidas = ventas.filter(v => parseInt(v.cantidad) > 0 && v.producto);
 
       const datos = {
         fecha,
@@ -140,12 +139,12 @@ const NuevoReporte = () => {
         venta_total: parseFloat(ventaTotal || 0),
         entrega: parseFloat(entrega || 0),
         observacion: observacion.trim(),
-        gastos: gastosValidos.map((g) => ({
+        gastos: gastosValidos.map(g => ({
           descripcion: g.descripcion,
           valor: parseFloat(g.valor),
           categoria: g.categoria || null,
         })),
-        ventas_productos: ventasValidas.map((v) => ({
+        ventas_productos: ventasValidas.map(v => ({
           producto: parseInt(v.producto),
           cantidad: parseInt(v.cantidad),
         })),
@@ -157,12 +156,13 @@ const NuevoReporte = () => {
     } catch (error) {
       if (error.response?.data) {
         const errores = error.response.data;
-        Object.keys(errores).forEach((campo) => {
+        Object.keys(errores).forEach(campo => {
           toast.error(`${campo}: ${errores[campo]}`);
         });
       } else {
         toast.error('Error al crear el reporte');
       }
+      // eslint-disable-next-line no-console
       console.error(error);
     } finally {
       setLoading(false);
@@ -175,7 +175,7 @@ const NuevoReporte = () => {
         <p>Cargando...</p>
       </div>
     );
-  };
+  }
 
   return (
     <div className="nuevo-reporte-container">
@@ -192,7 +192,7 @@ const NuevoReporte = () => {
               type="date"
               id="fecha"
               value={fecha}
-              onChange={(e) => setFecha(e.target.value)}
+              onChange={e => setFecha(e.target.value)}
               required
             />
           </div>
@@ -203,7 +203,7 @@ const NuevoReporte = () => {
               type="number"
               id="baseInicial"
               value={baseInicial}
-              onChange={(e) => setBaseInicial(e.target.value)}
+              onChange={e => setBaseInicial(e.target.value)}
               step="0.01"
               min="0"
             />
@@ -216,7 +216,7 @@ const NuevoReporte = () => {
               type="number"
               id="ventaTotal"
               value={ventaTotal}
-              onChange={(e) => setVentaTotal(e.target.value)}
+              onChange={e => setVentaTotal(e.target.value)}
               required
               step="0.01"
               min="0"
@@ -229,7 +229,7 @@ const NuevoReporte = () => {
               type="number"
               id="entrega"
               value={entrega}
-              onChange={(e) => setEntrega(e.target.value)}
+              onChange={e => setEntrega(e.target.value)}
               step="0.01"
               min="0"
             />
@@ -240,7 +240,7 @@ const NuevoReporte = () => {
             <textarea
               id="observacion"
               value={observacion}
-              onChange={(e) => setObservacion(e.target.value)}
+              onChange={e => setObservacion(e.target.value)}
               rows="3"
               placeholder="Notas adicionales del día..."
             />
@@ -263,7 +263,7 @@ const NuevoReporte = () => {
                   type="text"
                   placeholder="Descripción del gasto"
                   value={gasto.descripcion}
-                  onChange={(e) => actualizarGasto(index, 'descripcion', e.target.value)}
+                  onChange={e => actualizarGasto(index, 'descripcion', e.target.value)}
                 />
               </div>
 
@@ -272,7 +272,7 @@ const NuevoReporte = () => {
                   type="number"
                   placeholder="Valor"
                   value={gasto.valor}
-                  onChange={(e) => actualizarGasto(index, 'valor', e.target.value)}
+                  onChange={e => actualizarGasto(index, 'valor', e.target.value)}
                   step="0.01"
                   min="0"
                 />
@@ -281,10 +281,10 @@ const NuevoReporte = () => {
               <div className="form-group flex-1">
                 <select
                   value={gasto.categoria}
-                  onChange={(e) => actualizarGasto(index, 'categoria', e.target.value)}
+                  onChange={e => actualizarGasto(index, 'categoria', e.target.value)}
                 >
                   <option value="">Sin categoría</option>
-                  {categorias.map((cat) => (
+                  {categorias.map(cat => (
                     <option key={cat.id} value={cat.id}>
                       {cat.nombre}
                     </option>
@@ -325,10 +325,10 @@ const NuevoReporte = () => {
               <div className="form-group flex-2">
                 <select
                   value={venta.producto}
-                  onChange={(e) => actualizarVenta(index, 'producto', e.target.value)}
+                  onChange={e => actualizarVenta(index, 'producto', e.target.value)}
                 >
                   <option value="">Seleccionar producto</option>
-                  {productos.map((prod) => (
+                  {productos.map(prod => (
                     <option key={prod.id} value={prod.id}>
                       {prod.nombre} - {formatearMoneda(prod.precio_unitario)}
                     </option>
@@ -341,7 +341,7 @@ const NuevoReporte = () => {
                   type="number"
                   placeholder="Cantidad"
                   value={venta.cantidad}
-                  onChange={(e) => actualizarVenta(index, 'cantidad', e.target.value)}
+                  onChange={e => actualizarVenta(index, 'cantidad', e.target.value)}
                   min="0"
                 />
               </div>

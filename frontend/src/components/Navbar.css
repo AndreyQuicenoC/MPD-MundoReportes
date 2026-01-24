@@ -90,7 +90,7 @@
     flex-wrap: wrap;
     justify-content: center;
   }
-  
+
   .navbar-link {
     font-size: var(--font-size-small);
     padding: var(--spacing-xs) var(--spacing-sm);

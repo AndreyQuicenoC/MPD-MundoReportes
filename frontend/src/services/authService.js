@@ -1,6 +1,6 @@
 /**
  * Servicio de autenticación.
- * 
+ *
  * Maneja login, logout y gestión de tokens.
  */
 
@@ -9,7 +9,7 @@ import apiClient from './api';
 const authService = {
   /**
    * Iniciar sesión con email y contraseña.
-   * 
+   *
    * @param {string} email - Email del usuario
    * @param {string} password - Contraseña del usuario
    * @returns {Promise} Datos del usuario y tokens
@@ -41,7 +41,7 @@ const authService = {
 
   /**
    * Obtener usuario actual desde localStorage.
-   * 
+   *
    * @returns {Object|null} Datos del usuario o null
    */
   getCurrentUser: () => {
@@ -51,7 +51,7 @@ const authService = {
 
   /**
    * Verificar si el usuario está autenticado.
-   * 
+   *
    * @returns {boolean} True si está autenticado
    */
   isAuthenticated: () => {
@@ -60,7 +60,7 @@ const authService = {
 
   /**
    * Obtener perfil del usuario.
-   * 
+   *
    * @returns {Promise} Datos del perfil
    */
   getProfile: async () => {
@@ -70,24 +70,24 @@ const authService = {
 
   /**
    * Actualizar perfil del usuario.
-   * 
+   *
    * @param {Object} data - Datos a actualizar
    * @returns {Promise} Perfil actualizado
    */
   updateProfile: async data => {
     const response = await apiClient.patch('/auth/perfil/', data);
-    
+
     // Actualizar usuario en localStorage
     const usuario = JSON.parse(localStorage.getItem('usuario'));
     const updatedUsuario = { ...usuario, ...response.data };
     localStorage.setItem('usuario', JSON.stringify(updatedUsuario));
-    
+
     return response.data;
   },
 
   /**
    * Cambiar contraseña del usuario.
-   * 
+   *
    * @param {Object} data - password_actual, password_nueva, password_confirmacion
    * @returns {Promise} Confirmación
    */

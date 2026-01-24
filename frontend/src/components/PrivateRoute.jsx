@@ -1,9 +1,10 @@
 /**
  * Componente de ruta privada.
- * 
+ *
  * Protege rutas que requieren autenticación.
  */
 
+import PropTypes from 'prop-types';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -20,6 +21,10 @@ const PrivateRoute = ({ children }) => {
   }
 
   return isAuthenticated ? children : <Navigate to="/login" replace />;
+};
+
+PrivateRoute.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default PrivateRoute;

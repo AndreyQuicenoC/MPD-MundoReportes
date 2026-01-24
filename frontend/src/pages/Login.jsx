@@ -30,8 +30,10 @@ const Login = () => {
       toast.success('¡Bienvenido a Mundo Reporte!');
       navigate('/dashboard');
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error de login:', error);
-      const mensaje = error.response?.data?.detail || 'Error al iniciar sesión. Verifique sus credenciales.';
+      const mensaje =
+        error.response?.data?.detail || 'Error al iniciar sesión. Verifique sus credenciales.';
       toast.error(mensaje);
     } finally {
       setLoading(false);
