@@ -33,6 +33,7 @@ CORS_ALLOWED_ORIGINS=https://tu-frontend.com
 ```
 
 **Generar SECRET_KEY:**
+
 ```bash
 python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 ```
@@ -50,32 +51,38 @@ VITE_API_URL=https://tu-backend.com/api
 ## 📦 Despliegue del Backend (Django)
 
 ### 1. Instalar dependencias
+
 ```bash
 cd backend
 pip install -r requirements.txt
 ```
 
 ### 2. Ejecutar migraciones
+
 ```bash
 python manage.py migrate
 ```
 
 ### 3. Crear superusuario (opcional)
+
 ```bash
 python manage.py createsuperuser
 ```
 
 ### 4. Colectar archivos estáticos
+
 ```bash
 python manage.py collectstatic --noinput
 ```
 
 ### 5. Iniciar servidor de producción
+
 ```bash
 gunicorn config.wsgi:application --bind 0.0.0.0:8000
 ```
 
 **Archivo `Procfile` para Heroku/Render:**
+
 ```
 web: gunicorn config.wsgi:application
 release: python manage.py migrate
@@ -86,25 +93,30 @@ release: python manage.py migrate
 ## 🎨 Despliegue del Frontend (React)
 
 ### 1. Instalar dependencias
+
 ```bash
 cd frontend
 npm install
 ```
 
 ### 2. Compilar para producción
+
 ```bash
 npm run build
 ```
 
 ### 3. Servir archivos estáticos
+
 Los archivos compilados estarán en `frontend/build/`.
 
 **Para Vercel/Netlify:** Configurar:
+
 - Build command: `npm run build`
 - Output directory: `build`
 - Node version: `18.x`
 
 **Para servidor propio (con Nginx):**
+
 ```nginx
 server {
     listen 80;
@@ -130,14 +142,17 @@ server {
 ## 🔍 Verificación Post-Despliegue
 
 ### Backend
+
 ```bash
 curl https://tu-backend.com/api/health/
 ```
 
 ### Frontend
+
 Abre en navegador: `https://tu-dominio.com`
 
 ### Checklist:
+
 - [ ] Login funciona correctamente
 - [ ] Se pueden crear/editar reportes
 - [ ] Dashboard muestra datos del mes actual
@@ -151,6 +166,7 @@ Abre en navegador: `https://tu-dominio.com`
 Si prefieres usar Docker, el proyecto está listo con:
 
 ### Backend
+
 ```dockerfile
 FROM python:3.11-slim
 
@@ -164,6 +180,7 @@ CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
 ```
 
 ### Frontend
+
 ```dockerfile
 FROM node:18-alpine AS build
 
@@ -183,6 +200,7 @@ CMD ["nginx", "-g", "daemon off;"]
 ```
 
 ### Docker Compose
+
 ```bash
 docker-compose up -d
 ```
@@ -192,18 +210,22 @@ docker-compose up -d
 ## 🆘 Solución de Problemas
 
 ### Error de conexión a base de datos
+
 - Verifica que `DATABASE_URL` tenga el formato correcto
 - Confirma que las credenciales de Supabase sean válidas
 
 ### CORS errors en el frontend
+
 - Agrega el dominio del frontend a `CORS_ALLOWED_ORIGINS` en backend
 - Verifica que `VITE_API_URL` apunte al backend correcto
 
 ### Archivos estáticos no cargan
+
 - Ejecuta `python manage.py collectstatic` nuevamente
 - Verifica configuración de WhiteNoise en `settings.py`
 
 ### Build del frontend falla
+
 - Limpia cache: `rm -rf node_modules package-lock.json && npm install`
 - Verifica versión de Node.js: `node --version` (debe ser 18+)
 

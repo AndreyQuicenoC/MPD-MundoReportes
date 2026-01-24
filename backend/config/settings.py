@@ -188,6 +188,11 @@ CORS_ALLOWED_ORIGINS = config(
     cast=Csv(),
 )
 
+# Permitir todos los subdominios de Vercel en preview
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",
+]
+
 CORS_ALLOW_CREDENTIALS = True
 
 # Security Settings
