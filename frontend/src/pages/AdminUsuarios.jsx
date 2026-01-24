@@ -35,8 +35,8 @@ const AdminUsuarios = () => {
     try {
       setLoading(true);
       const [usuariosRes, statsRes] = await Promise.all([
-        api.get('/admin/usuarios/'),
-        api.get('/admin/usuarios/estadisticas/'),
+        api.get('/auth/admin/usuarios/'),
+        api.get('/auth/admin/usuarios/estadisticas/'),
       ]);
       setUsuarios(usuariosRes.data);
       setEstadisticas(statsRes.data);
@@ -97,11 +97,11 @@ const AdminUsuarios = () => {
     try {
       if (usuarioEditando) {
         // Actualizar usuario existente
-        await api.put(`/admin/usuarios/${usuarioEditando.id}/`, formData);
+        await api.put(`/auth/admin/usuarios/${usuarioEditando.id}/`, formData);
         toast.success('Usuario actualizado exitosamente');
       } else {
         // Crear nuevo usuario
-        await api.post('/admin/usuarios/', formData);
+        await api.post('/auth/admin/usuarios/', formData);
         toast.success('Usuario creado exitosamente');
       }
 
@@ -125,7 +125,7 @@ const AdminUsuarios = () => {
     if (!window.confirm('¿Estás seguro de desactivar este usuario?')) return;
 
     try {
-      await api.delete(`/admin/usuarios/${id}/`);
+      await api.delete(`/auth/admin/usuarios/${id}/`);
       toast.success('Usuario desactivado exitosamente');
       cargarDatos();
     } catch (error) {
@@ -137,7 +137,7 @@ const AdminUsuarios = () => {
 
   const handleActivar = async id => {
     try {
-      await api.post(`/admin/usuarios/${id}/activar/`);
+      await api.post(`/auth/admin/usuarios/${id}/activar/`);
       toast.success('Usuario activado exitosamente');
       cargarDatos();
     } catch (error) {

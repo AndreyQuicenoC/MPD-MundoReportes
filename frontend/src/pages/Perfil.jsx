@@ -32,7 +32,7 @@ const Perfil = () => {
   const cargarPerfil = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/perfil/');
+      const response = await api.get('/auth/perfil/list/');
       setPerfil(response.data);
       setFormData({
         nombre: response.data.nombre,
@@ -68,7 +68,7 @@ const Perfil = () => {
     e.preventDefault();
 
     try {
-      const response = await api.patch('/perfil/', formData);
+      const response = await api.patch('/auth/perfil/partial_update/', formData);
       setPerfil(response.data);
       setModoEdicion(false);
       toast.success('Perfil actualizado exitosamente');
@@ -95,7 +95,7 @@ const Perfil = () => {
     }
 
     try {
-      await api.post('/perfil/cambiar-contrasena/', contrasenaData);
+      await api.post('/auth/perfil/cambiar-contrasena/', contrasenaData);
       toast.success('Contraseña cambiada exitosamente');
       setMostrarCambiarContrasena(false);
       setContrasenaData({

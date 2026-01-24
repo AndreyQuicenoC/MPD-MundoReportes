@@ -121,27 +121,29 @@ class PerfilUsuarioViewSet(viewsets.ViewSet):
     ViewSet para que usuarios gestionen su propio perfil.
 
     Endpoints:
-    - GET /api/perfil/ - Ver perfil actual
-    - PUT/PATCH /api/perfil/ - Actualizar perfil
-    - POST /api/perfil/cambiar-contrasena/ - Cambiar contraseña
+    - GET /api/auth/perfil/ - Ver perfil actual
+    - PUT/PATCH /api/auth/perfil/ - Actualizar perfil
+    - POST /api/auth/perfil/cambiar-contrasena/ - Cambiar contraseña
     """
 
     permission_classes = [IsAuthenticated]
 
+    @action(detail=False, methods=["get"])
     def list(self, request):
         """
         Obtener el perfil del usuario actual.
 
-        GET /api/perfil/
+        GET /api/auth/perfil/
         """
         serializer = PerfilUsuarioSerializer(request.user)
         return Response(serializer.data)
 
-    def update(self, request, pk=None):
+    @action(detail=False, methods=["put"])
+    def update(self, request):
         """
         Actualizar el perfil del usuario actual.
 
-        PUT /api/perfil/
+        PUT /api/auth/perfil/
         """
         serializer = PerfilUsuarioSerializer(request.user, data=request.data, partial=False)
         if serializer.is_valid():
@@ -149,11 +151,12 @@ class PerfilUsuarioViewSet(viewsets.ViewSet):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def partial_update(self, request, pk=None):
+    @action(detail=False, methods=["patch"])
+    def partial_update(self, request):
         """
         Actualizar parcialmente el perfil del usuario actual.
 
-        PATCH /api/perfil/
+        PATCH /api/auth/perfil/
         """
         serializer = PerfilUsuarioSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
