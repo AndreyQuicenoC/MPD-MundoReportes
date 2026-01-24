@@ -64,9 +64,6 @@ const Navbar = () => {
               <Link to="/dashboard" className="navbar-link" onClick={cerrarMenu}>
                 Dashboard
               </Link>
-              <Link to="/reportes/nuevo" className="navbar-link" onClick={cerrarMenu}>
-                Nuevo Reporte
-              </Link>
               <Link to="/reportes" className="navbar-link" onClick={cerrarMenu}>
                 Reportes
               </Link>

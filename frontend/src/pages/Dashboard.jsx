@@ -3,6 +3,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import estadisticasService from '../services/estadisticasService';
 import './Dashboard.css';
@@ -10,6 +11,7 @@ import './Dashboard.css';
 const Dashboard = () => {
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     cargarDashboard();
@@ -44,8 +46,15 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      <h1>Dashboard</h1>
-      <p className="dashboard-subtitle">Resumen del mes: {dashboard.mes_actual}</p>
+      <div className="dashboard-header">
+        <div>
+          <h1>Dashboard</h1>
+          <p className="dashboard-subtitle">Resumen del mes: {dashboard.mes_actual}</p>
+        </div>
+        <button className="btn btn-primary" onClick={() => navigate('/reportes/nuevo')}>
+          Nuevo Reporte
+        </button>
+      </div>
 
       <div className="dashboard-grid">
         <div className="dashboard-card">

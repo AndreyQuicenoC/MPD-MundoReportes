@@ -84,7 +84,8 @@
   animation: fadeInUp 0.7s ease-out;
   display: flex;
   flex-direction: column;
-  max-height: 70vh;
+  max-height: none;
+  min-height: 400px;
 }
 
 .tabla-usuarios-wrapper {
@@ -468,12 +469,15 @@
   }
 
   .acciones {
-    flex-direction: column;
-    gap: 0.4rem;
+    flex-direction: row;
+    gap: 0.3rem;
+    justify-content: flex-start;
   }
 
-  .btn-sm {
-    width: 100%;
+  .acciones .btn-sm {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.75rem;
+    min-width: auto;
   }
 
   .modal-content {
@@ -523,6 +527,15 @@
   .tabla-usuarios td {
     padding: 0.75rem 0.5rem;
     font-size: 0.85rem;
+  }
+
+  .acciones {
+    gap: 0.25rem;
+  }
+
+  .acciones .btn-sm {
+    padding: 0.3rem 0.4rem;
+    font-size: 0.7rem;
   }
 
   .badge {

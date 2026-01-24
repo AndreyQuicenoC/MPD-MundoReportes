@@ -302,28 +302,44 @@ class DashboardView(APIView):
         Returns:
             Response: KPIs del mes actual
         """
-        hoy = datetime.now().date()
-        primer_dia_mes = hoy.replace(day=1)
+        try:
+            hoy = datetime.now().date()
+            primer_dia_mes = hoy.replace(day=1)
 
-        # Estadísticas del mes actual
-        ventas_mes = ServicioEstadisticas.estadisticas_ventas(primer_dia_mes, hoy)
-        gastos_mes = ServicioEstadisticas.estadisticas_gastos(primer_dia_mes, hoy)
-        gastos_categoria = ServicioEstadisticas.gastos_por_categoria(primer_dia_mes, hoy)
-        productos_top = ServicioEstadisticas.productos_mas_vendidos(primer_dia_mes, hoy, limite=5)
+            # Estadísticas del mes actual
+            ventas_mes = ServicioEstadisticas.estadisticas_ventas(primer_dia_mes, hoy)
+            gastos_mes = ServicioEstadisticas.estadisticas_gastos(primer_dia_mes, hoy)
+            gastos_categoria = ServicioEstadisticas.gastos_por_categoria(primer_dia_mes, hoy)
+            productos_top = ServicioEstadisticas.productos_mas_vendidos(
+                primer_dia_mes, hoy, limite=5
+            )
 
-        # Calcular categoría con mayor gasto
-        categoria_mayor = None
-        if gastos_categoria:
-            categoria_mayor = max(gastos_categoria, key=lambda x: x["total"])
+            # Calcular categoría con mayor gasto
+            categoria_mayor = None
+            if gastos_categoria:
+                categoria_mayor = max(gastos_categoria, key=lambda x: x["total"])
 
-        dashboard = {
-            "mes_actual": hoy.strftime("%Y-%m"),
-            "total_ventas_mes": ventas_mes["total_ventas"],
-            "total_gastos_mes": gastos_mes["total_gastos"],
-            "promedio_ventas_diarias": ventas_mes["promedio_ventas"],
-            "cantidad_reportes": ventas_mes["cantidad_reportes"],
-            "categoria_mayor_gasto": categoria_mayor,
-            "productos_mas_vendidos": productos_top,
-        }
+            dashboard = {
+                "mes_actual": hoy.strftime("%Y-%m"),
+                "total_ventas_mes": ventas_mes["total_ventas"],
+                "total_gastos_mes": gastos_mes["total_gastos"],
+                "promedio_ventas_diarias": ventas_mes["promedio_ventas"],
+                "cantidad_reportes": ventas_mes["cantidad_reportes"],
+                "categoria_mayor_gasto": categoria_mayor,
+                "productos_mas_vendidos": productos_top,
+            }
 
-        return Response(dashboard, status=status.HTTP_200_OK)
+            return Response(dashboard, status=status.HTTP_200_OK)
+        except Exception as e:
+            # Si hay algún error, retornar valores por defecto
+            hoy = datetime.now().date()
+            dashboard = {
+                "mes_actual": hoy.strftime("%Y-%m"),
+                "total_ventas_mes": "0.00",
+                "total_gastos_mes": "0.00",
+                "promedio_ventas_diarias": "0.00",
+                "cantidad_reportes": 0,
+                "categoria_mayor_gasto": None,
+                "productos_mas_vendidos": [],
+            }
+            return Response(dashboard, status=status.HTTP_200_OK)
