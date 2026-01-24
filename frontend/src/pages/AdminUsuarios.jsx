@@ -185,7 +185,7 @@ const AdminUsuarios = () => {
     <div className="admin-usuarios-container">
       <div className="admin-header">
         <h1>Administración de Usuarios</h1>
-        <button onClick={abrirModalCrear} className="btn btn-primary">
+        <button onClick={abrirModalCrear} className="btn btn-primary-opposite">
           + Nuevo Usuario
         </button>
       </div>
@@ -212,70 +212,72 @@ const AdminUsuarios = () => {
       )}
 
       <div className="tabla-usuarios">
-        <table>
-          <thead>
-            <tr>
-              <th>Email</th>
-              <th>Nombre</th>
-              <th>Cédula</th>
-              <th>Edad</th>
-              <th>Fecha Ingreso</th>
-              <th>Fecha Fin</th>
-              <th>Rol</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {usuarios.map(usuario => (
-              <tr key={usuario.id}>
-                <td>{usuario.email}</td>
-                <td>{usuario.nombre}</td>
-                <td>{usuario.cedula || '-'}</td>
-                <td>{usuario.edad || '-'}</td>
-                <td>{usuario.fecha_ingreso || '-'}</td>
-                <td>{usuario.fecha_fin || '-'}</td>
-                <td>
-                  <span
-                    className={`badge ${usuario.rol === 'admin' ? 'badge-admin' : 'badge-usuario'}`}
-                  >
-                    {usuario.rol === 'admin' ? 'Admin' : 'Usuario'}
-                  </span>
-                </td>
-                <td>
-                  <span
-                    className={`badge ${usuario.is_active ? 'badge-activo' : 'badge-inactivo'}`}
-                  >
-                    {usuario.is_active ? 'Activo' : 'Inactivo'}
-                  </span>
-                </td>
-                <td className="acciones">
-                  <button
-                    onClick={() => abrirModalEditar(usuario)}
-                    className="btn btn-sm btn-secondary"
-                  >
-                    Editar
-                  </button>
-                  {usuario.is_active ? (
-                    <button
-                      onClick={() => handleDesactivar(usuario.id)}
-                      className="btn btn-sm btn-danger"
-                    >
-                      Desactivar
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleActivar(usuario.id)}
-                      className="btn btn-sm btn-success"
-                    >
-                      Activar
-                    </button>
-                  )}
-                </td>
+        <div className="tabla-usuarios-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Nombre</th>
+                <th>Cédula</th>
+                <th>Edad</th>
+                <th>Fecha Ingreso</th>
+                <th>Fecha Fin</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {usuarios.map(usuario => (
+                <tr key={usuario.id}>
+                  <td>{usuario.email}</td>
+                  <td>{usuario.nombre}</td>
+                  <td>{usuario.cedula || '-'}</td>
+                  <td>{usuario.edad || '-'}</td>
+                  <td>{usuario.fecha_ingreso || '-'}</td>
+                  <td>{usuario.fecha_fin || '-'}</td>
+                  <td>
+                    <span
+                      className={`badge ${usuario.rol === 'admin' ? 'badge-admin' : 'badge-usuario'}`}
+                    >
+                      {usuario.rol === 'admin' ? 'Admin' : 'Usuario'}
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      className={`badge ${usuario.is_active ? 'badge-activo' : 'badge-inactivo'}`}
+                    >
+                      {usuario.is_active ? 'Activo' : 'Inactivo'}
+                    </span>
+                  </td>
+                  <td className="acciones">
+                    <button
+                      onClick={() => abrirModalEditar(usuario)}
+                      className="btn btn-sm btn-secondary"
+                    >
+                      Editar
+                    </button>
+                    {usuario.is_active ? (
+                      <button
+                        onClick={() => handleDesactivar(usuario.id)}
+                        className="btn btn-sm btn-danger"
+                      >
+                        Desactivar
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleActivar(usuario.id)}
+                        className="btn btn-sm btn-success"
+                      >
+                        Activar
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {mostrarModal && (

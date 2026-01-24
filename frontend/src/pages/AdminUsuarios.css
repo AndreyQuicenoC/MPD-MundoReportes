@@ -82,11 +82,50 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   animation: fadeInUp 0.7s ease-out;
+  display: flex;
+  flex-direction: column;
+  max-height: 70vh;
+}
+
+.tabla-usuarios-wrapper {
+  overflow-x: auto;
+  overflow-y: auto;
+  flex: 1;
+  position: relative;
+}
+
+/* Estilos personalizados para scrollbar */
+.tabla-usuarios-wrapper::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.tabla-usuarios-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.tabla-usuarios-wrapper::-webkit-scrollbar-thumb {
+  background: #9b933b;
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.tabla-usuarios-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #6f6a2a;
 }
 
 .tabla-usuarios table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 1200px; /* Ancho mínimo para forzar scroll horizontal si es necesario */
+}
+
+.tabla-usuarios thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 }
 
 .tabla-usuarios th {
@@ -105,6 +144,12 @@
   padding: 1.25rem;
   border-bottom: 1px solid #f0f0f0;
   transition: background 0.2s ease;
+  white-space: nowrap;
+}
+
+.tabla-usuarios td.acciones {
+  min-width: 220px;
+  white-space: nowrap;
 }
 
 .tabla-usuarios tbody tr {

@@ -8,8 +8,11 @@
   --color-primary: #9b933b;
   --color-primary-dark: #6f6a2a;
   --color-primary-light: #b0aa4d;
-  --color-secondary: #157daa;
+
+  --color-secondary: #166d92;
   --color-secondary-light: #2a84bc;
+  --color-secondary-dark: #0f4c6a;
+
   /* Colores complementarios */
   --color-white: #ffffff;
   --color-gray-light: #f5f5f5;
@@ -141,6 +144,13 @@ a:hover {
 .btn-primary {
   background-color: var(--color-primary);
   color: var(--color-white);
+}
+.btn-primary-opposite {
+  background-color: var(--color-secondary);
+  color: var(--color-white);
+}
+.btn-primary-opposite:hover:not(:disabled) {
+  background-color: var(--color-secondary-dark);
 }
 
 .btn-primary:hover:not(:disabled) {

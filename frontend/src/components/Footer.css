@@ -1,6 +1,6 @@
 /* Footer Styles */
 .footer {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background: linear-gradient(135deg, #001520 0%, #0f4c6a 100%);
   color: #e0e0e0;
   padding: 3rem 1rem 1rem;
   margin-top: auto;
@@ -21,7 +21,7 @@
 }
 
 .footer-title {
-  color: #6b8e23;
+  color: #d6cd4c;
   font-size: 1.25rem;
   font-weight: 700;
   margin-bottom: 1rem;
