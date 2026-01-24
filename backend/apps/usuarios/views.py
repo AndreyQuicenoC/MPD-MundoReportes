@@ -39,6 +39,14 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         Returns:
             dict: Tokens y datos del usuario
         """
+        # Verificar si el usuario puede acceder al sistema
+        if not self.user.puede_acceder():
+            from rest_framework.exceptions import PermissionDenied
+            if not self.user.is_active:
+                raise PermissionDenied("Tu cuenta ha sido desactivada. Contacta al administrador.")
+            else:
+                raise PermissionDenied("Tu período de acceso ha finalizado. Contacta al administrador.")
+        
         data = super().validate(attrs)
 
         # Agregar información del usuario
@@ -47,6 +55,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             "email": self.user.email,
             "nombre": self.user.nombre,
             "rol": self.user.rol,
+            "cedula": self.user.cedula,
         }
 
         return data

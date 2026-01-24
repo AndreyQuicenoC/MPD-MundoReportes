@@ -16,6 +16,8 @@ import NuevoReporte from './pages/NuevoReporte';
 import Estadisticas from './pages/Estadisticas';
 import Productos from './pages/Productos';
 import Categorias from './pages/Categorias';
+import Perfil from './pages/Perfil';
+import AdminUsuarios from './pages/AdminUsuarios';
 import './styles/global.css';
 
 function App() {
@@ -62,6 +64,8 @@ function App() {
             <Route path="estadisticas" element={<Estadisticas />} />
             <Route path="productos" element={<Productos />} />
             <Route path="categorias" element={<Categorias />} />
+            <Route path="perfil" element={<Perfil />} />
+            <Route path="admin/usuarios" element={<AdminUsuarios />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />

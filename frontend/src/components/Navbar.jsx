@@ -42,10 +42,17 @@ const Navbar = () => {
           <Link to="/categorias" className="navbar-link">
             Categorías
           </Link>
+          {usuario?.rol === 'admin' && (
+            <Link to="/admin/usuarios" className="navbar-link navbar-link-admin">
+              Usuarios
+            </Link>
+          )}
         </div>
 
         <div className="navbar-user">
-          <span className="navbar-username">{usuario?.nombre}</span>
+          <Link to="/perfil" className="navbar-username">
+            {usuario?.nombre}
+          </Link>
           <button onClick={handleLogout} className="navbar-logout">
             Cerrar Sesión
           </button>

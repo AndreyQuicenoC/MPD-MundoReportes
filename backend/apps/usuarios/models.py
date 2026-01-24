@@ -89,6 +89,21 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     nombre = models.CharField(verbose_name="nombre completo", max_length=150)
 
+    cedula = models.CharField(
+        verbose_name="cédula", max_length=20, unique=True, null=True, blank=True
+    )
+
+    edad = models.PositiveIntegerField(verbose_name="edad", null=True, blank=True)
+
+    fecha_ingreso = models.DateField(
+        verbose_name="fecha de ingreso", null=True, blank=True
+    )
+
+    fecha_fin = models.DateField(
+        verbose_name="fecha de fin", null=True, blank=True,
+        help_text="Si se establece, el usuario no podrá acceder al sistema después de esta fecha"
+    )
+
     rol = models.CharField(
         verbose_name="rol", max_length=20, choices=ROLES_CHOICES, default=ROL_USUARIO
     )
@@ -128,3 +143,20 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     def es_usuario_operativo(self):
         """Verificar si el usuario es operativo."""
         return self.rol == self.ROL_USUARIO
+
+    def puede_acceder(self):
+        """
+        Verificar si el usuario puede acceder al sistema.
+        
+        Returns:
+            bool: True si el usuario está activo y no ha pasado su fecha_fin
+        """
+        from datetime import date
+        
+        if not self.is_active:
+            return False
+        
+        if self.fecha_fin and date.today() > self.fecha_fin:
+            return False
+        
+        return True
