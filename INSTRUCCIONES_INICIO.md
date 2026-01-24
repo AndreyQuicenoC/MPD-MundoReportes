@@ -11,6 +11,7 @@ El error `ModuleNotFoundError: No module named 'decouple'` ocurre porque estás 
 ### **Opción 1: Scripts de Inicio (MÁS FÁCIL)** ⭐
 
 #### Windows (CMD):
+
 ```cmd
 # Backend
 cd backend
@@ -22,6 +23,7 @@ run.bat
 ```
 
 #### Windows (PowerShell):
+
 ```powershell
 # Backend
 cd backend
@@ -37,6 +39,7 @@ npm run dev
 ### **Opción 2: Activar Entorno Virtual Manualmente**
 
 #### Windows (CMD):
+
 ```cmd
 cd backend
 venv\Scripts\activate.bat
@@ -44,6 +47,7 @@ python manage.py runserver
 ```
 
 #### Windows (PowerShell):
+
 ```powershell
 cd backend
 .\venv\Scripts\Activate.ps1
@@ -51,6 +55,7 @@ python manage.py runserver
 ```
 
 #### Linux/Mac:
+
 ```bash
 cd backend
 source venv/bin/activate
@@ -92,20 +97,25 @@ Cuando ejecutas `python manage.py runserver` sin activar el entorno virtual:
 ## 📋 Inicio Rápido Completo
 
 ### 1. Iniciar Backend
+
 ```cmd
 cd backend
 run.bat
 ```
+
 ✅ Servidor corriendo en: http://127.0.0.1:8000/
 
 ### 2. Iniciar Frontend (nueva terminal)
+
 ```cmd
 cd frontend
 run.bat
 ```
+
 ✅ Aplicación corriendo en: http://localhost:3001/
 
 ### 3. Iniciar Sesión
+
 - Email: `andreyquic@gmail.com`
 - Contraseña: `admin123`
 
@@ -114,12 +124,14 @@ run.bat
 ## 🔧 Comandos Útiles
 
 ### Verificar que el entorno virtual está activo:
+
 ```cmd
 # Deberías ver (venv) al inicio del prompt
 (venv) C:\Users\lu\Downloads\MPD-MundoReportes\backend>
 ```
 
 ### Instalar nuevas dependencias:
+
 ```cmd
 cd backend
 venv\Scripts\activate.bat
@@ -128,6 +140,7 @@ pip freeze > requirements.txt
 ```
 
 ### Aplicar migraciones:
+
 ```cmd
 cd backend
 venv\Scripts\activate.bat
@@ -135,6 +148,7 @@ python manage.py migrate
 ```
 
 ### Crear superusuario:
+
 ```cmd
 cd backend
 venv\Scripts\activate.bat
@@ -146,14 +160,18 @@ python manage.py createsuperuser
 ## 🐛 Troubleshooting
 
 ### Error: "No module named 'X'"
+
 **Solución:** Activa el entorno virtual primero
+
 ```cmd
 cd backend
 venv\Scripts\activate.bat
 ```
 
 ### Error: "venv\Scripts\activate.bat no se encuentra"
+
 **Solución:** Recrea el entorno virtual
+
 ```cmd
 cd backend
 python -m venv venv
@@ -162,7 +180,9 @@ pip install -r requirements.txt
 ```
 
 ### Error: PowerShell no permite ejecutar scripts
+
 **Solución:** Ejecuta como administrador
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```

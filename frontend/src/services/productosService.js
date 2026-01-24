@@ -29,7 +29,7 @@ const productosService = {
    * @returns {Promise<Object>} Producto creado
    */
   crearProducto: async datos => {
-    const response = await api.post('/productos/', datos);
+    const response = await api.post('/productos/crear/', datos);
     return response.data;
   },
 

@@ -13,6 +13,7 @@ El proyecto está configurado y funcionando correctamente con Supabase PostgreSQ
 ## Configuración Actual
 
 ### Base de Datos
+
 - **Proveedor:** Supabase (PostgreSQL 15)
 - **Host:** `db.zmcqlwkkspjflzrugxam.supabase.co`
 - **Puerto:** `5432`
@@ -22,12 +23,14 @@ El proyecto está configurado y funcionando correctamente con Supabase PostgreSQ
 ### Servidores en Ejecución
 
 ✅ **Backend Django**
+
 - URL: http://127.0.0.1:8000/
 - Estado: Corriendo
 - Base de datos: Supabase PostgreSQL
 - Conexión verificada: ✓
 
 ✅ **Frontend React (Vite)**
+
 - URL: http://localhost:3001/
 - Estado: Corriendo
 - Linting: Sin errores
@@ -39,35 +42,39 @@ El proyecto está configurado y funcionando correctamente con Supabase PostgreSQ
 
 Los siguientes usuarios están disponibles en Supabase:
 
-| Email | Contraseña | Tipo | Estado |
-|-------|-----------|------|--------|
-| andreyquic@gmail.com | admin123 | admin | ✅ Creado |
+| Email                     | Contraseña  | Tipo    | Estado    |
+| ------------------------- | ----------- | ------- | --------- |
+| andreyquic@gmail.com      | admin123    | admin   | ✅ Creado |
 | operario@mundoreporte.com | operario123 | usuario | ✅ Creado |
-| admin@mundoreporte.com | admin123 | admin | ✅ Creado |
+| admin@mundoreporte.com    | admin123    | admin   | ✅ Creado |
 
 ---
 
 ## Verificaciones Realizadas
 
 ### 1. Conectividad de Red ✓
+
 ```powershell
 Test-NetConnection -ComputerName db.zmcqlwkkspjflzrugxam.supabase.co -Port 5432
 # Resultado: TcpTestSucceeded = True
 ```
 
 ### 2. Django Check ✓
+
 ```bash
 python manage.py check
 # System check identified no issues (0 silenced)
 ```
 
 ### 3. Consulta de Base de Datos ✓
+
 ```python
 Usuario.objects.count()
 # Resultado: 3 usuarios
 ```
 
 ### 4. Servidor Backend ✓
+
 ```
 Starting development server at http://127.0.0.1:8000/
 Peticiones procesadas correctamente:
@@ -77,6 +84,7 @@ Peticiones procesadas correctamente:
 ```
 
 ### 5. Linting y Calidad de Código ✓
+
 ```bash
 # Backend
 black . --check ✓
@@ -106,6 +114,7 @@ CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 ```
 
 **Nota:** La contraseña en DATABASE_URL está codificada para URL:
+
 - Original: `9nG??J@7e9nb$@u`
 - Codificada: `9nG%3F%3FJ%407e9nb%24%40u`
 
@@ -116,17 +125,20 @@ CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 ### Desarrollo Local
 
 1. **Activar entorno virtual:**
+
    ```bash
    cd backend
    .\venv\Scripts\Activate.ps1  # Windows
    ```
 
 2. **Iniciar backend:**
+
    ```bash
    python manage.py runserver
    ```
 
 3. **Iniciar frontend (en otra terminal):**
+
    ```bash
    cd frontend
    npm run dev
@@ -147,6 +159,7 @@ El proyecto está listo para desplegarse con Supabase. Solo necesitas:
    - Configura `ALLOWED_HOSTS` con tu dominio
 
 2. **Aplicar migraciones (si es necesario):**
+
    ```bash
    python manage.py migrate
    ```
@@ -165,6 +178,7 @@ El proyecto está listo para desplegarse con Supabase. Solo necesitas:
 **Causa:** Problema de red o DNS.
 
 **Solución:**
+
 1. Verifica tu conexión a internet
 2. Verifica que puedes acceder a Supabase:
    ```powershell
@@ -182,6 +196,7 @@ El proyecto está listo para desplegarse con Supabase. Solo necesitas:
 **Causa:** No estás usando el entorno virtual.
 
 **Solución:**
+
 ```bash
 cd backend
 .\venv\Scripts\Activate.ps1

@@ -29,7 +29,7 @@ const categoriasService = {
    * @returns {Promise<Object>} Categoría creada
    */
   crearCategoria: async datos => {
-    const response = await api.post('/gastos/categorias/', datos);
+    const response = await api.post('/gastos/categorias/crear/', datos);
     return response.data;
   },
 

@@ -37,7 +37,8 @@
     "lint:fix": "eslint src --ext js,jsx --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,css}\"",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "verify-api": "node verify-api.mjs"
   },
   "eslintConfig": {
     "extends": [
