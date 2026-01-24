@@ -1,0 +1,149 @@
+/* Footer Styles */
+.footer {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #e0e0e0;
+  padding: 3rem 1rem 1rem;
+  margin-top: auto;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.footer-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2.5rem;
+  padding: 0 1rem;
+}
+
+.footer-section {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.footer-title {
+  color: #6b8e23;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.footer-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #6b8e23, transparent);
+  border-radius: 2px;
+}
+
+.footer-description {
+  color: #b0b0b0;
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+  color: #c0c0c0;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+  font-size: 0.95rem;
+}
+
+.footer-links a:hover {
+  color: #6b8e23;
+  transform: translateX(5px);
+}
+
+.footer-links span {
+  color: #b0b0b0;
+  font-size: 0.95rem;
+  display: block;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.footer-bottom strong {
+  color: #6b8e23;
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footer {
+    padding: 2rem 0.5rem 1rem;
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .footer-title {
+    font-size: 1.1rem;
+  }
+
+  .footer-description,
+  .footer-links a,
+  .footer-links span {
+    font-size: 0.9rem;
+  }
+
+  .footer-bottom {
+    font-size: 0.85rem;
+    padding: 1rem 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 1.5rem 0.25rem 0.75rem;
+  }
+
+  .footer-container {
+    gap: 1.5rem;
+  }
+
+  .footer-title {
+    font-size: 1rem;
+  }
+
+  .footer-description,
+  .footer-links a,
+  .footer-links span {
+    font-size: 0.85rem;
+  }
+}

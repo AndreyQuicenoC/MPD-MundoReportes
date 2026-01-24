@@ -28,3 +28,49 @@ class EsAdministrador(permissions.BasePermission):
             bool: True si es administrador, False en caso contrario
         """
         return request.user and request.user.is_authenticated and request.user.rol == "admin"
+
+
+class EsOperario(permissions.BasePermission):
+    """
+    Permiso que solo permite acceso a usuarios operarios.
+
+    Verifica que el usuario autenticado tenga rol de usuario (operario).
+    """
+
+    message = "Solo los usuarios operarios pueden realizar esta acción"
+
+    def has_permission(self, request, view):
+        """
+        Verificar si el usuario es operario.
+
+        Args:
+            request: Request HTTP
+            view: Vista que solicita el permiso
+
+        Returns:
+            bool: True si es operario, False en caso contrario
+        """
+        return request.user and request.user.is_authenticated and request.user.rol == "usuario"
+
+
+class EsOperarioOAdmin(permissions.BasePermission):
+    """
+    Permiso que permite acceso tanto a administradores como operarios.
+
+    Útil para funciones compartidas entre roles.
+    """
+
+    message = "Necesitas estar autenticado para realizar esta acción"
+
+    def has_permission(self, request, view):
+        """
+        Verificar si el usuario está autenticado.
+
+        Args:
+            request: Request HTTP
+            view: Vista que solicita el permiso
+
+        Returns:
+            bool: True si está autenticado
+        """
+        return request.user and request.user.is_authenticated

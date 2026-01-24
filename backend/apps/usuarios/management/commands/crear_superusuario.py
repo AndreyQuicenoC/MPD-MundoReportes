@@ -43,17 +43,9 @@ class Command(BaseCommand):
                 cedula="0000000000",
             )
             self.stdout.write(
-                self.style.SUCCESS(
-                    f"✓ Superusuario creado exitosamente: {admin_user.email}"
-                )
+                self.style.SUCCESS(f"✓ Superusuario creado exitosamente: {admin_user.email}")
             )
-            self.stdout.write(
-                self.style.SUCCESS(f"  Nombre: {admin_user.nombre}")
-            )
-            self.stdout.write(
-                self.style.SUCCESS(f"  Rol: {admin_user.get_rol_display()}")
-            )
+            self.stdout.write(self.style.SUCCESS(f"  Nombre: {admin_user.nombre}"))
+            self.stdout.write(self.style.SUCCESS(f"  Rol: {admin_user.get_rol_display()}"))
         except Exception as e:
-            self.stdout.write(
-                self.style.ERROR(f"✗ Error al crear superusuario: {str(e)}")
-            )
+            self.stdout.write(self.style.ERROR(f"✗ Error al crear superusuario: {str(e)}"))

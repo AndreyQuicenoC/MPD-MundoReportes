@@ -11,8 +11,7 @@ const Perfil = () => {
   const [perfil, setPerfil] = useState(null);
   const [loading, setLoading] = useState(true);
   const [modoEdicion, setModoEdicion] = useState(false);
-  const [mostrarCambiarContrasena, setMostrarCambiarContrasena] =
-    useState(false);
+  const [mostrarCambiarContrasena, setMostrarCambiarContrasena] = useState(false);
 
   const [formData, setFormData] = useState({
     nombre: '',
@@ -33,7 +32,7 @@ const Perfil = () => {
   const cargarPerfil = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/api/perfil/');
+      const response = await api.get('/perfil/');
       setPerfil(response.data);
       setFormData({
         nombre: response.data.nombre,
@@ -69,7 +68,7 @@ const Perfil = () => {
     e.preventDefault();
 
     try {
-      const response = await api.patch('/api/perfil/', formData);
+      const response = await api.patch('/perfil/', formData);
       setPerfil(response.data);
       setModoEdicion(false);
       toast.success('Perfil actualizado exitosamente');
@@ -90,15 +89,13 @@ const Perfil = () => {
   const handleCambiarContrasena = async e => {
     e.preventDefault();
 
-    if (
-      contrasenaData.contrasena_nueva !== contrasenaData.contrasena_confirmacion
-    ) {
+    if (contrasenaData.contrasena_nueva !== contrasenaData.contrasena_confirmacion) {
       toast.error('Las contraseñas no coinciden');
       return;
     }
 
     try {
-      await api.post('/api/perfil/cambiar-contrasena/', contrasenaData);
+      await api.post('/perfil/cambiar-contrasena/', contrasenaData);
       toast.success('Contraseña cambiada exitosamente');
       setMostrarCambiarContrasena(false);
       setContrasenaData({
@@ -112,9 +109,7 @@ const Perfil = () => {
       const errores = error.response?.data;
       if (errores) {
         Object.keys(errores).forEach(campo => {
-          const mensaje = Array.isArray(errores[campo])
-            ? errores[campo][0]
-            : errores[campo];
+          const mensaje = Array.isArray(errores[campo]) ? errores[campo][0] : errores[campo];
           toast.error(`${campo}: ${mensaje}`);
         });
       } else {
@@ -145,10 +140,7 @@ const Perfil = () => {
       <div className="perfil-header">
         <h1>Mi Perfil</h1>
         {!modoEdicion && (
-          <button
-            onClick={() => setModoEdicion(true)}
-            className="btn btn-primary"
-          >
+          <button onClick={() => setModoEdicion(true)} className="btn btn-primary">
             Editar Perfil
           </button>
         )}
@@ -192,17 +184,11 @@ const Perfil = () => {
               <div className="form-group">
                 <label>Cédula (No editable)</label>
                 <input type="text" value={perfil.cedula || 'No asignada'} disabled />
-                <small>
-                  La cédula solo puede ser cambiada por un administrador
-                </small>
+                <small>La cédula solo puede ser cambiada por un administrador</small>
               </div>
 
               <div className="form-actions">
-                <button
-                  type="button"
-                  onClick={cancelarEdicion}
-                  className="btn btn-secondary"
-                >
+                <button type="button" onClick={cancelarEdicion} className="btn btn-secondary">
                   Cancelar
                 </button>
                 <button type="submit" className="btn btn-primary">

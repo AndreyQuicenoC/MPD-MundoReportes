@@ -1,16 +1,18 @@
+/* Navbar Styles - Diseño Moderno y Responsive */
 .navbar {
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
+  transition: all 0.3s ease;
 }
 
 .navbar-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 var(--spacing-lg);
+  padding: 0 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -20,98 +22,255 @@
 .navbar-brand {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: 1rem;
+  animation: slideInLeft 0.5s ease-out;
 }
 
 .navbar-logo {
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+
+.navbar-logo:hover {
+  transform: rotate(360deg) scale(1.1);
 }
 
 .navbar-title {
-  font-size: var(--font-size-large);
-  font-weight: 600;
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #6b8e23, #8fbc8f);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .navbar-menu {
   display: flex;
-  gap: var(--spacing-md);
+  gap: 0.5rem;
   align-items: center;
+  animation: fadeIn 0.6s ease-out;
 }
 
 .navbar-link {
-  color: var(--color-white);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--border-radius);
-  transition: background-color var(--transition-fast);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
   font-weight: 500;
+  font-size: 0.95rem;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.navbar-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.navbar-link:hover::before {
+  left: 100%;
 }
 
 .navbar-link:hover {
-  background-color: var(--color-primary-dark);
-  color: var(--color-white);
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
 }
 
 .navbar-link-admin {
-  background-color: rgba(220, 53, 69, 0.2);
-  border: 1px solid rgba(220, 53, 69, 0.5);
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
 }
 
 .navbar-link-admin:hover {
-  background-color: rgba(220, 53, 69, 0.3);
+  box-shadow: 0 6px 15px rgba(231, 76, 60, 0.5);
+  transform: translateY(-2px);
 }
 
 .navbar-user {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: 1rem;
+  animation: slideInRight 0.5s ease-out;
 }
 
 .navbar-username {
-  font-weight: 500;
-  color: var(--color-white);
+  font-weight: 600;
+  color: #fff;
   text-decoration: none;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--border-radius);
-  transition: background-color var(--transition-fast);
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .navbar-username:hover {
-  background-color: var(--color-primary-dark);
-  color: var(--color-white);
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
 }
 
 .navbar-logout {
-  padding: var(--spacing-sm) var(--spacing-md);
-  background-color: transparent;
-  border: 2px solid var(--color-white);
-  color: var(--color-white);
-  border-radius: var(--border-radius);
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: 2px solid #fff;
+  color: #fff;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: 500;
-  transition: all var(--transition-fast);
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
 }
 
 .navbar-logout:hover {
-  background-color: var(--color-white);
-  color: var(--color-primary);
+  background: #fff;
+  color: #2c3e50;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
 }
 
-@media (max-width: 768px) {
-  .navbar-container {
-    flex-direction: column;
-    padding: var(--spacing-md);
-    gap: var(--spacing-md);
-  }
+/* Botón hamburguesa */
+.navbar-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
 
-  .navbar-menu {
-    flex-wrap: wrap;
-    justify-content: center;
+.navbar-toggle span {
+  width: 25px;
+  height: 3px;
+  background: #fff;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.navbar-toggle.active span:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 6px);
+}
+
+.navbar-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.navbar-toggle.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Animaciones */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .navbar-container {
+    padding: 0 1.5rem;
   }
 
   .navbar-link {
-    font-size: var(--font-size-small);
-    padding: var(--spacing-xs) var(--spacing-sm);
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-toggle {
+    display: flex;
+  }
+
+  .navbar-container {
+    flex-wrap: wrap;
+    padding: 1rem;
+  }
+
+  .navbar-menu {
+    flex-direction: column;
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .navbar-menu.active {
+    max-height: 500px;
+    margin-top: 1rem;
+  }
+
+  .navbar-link {
+    width: 100%;
+    text-align: center;
+  }
+
+  .navbar-user {
+    width: 100%;
+    justify-content: center;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .navbar-username,
+  .navbar-logout {
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-container {
+    padding: 0.75rem;
+  }
+
+  .navbar-title {
+    font-size: 1.2rem;
+  }
+
+  .navbar-logo {
+    width: 35px;
+    height: 35px;
+  }
+
+  .navbar-link,
+  .navbar-username,
+  .navbar-logout {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
   }
 }

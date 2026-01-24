@@ -2,12 +2,14 @@
  * Componente principal de la aplicación.
  *
  * Configura las rutas, contexto de autenticación y layout global.
+ * Controla el acceso por rol: admin solo ve usuarios, operarios ven reportes.
  */
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
+import RoleRoute from './components/RoleRoute';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -19,6 +21,19 @@ import Categorias from './pages/Categorias';
 import Perfil from './pages/Perfil';
 import AdminUsuarios from './pages/AdminUsuarios';
 import './styles/global.css';
+
+// Componente para redirigir según rol
+const RoleBasedRedirect = () => {
+  const { usuario } = useAuth();
+
+  if (!usuario) return <Navigate to="/login" replace />;
+
+  if (usuario.rol === 'admin') {
+    return <Navigate to="/admin/usuarios" replace />;
+  }
+
+  return <Navigate to="/dashboard" replace />;
+};
 
 function App() {
   return (
@@ -57,15 +72,70 @@ function App() {
               </PrivateRoute>
             }
           >
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="reportes" element={<Reportes />} />
-            <Route path="reportes/nuevo" element={<NuevoReporte />} />
-            <Route path="estadisticas" element={<Estadisticas />} />
-            <Route path="productos" element={<Productos />} />
-            <Route path="categorias" element={<Categorias />} />
+            <Route index element={<RoleBasedRedirect />} />
+
+            {/* Rutas solo para operarios */}
+            <Route
+              path="dashboard"
+              element={
+                <RoleRoute allowedRoles={['usuario']}>
+                  <Dashboard />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="reportes"
+              element={
+                <RoleRoute allowedRoles={['usuario']}>
+                  <Reportes />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="reportes/nuevo"
+              element={
+                <RoleRoute allowedRoles={['usuario']}>
+                  <NuevoReporte />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="estadisticas"
+              element={
+                <RoleRoute allowedRoles={['usuario']}>
+                  <Estadisticas />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="productos"
+              element={
+                <RoleRoute allowedRoles={['usuario']}>
+                  <Productos />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="categorias"
+              element={
+                <RoleRoute allowedRoles={['usuario']}>
+                  <Categorias />
+                </RoleRoute>
+              }
+            />
+
+            {/* Rutas solo para administradores */}
+            <Route
+              path="admin/usuarios"
+              element={
+                <RoleRoute allowedRoles={['admin']}>
+                  <AdminUsuarios />
+                </RoleRoute>
+              }
+            />
+
+            {/* Perfil: accesible para todos */}
             <Route path="perfil" element={<Perfil />} />
-            <Route path="admin/usuarios" element={<AdminUsuarios />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -95,13 +95,13 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     edad = models.PositiveIntegerField(verbose_name="edad", null=True, blank=True)
 
-    fecha_ingreso = models.DateField(
-        verbose_name="fecha de ingreso", null=True, blank=True
-    )
+    fecha_ingreso = models.DateField(verbose_name="fecha de ingreso", null=True, blank=True)
 
     fecha_fin = models.DateField(
-        verbose_name="fecha de fin", null=True, blank=True,
-        help_text="Si se establece, el usuario no podrá acceder al sistema después de esta fecha"
+        verbose_name="fecha de fin",
+        null=True,
+        blank=True,
+        help_text="Si se establece, el usuario no podrá acceder al sistema después de esta fecha",
     )
 
     rol = models.CharField(
@@ -147,16 +147,16 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     def puede_acceder(self):
         """
         Verificar si el usuario puede acceder al sistema.
-        
+
         Returns:
             bool: True si el usuario está activo y no ha pasado su fecha_fin
         """
         from datetime import date
-        
+
         if not self.is_active:
             return False
-        
+
         if self.fecha_fin and date.today() > self.fecha_fin:
             return False
-        
+
         return True

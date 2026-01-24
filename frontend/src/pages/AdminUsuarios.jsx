@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import './AdminUsuarios.css';
@@ -9,7 +8,6 @@ import './AdminUsuarios.css';
  * Solo accesible para administradores.
  */
 const AdminUsuarios = () => {
-  const navigate = useNavigate();
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -37,8 +35,8 @@ const AdminUsuarios = () => {
     try {
       setLoading(true);
       const [usuariosRes, statsRes] = await Promise.all([
-        api.get('/api/admin/usuarios/'),
-        api.get('/api/admin/usuarios/estadisticas/'),
+        api.get('/admin/usuarios/'),
+        api.get('/admin/usuarios/estadisticas/'),
       ]);
       setUsuarios(usuariosRes.data);
       setEstadisticas(statsRes.data);
@@ -99,11 +97,11 @@ const AdminUsuarios = () => {
     try {
       if (usuarioEditando) {
         // Actualizar usuario existente
-        await api.put(`/api/admin/usuarios/${usuarioEditando.id}/`, formData);
+        await api.put(`/admin/usuarios/${usuarioEditando.id}/`, formData);
         toast.success('Usuario actualizado exitosamente');
       } else {
         // Crear nuevo usuario
-        await api.post('/api/admin/usuarios/', formData);
+        await api.post('/admin/usuarios/', formData);
         toast.success('Usuario creado exitosamente');
       }
 
@@ -127,21 +125,19 @@ const AdminUsuarios = () => {
     if (!window.confirm('¿Estás seguro de desactivar este usuario?')) return;
 
     try {
-      await api.delete(`/api/admin/usuarios/${id}/`);
+      await api.delete(`/admin/usuarios/${id}/`);
       toast.success('Usuario desactivado exitosamente');
       cargarDatos();
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error al desactivar usuario:', error);
-      toast.error(
-        error.response?.data?.error || 'Error al desactivar usuario'
-      );
+      toast.error(error.response?.data?.error || 'Error al desactivar usuario');
     }
   };
 
   const handleActivar = async id => {
     try {
-      await api.post(`/api/admin/usuarios/${id}/activar/`);
+      await api.post(`/admin/usuarios/${id}/activar/`);
       toast.success('Usuario activado exitosamente');
       cargarDatos();
     } catch (error) {
@@ -172,21 +168,15 @@ const AdminUsuarios = () => {
           </div>
           <div className="stat-card">
             <h3>Activos</h3>
-            <p className="stat-numero success">
-              {estadisticas.usuarios_activos}
-            </p>
+            <p className="stat-numero success">{estadisticas.usuarios_activos}</p>
           </div>
           <div className="stat-card">
             <h3>Inactivos</h3>
-            <p className="stat-numero warning">
-              {estadisticas.usuarios_inactivos}
-            </p>
+            <p className="stat-numero warning">{estadisticas.usuarios_inactivos}</p>
           </div>
           <div className="stat-card">
             <h3>Próximos a Vencer</h3>
-            <p className="stat-numero error">
-              {estadisticas.usuarios_proximos_vencer}
-            </p>
+            <p className="stat-numero error">{estadisticas.usuarios_proximos_vencer}</p>
           </div>
         </div>
       )}
@@ -262,13 +252,8 @@ const AdminUsuarios = () => {
         <div className="modal-overlay" onClick={() => setMostrarModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>
-                {usuarioEditando ? 'Editar Usuario' : 'Crear Nuevo Usuario'}
-              </h2>
-              <button
-                className="btn-close"
-                onClick={() => setMostrarModal(false)}
-              >
+              <h2>{usuarioEditando ? 'Editar Usuario' : 'Crear Nuevo Usuario'}</h2>
+              <button className="btn-close" onClick={() => setMostrarModal(false)}>
                 ×
               </button>
             </div>
@@ -342,10 +327,7 @@ const AdminUsuarios = () => {
                     value={formData.fecha_fin}
                     onChange={handleInputChange}
                   />
-                  <small>
-                    Si se establece, el usuario no podrá acceder después de
-                    esta fecha
-                  </small>
+                  <small>Si se establece, el usuario no podrá acceder después de esta fecha</small>
                 </div>
               </div>
 
@@ -362,9 +344,7 @@ const AdminUsuarios = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>
-                    Confirmar Contraseña {!usuarioEditando && '*'}
-                  </label>
+                  <label>Confirmar Contraseña {!usuarioEditando && '*'}</label>
                   <input
                     type="password"
                     name="password_confirmacion"
