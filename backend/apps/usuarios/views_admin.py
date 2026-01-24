@@ -83,6 +83,31 @@ class AdminUsuarioViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
         )
 
+    @action(detail=True, methods=["delete"])
+    def eliminar_permanente(self, request, pk=None):
+        """
+        Eliminar permanentemente un usuario (hard delete).
+
+        DELETE /api/admin/usuarios/{id}/eliminar_permanente/
+        """
+        usuario = self.get_object()
+
+        # No permitir que el admin se elimine a sí mismo
+        if usuario.id == request.user.id:
+            return Response(
+                {"error": "No puedes eliminar tu propia cuenta"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        nombre_usuario = usuario.nombre
+        email_usuario = usuario.email
+        usuario.delete()
+
+        return Response(
+            {"mensaje": f"Usuario {nombre_usuario} ({email_usuario}) eliminado permanentemente"},
+            status=status.HTTP_200_OK,
+        )
+
     @action(detail=False, methods=["get"])
     def estadisticas(self, request):
         """

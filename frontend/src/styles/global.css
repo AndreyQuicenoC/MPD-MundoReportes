@@ -175,6 +175,15 @@ a:hover {
   background-color: #b03a3a;
 }
 
+.btn-warning {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.btn-warning:hover:not(:disabled) {
+  background-color: #e0a800;
+}
+
 .btn-large {
   padding: var(--spacing-md) var(--spacing-xl);
   font-size: var(--font-size-large);

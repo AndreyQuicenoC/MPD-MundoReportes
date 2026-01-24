@@ -177,6 +177,28 @@ const AdminUsuarios = () => {
     }
   };
 
+  const handleEliminar = async id => {
+    const usuario = usuarios.find(u => u.id === id);
+    const confirmacion = window.confirm(
+      `¿Estás seguro de ELIMINAR PERMANENTEMENTE al usuario ${usuario?.nombre}?\n\n` +
+        `Esta acción NO SE PUEDE DESHACER.\n\n` +
+        `Si solo quieres desactivarlo temporalmente, usa el botón "Desactivar".`
+    );
+
+    if (!confirmacion) return;
+
+    try {
+      await api.delete(`/auth/admin/usuarios/${id}/eliminar_permanente/`);
+      toast.success('Usuario eliminado permanentemente');
+      cargarDatos();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error al eliminar usuario:', error);
+      const mensaje = error.response?.data?.error || 'Error al eliminar usuario';
+      toast.error(mensaje);
+    }
+  };
+
   if (loading) {
     return <div className="loading-container">Cargando...</div>;
   }
@@ -260,7 +282,7 @@ const AdminUsuarios = () => {
                     {usuario.is_active ? (
                       <button
                         onClick={() => handleDesactivar(usuario.id)}
-                        className="btn btn-sm btn-danger"
+                        className="btn btn-sm btn-warning"
                       >
                         Desactivar
                       </button>
@@ -272,6 +294,13 @@ const AdminUsuarios = () => {
                         Activar
                       </button>
                     )}
+                    <button
+                      onClick={() => handleEliminar(usuario.id)}
+                      className="btn btn-sm btn-danger"
+                      title="Eliminar permanentemente"
+                    >
+                      Eliminar
+                    </button>
                   </td>
                 </tr>
               ))}
