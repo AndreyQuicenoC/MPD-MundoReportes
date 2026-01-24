@@ -1,0 +1,191 @@
+PROYECTO: Mundo Reporte
+ARCHIVO: ARQUITECTURA.TXT
+
+==================================================
+1. VISIÓN GENERAL
+==================================================
+
+Mundo Reporte se implementará como una aplicación web
+con arquitectura cliente-servidor desacoplada.
+
+- Backend: Django (API REST)
+- Frontend: React (JavaScript o TypeScript según viabilidad)
+- Comunicación: HTTP/HTTPS mediante JSON
+
+El sistema debe ser:
+- Modular
+- Escalable
+- Seguro
+- Fácil de mantener
+
+==================================================
+2. ARQUITECTURA GENERAL
+==================================================
+
+2.1 Capas del sistema
+
+1. Capa de presentación
+   - React
+   - Manejo de UI/UX
+   - Validaciones básicas de formulario
+   - Consumo de API
+
+2. Capa de aplicación
+   - Django REST Framework
+   - Orquestación de casos de uso
+   - Autenticación y autorización
+
+3. Capa de dominio
+   - Reglas de negocio
+   - Servicios
+   - Cálculos (gastos, ventas, base siguiente)
+
+4. Capa de persistencia
+   - Modelos Django
+   - Base de datos relacional
+
+==================================================
+3. BACKEND (DJANGO)
+==================================================
+
+3.1 Estructura del proyecto
+
+- config/
+  - settings.py
+  - urls.py
+
+- apps/
+  - usuarios/
+  - reportes/
+  - gastos/
+  - productos/
+  - estadisticas/
+
+Cada app debe ser independiente y cohesionada.
+
+==================================================
+4. MODELOS PRINCIPALES
+==================================================
+
+4.1 Usuario
+- email
+- contraseña (hash)
+- rol
+
+4.2 ReporteDiario
+- fecha (única)
+- base_inicial
+- venta_total
+- total_gastos (calculado)
+- entrega
+- base_siguiente (calculado)
+- observacion
+- timestamps
+
+4.3 Gasto
+- reporte
+- descripcion
+- valor
+- categoria (opcional)
+
+4.4 CategoriaGasto
+- nombre
+- activa
+
+4.5 Producto
+- nombre
+- precio_unitario
+- activo
+
+4.6 VentaProducto
+- reporte
+- producto
+- cantidad
+
+==================================================
+5. SERVICIOS DE DOMINIO
+==================================================
+
+5.1 Servicio de reportes
+- Crear reporte
+- Validar datos
+- Calcular:
+  - total_gastos
+  - base_siguiente
+
+5.2 Servicio de gastos
+- Registrar gastos
+- Asociar categorías
+
+5.3 Servicio de productos
+- Registrar productos
+- Validar cantidades
+
+5.4 Servicio de estadísticas
+- Agregar métricas por periodo
+- Generar datasets para gráficos
+
+Toda la lógica vive en servicios, no en vistas.
+
+==================================================
+6. API REST
+==================================================
+
+6.1 Principios
+- Endpoints claros y semánticos
+- No exponer lógica interna
+- Respuestas consistentes
+
+6.2 Ejemplos de endpoints
+
+- POST   /api/auth/login
+- GET    /api/reportes
+- POST   /api/reportes
+- GET    /api/reportes/{id}
+- GET    /api/estadisticas/ventas
+- GET    /api/estadisticas/gastos
+
+==================================================
+7. FRONTEND (REACT)
+==================================================
+
+7.1 Estructura sugerida
+
+- src/
+  - components/
+  - pages/
+  - services/
+  - hooks/
+  - styles/
+
+7.2 Principios
+- Componentes pequeños.
+- Lógica separada de UI.
+- Servicios para llamadas HTTP.
+- Manejo centralizado de errores.
+
+==================================================
+8. ESTADO Y DATOS
+==================================================
+
+8.1 Estado
+- Estado local para formularios.
+- Estado global solo si es necesario.
+
+8.2 Formularios
+- Validaciones básicas en frontend.
+- Validación final en backend.
+
+==================================================
+9. ESCALABILIDAD Y EVOLUCIÓN
+==================================================
+
+- Posibilidad de agregar:
+  - Más métricas
+  - Más productos
+  - Nuevos tipos de reportes
+- Sin romper funcionalidades existentes.
+
+==================================================
+FIN DEL DOCUMENTO
+==================================================

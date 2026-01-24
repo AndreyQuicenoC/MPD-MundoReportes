@@ -42,7 +42,7 @@ class TestServicioEstadisticas:
     def test_estadisticas_ventas_vacio(self):
         """Test de estadísticas cuando no hay reportes."""
         stats = ServicioEstadisticas.estadisticas_ventas()
-        
+
         assert stats["total_ventas"] == Decimal("0")
         assert stats["promedio_ventas"] == Decimal("0")
         assert stats["total_entregas"] == Decimal("0")
@@ -51,7 +51,7 @@ class TestServicioEstadisticas:
         """Test de estadísticas con reportes existentes."""
         # Crear reportes
         fecha_hoy = timezone.now().date()
-        
+
         ReporteDiario.objects.create(
             fecha=fecha_hoy,
             base_inicial=Decimal("100000"),
@@ -59,7 +59,7 @@ class TestServicioEstadisticas:
             entrega=Decimal("20000"),
             usuario=usuario,
         )
-        
+
         ReporteDiario.objects.create(
             fecha=fecha_hoy - timedelta(days=1),
             base_inicial=Decimal("80000"),
@@ -69,7 +69,7 @@ class TestServicioEstadisticas:
         )
 
         stats = ServicioEstadisticas.estadisticas_ventas()
-        
+
         assert stats["total_ventas"] == Decimal("110000")
         assert stats["promedio_ventas"] == Decimal("55000")
         assert stats["total_entregas"] == Decimal("50000")
@@ -94,10 +94,10 @@ class TestServicioEstadisticas:
         Gasto.objects.create(reporte=reporte, descripcion="Sin cat", valor=Decimal("5000"))
 
         gastos = ServicioEstadisticas.gastos_por_categoria()
-        
+
         # Debe haber 2 categorías: Servicios y Sin Categoría
         assert len(gastos) == 2
-        
+
         servicios = next(g for g in gastos if g["categoria"] == "Servicios")
         assert servicios["total"] == Decimal("25000")
 

@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from .services import ServicioEstadisticas
 
@@ -231,9 +231,7 @@ class ProductosMasVendidosView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        productos = ServicioEstadisticas.productos_mas_vendidos(
-            fecha_inicio, fecha_fin, limite
-        )
+        productos = ServicioEstadisticas.productos_mas_vendidos(fecha_inicio, fecha_fin, limite)
 
         return Response(productos, status=status.HTTP_200_OK)
 
@@ -311,9 +309,7 @@ class DashboardView(APIView):
         ventas_mes = ServicioEstadisticas.estadisticas_ventas(primer_dia_mes, hoy)
         gastos_mes = ServicioEstadisticas.estadisticas_gastos(primer_dia_mes, hoy)
         gastos_categoria = ServicioEstadisticas.gastos_por_categoria(primer_dia_mes, hoy)
-        productos_top = ServicioEstadisticas.productos_mas_vendidos(
-            primer_dia_mes, hoy, limite=5
-        )
+        productos_top = ServicioEstadisticas.productos_mas_vendidos(primer_dia_mes, hoy, limite=5)
 
         # Calcular categoría con mayor gasto
         categoria_mayor = None

@@ -5,12 +5,12 @@ Contiene toda la lógica de análisis y agregación de datos
 para generar métricas de negocio.
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from decimal import Decimal
-from django.db.models import Sum, Count, Avg, Max, Min, Q
-from django.db.models.functions import TruncMonth, TruncDate
+from django.db.models import Sum, Count, Avg, Max, Min
+from django.db.models.functions import TruncMonth
 from apps.reportes.models import ReporteDiario, VentaProducto
-from apps.gastos.models import Gasto, CategoriaGasto
+from apps.gastos.models import Gasto
 
 
 class ServicioEstadisticas:

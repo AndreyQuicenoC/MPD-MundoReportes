@@ -27,8 +27,4 @@ class EsAdministrador(permissions.BasePermission):
         Returns:
             bool: True si es administrador, False en caso contrario
         """
-        return (
-            request.user
-            and request.user.is_authenticated
-            and request.user.rol == "admin"
-        )
+        return request.user and request.user.is_authenticated and request.user.rol == "admin"

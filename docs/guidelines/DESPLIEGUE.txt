@@ -1,0 +1,151 @@
+PROYECTO: Mundo Reporte
+ARCHIVO: DESPLIEGUE.TXT
+
+==================================================
+1. OBJETIVO DEL DESPLIEGUE
+==================================================
+
+El despliegue de Mundo Reporte debe cumplir:
+- Bajo costo mensual.
+- Facilidad de configuración.
+- Mantenimiento mínimo.
+- Buen rendimiento para bajo tráfico.
+- Seguridad básica garantizada.
+
+El sistema se usará con poca frecuencia
+(1 o pocas veces al día), por lo que no se requiere
+infraestructura compleja.
+
+==================================================
+2. PRINCIPIOS DE DESPLIEGUE
+==================================================
+
+2.1 Simplicidad
+- Evitar configuraciones complejas.
+- Preferir servicios gestionados.
+- Minimizar puntos de falla.
+
+2.2 Costo
+- Priorizar opciones gratuitas o de bajo costo.
+- No usar servicios enterprise innecesarios.
+
+2.3 Escalabilidad básica
+- Permitir crecer si el uso aumenta.
+- Sin sobreingeniería inicial.
+
+==================================================
+3. ARQUITECTURA DE DESPLIEGUE
+==================================================
+
+3.1 Separación de servicios
+- Backend y frontend se despliegan por separado.
+- Base de datos gestionada.
+
+==================================================
+4. BACKEND (DJANGO)
+==================================================
+
+4.1 Opción recomendada
+- Plataforma: Railway o Render
+- Ventajas:
+  - Configuración sencilla.
+  - HTTPS automático.
+  - Variables de entorno fáciles.
+  - Ideal para proyectos pequeños.
+
+4.2 Configuración
+- Django + Gunicorn.
+- Variables sensibles en entorno:
+  - SECRET_KEY
+  - DATABASE_URL
+  - DEBUG = False
+
+4.3 Base de datos
+- PostgreSQL gestionado por la plataforma.
+- Backups automáticos (si están disponibles).
+
+==================================================
+5. FRONTEND (REACT)
+==================================================
+
+5.1 Opción recomendada
+- Plataforma: Vercel o Netlify
+- Ventajas:
+  - Gratis para proyectos pequeños.
+  - Deploy automático desde Git.
+  - CDN incluido.
+
+5.2 Configuración
+- Build estático.
+- Variables de entorno:
+  - URL del backend API.
+
+==================================================
+6. BASE DE DATOS
+==================================================
+
+6.1 Reglas
+- No usar SQLite en producción.
+- Usar PostgreSQL.
+- Acceso restringido solo al backend.
+
+==================================================
+7. DOMINIO Y HTTPS
+==================================================
+
+7.1 Dominio
+- Dominio económico (.com o .co).
+- Configurar DNS apuntando a frontend.
+
+7.2 Seguridad
+- HTTPS obligatorio.
+- Certificados automáticos de la plataforma.
+
+==================================================
+8. PIPELINE BÁSICO
+==================================================
+
+8.1 Flujo recomendado
+- Repositorio Git (GitHub).
+- Push a rama principal.
+- Deploy automático:
+  - Backend
+  - Frontend
+
+8.2 Validaciones
+- Ejecutar tests antes de deploy.
+- No desplegar si fallan.
+
+==================================================
+9. MANTENIMIENTO
+==================================================
+
+9.1 Actualizaciones
+- Actualizar dependencias periódicamente.
+- Revisar logs mensualmente.
+
+9.2 Costos estimados
+- Backend: Bajo o gratuito.
+- Frontend: Gratuito.
+- Dominio: Bajo costo anual.
+- Total mensual: mínimo.
+
+==================================================
+10. RESPALDOS
+==================================================
+
+- Backups automáticos de base de datos.
+- Exportación manual de reportes disponible.
+
+==================================================
+11. DECISIONES CLAVE
+==================================================
+
+- No usar Docker inicialmente.
+- No usar Kubernetes.
+- No usar microservicios.
+- Arquitectura simple y efectiva.
+
+==================================================
+FIN DEL DOCUMENTO
+==================================================

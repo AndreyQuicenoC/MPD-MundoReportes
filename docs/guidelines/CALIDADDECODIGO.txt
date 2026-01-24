@@ -1,0 +1,117 @@
+PROYECTO: Mundo Reporte
+ARCHIVO: CALIDADDECODIGO.TXT
+
+==================================================
+1. ESTILO DE CÓDIGO
+==================================================
+
+1.1 Convenciones
+- Usar convenciones estándar del lenguaje.
+- Mantener consistencia en todo el proyecto.
+- No mezclar estilos.
+
+1.2 Backend (Django / Python)
+- Seguir PEP8 estrictamente.
+- Usar nombres descriptivos:
+  - snake_case para variables y funciones.
+  - PascalCase para clases.
+- Evitar funciones largas.
+- Un método = una responsabilidad.
+
+1.3 Frontend (React)
+- Componentes pequeños y reutilizables.
+- Nombres claros y semánticos.
+- Separar lógica de presentación.
+- Evitar componentes monolíticos.
+
+1.4 Formato automático
+- Usar formatter automático:
+  - Backend: black
+  - Frontend: prettier
+- El código debe estar formateado antes de commit.
+
+==================================================
+2. TESTING
+==================================================
+
+2.1 Pruebas obligatorias
+- Toda lógica de negocio debe tener pruebas unitarias.
+- No se aceptan módulos sin pruebas.
+- Priorizar pruebas de servicios y reglas.
+
+2.2 Casos a cubrir
+- Casos normales.
+- Casos límite.
+- Casos de error.
+
+2.3 Reglas
+- No depender de estado global.
+- Usar datos controlados.
+- Evitar tests frágiles o dependientes del orden.
+
+==================================================
+3. CI / CD
+==================================================
+
+3.1 Pipeline
+- Pipeline automático en cada push.
+- Ejecutar:
+  - Linter
+  - Tests
+  - Build
+
+3.2 Fallar rápido
+- Si algo falla, el pipeline se detiene.
+- No permitir deploy con errores.
+
+==================================================
+4. LINTERS Y CALIDAD
+==================================================
+
+4.1 Linters obligatorios
+- Backend:
+  - flake8
+  - pylint (opcional pero recomendado)
+- Frontend:
+  - eslint
+
+4.2 Reglas
+- No ignorar advertencias sin razón.
+- Documentar excepciones.
+
+==================================================
+5. DOCUMENTACIÓN
+==================================================
+
+5.1 Decisiones técnicas
+- Documentar decisiones importantes.
+- Explicar el porqué, no solo el qué.
+
+5.2 Comentarios
+- Solo cuando aporten valor.
+- No comentar lo obvio.
+
+5.3 README
+Debe incluir:
+- Descripción del proyecto.
+- Tecnologías usadas.
+- Cómo ejecutar el proyecto.
+- Estructura general.
+
+==================================================
+6. DEUDA TÉCNICA
+==================================================
+
+6.1 Identificación
+- Registrar deuda técnica.
+- No esconderla.
+
+6.2 Gestión
+- Priorizar correcciones cuando afecten:
+  - Seguridad
+  - Datos
+  - Mantenibilidad
+
+==================================================
+FIN DEL DOCUMENTO
+==================================================

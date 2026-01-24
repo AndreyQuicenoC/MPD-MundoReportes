@@ -83,13 +83,9 @@ class ReporteDiario(models.Model):
     )
 
     # Timestamps
-    fecha_creacion = models.DateTimeField(
-        verbose_name="fecha de creación", auto_now_add=True
-    )
+    fecha_creacion = models.DateTimeField(verbose_name="fecha de creación", auto_now_add=True)
 
-    fecha_actualizacion = models.DateTimeField(
-        verbose_name="fecha de actualización", auto_now=True
-    )
+    fecha_actualizacion = models.DateTimeField(verbose_name="fecha de actualización", auto_now=True)
 
     class Meta:
         verbose_name = "reporte diario"
@@ -113,9 +109,7 @@ class ReporteDiario(models.Model):
         Returns:
             Decimal: Total de gastos
         """
-        return self.gastos.aggregate(
-            total=models.Sum("valor")
-        )["total"] or Decimal("0.00")
+        return self.gastos.aggregate(total=models.Sum("valor"))["total"] or Decimal("0.00")
 
     def calcular_base_siguiente(self):
         """
@@ -126,12 +120,7 @@ class ReporteDiario(models.Model):
         Returns:
             Decimal: Base calculada para el día siguiente
         """
-        return (
-            self.base_inicial
-            + self.venta_total
-            - self.total_gastos
-            - self.entrega
-        )
+        return self.base_inicial + self.venta_total - self.total_gastos - self.entrega
 
     def save(self, *args, **kwargs):
         """
@@ -187,9 +176,7 @@ class VentaProducto(models.Model):
     )
 
     # Timestamps
-    fecha_creacion = models.DateTimeField(
-        verbose_name="fecha de creación", auto_now_add=True
-    )
+    fecha_creacion = models.DateTimeField(verbose_name="fecha de creación", auto_now_add=True)
 
     class Meta:
         verbose_name = "venta de producto"

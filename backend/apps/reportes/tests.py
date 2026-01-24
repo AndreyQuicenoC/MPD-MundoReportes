@@ -7,7 +7,8 @@ Pruebas unitarias de la lógica de negocio de reportes.
 import pytest
 from decimal import Decimal
 from django.utils import timezone
-from apps.reportes.models import ReporteDiario, VentaProducto
+from apps.reportes.models import ReporteDiario  # noqa: F401
+from apps.reportes.models import VentaProducto  # noqa: F401
 from apps.reportes.services import ServicioReporte
 from apps.productos.models import Producto
 from apps.gastos.models import CategoriaGasto

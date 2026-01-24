@@ -32,7 +32,10 @@ class RegistroSerializer(serializers.ModelSerializer):
     """
 
     password = serializers.CharField(
-        write_only=True, required=True, validators=[validate_password], style={"input_type": "password"}
+        write_only=True,
+        required=True,
+        validators=[validate_password],
+        style={"input_type": "password"},
     )
 
     password_confirmacion = serializers.CharField(
@@ -97,7 +100,10 @@ class CambioPasswordSerializer(serializers.Serializer):
     )
 
     password_nueva = serializers.CharField(
-        required=True, write_only=True, validators=[validate_password], style={"input_type": "password"}
+        required=True,
+        write_only=True,
+        validators=[validate_password],
+        style={"input_type": "password"},
     )
 
     password_confirmacion = serializers.CharField(

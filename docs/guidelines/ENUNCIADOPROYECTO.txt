@@ -1,0 +1,143 @@
+PROYECTO: Mundo Reporte
+TIPO: Sistema web de reporte diario de ventas
+BACKEND: Django
+FRONTEND: React (JavaScript o TypeScript según viabilidad)
+USUARIO OBJETIVO: Adultos mayores y usuarios no técnicos
+
+==================================================
+1. OBJETIVO GENERAL
+==================================================
+
+Diseñar e implementar un sistema web llamado "Mundo Reporte" que permita
+registrar, almacenar, consultar y analizar reportes diarios de ventas y gastos
+de un almacén de pinturas, reemplazando el uso manual de hojas de cálculo
+(Excel), garantizando claridad, seguridad, facilidad de uso y bajo costo de operación.
+
+El sistema debe permitir:
+- Registro diario de base, ventas, gastos, entregas y base del día siguiente.
+- Registro de cantidades vendidas por producto.
+- Clasificación de gastos por categorías reutilizables.
+- Generación de estadísticas confiables por periodos.
+- Exportación de reportes en Excel y PDF.
+- Acceso seguro mediante autenticación.
+
+==================================================
+2. COMPRENSIÓN DEL PROBLEMA
+==================================================
+
+2.1 Contexto
+Actualmente los registros se realizan manualmente en Excel, lo cual:
+- Es propenso a errores humanos.
+- No permite estadísticas automáticas confiables.
+- Dificulta el análisis histórico.
+- No separa correctamente datos estructurados (ventas, gastos, productos).
+
+2.2 Actores del sistema
+- Administrador:
+  - Gestiona usuarios.
+  - Crea y edita categorías de gastos.
+  - Crea y edita productos con precio.
+  - Consulta estadísticas globales.
+- Usuario operativo:
+  - Registra reportes diarios.
+  - Consulta reportes históricos.
+  - Exporta información.
+
+2.3 Flujo principal (registro diario)
+1. Usuario inicia sesión.
+2. Selecciona fecha del reporte.
+3. Ingresa:
+   - Base inicial del día.
+   - Venta total del día.
+   - Entrega del día.
+4. Registra gastos dinámicos:
+   - Descripción
+   - Valor
+   - Categoría (opcional pero recomendada)
+5. El sistema calcula automáticamente:
+   - Total de gastos.
+   - Base del día siguiente:
+     base_siguiente = base_inicial + venta - gastos - entrega
+6. Registra cantidades de productos vendidos.
+7. Agrega una observación opcional.
+8. Guarda el reporte.
+
+2.4 Casos borde
+- Días sin ventas.
+- Días sin gastos.
+- Gastos no categorizados.
+- Productos con cantidad cero.
+- Correcciones manuales antes de guardar.
+- Exportación de grandes rangos de fechas (hasta 360 días).
+
+==================================================
+3. LÓGICA DE NEGOCIO
+==================================================
+
+3.1 Principios
+- Toda la lógica de negocio debe residir en el backend (Django).
+- El frontend solo consume y presenta datos.
+- Ningún cálculo crítico debe depender del cliente.
+
+3.2 Reglas clave
+- Los valores monetarios deben ser positivos o cero.
+- Las cantidades de productos deben ser enteros positivos (naturales).
+- No se permite guardar un reporte sin fecha.
+- No se permiten duplicados de reportes para la misma fecha.
+- El total de gastos es la suma de todos los gastos registrados ese día.
+- La base del día siguiente se calcula automáticamente y no es editable.
+
+3.3 Independencia de capas
+- UI no contiene reglas de negocio.
+- Servicios centralizan cálculos y validaciones.
+- Modelos representan el dominio, no la presentación.
+
+==================================================
+4. CASOS DE USO
+==================================================
+
+4.1 Casos críticos
+- Crear reporte diario.
+- Consultar reportes históricos.
+- Crear categorías de gastos.
+- Crear productos.
+- Ver estadísticas de ventas y gastos.
+- Exportar reportes.
+
+4.2 Manejo de errores
+- Validación de formularios en backend.
+- Mensajes claros ante errores.
+- Prevención de datos inconsistentes.
+
+4.3 Estados intermedios
+- Reporte en edición (no persistido).
+- Carga de estadísticas.
+- Generación de archivos de exportación.
+
+==================================================
+5. EVOLUCIÓN DEL SISTEMA
+==================================================
+
+5.1 Extensibilidad
+El sistema debe permitir:
+- Agregar nuevos tipos de gastos sin modificar lógica existente.
+- Agregar nuevos productos fácilmente.
+- Agregar nuevas métricas y estadísticas.
+
+5.2 Diseño desacoplado
+- Backend y frontend desacoplados vía API REST.
+- Módulos independientes por dominio:
+  - Reportes
+  - Gastos
+  - Productos
+  - Estadísticas
+  - Autenticación
+
+5.3 Mantenibilidad
+- Código legible y documentado.
+- Estructura clara del proyecto.
+- Decisiones técnicas registradas.
+
+==================================================
+FIN DEL DOCUMENTO
+==================================================

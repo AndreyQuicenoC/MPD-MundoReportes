@@ -7,7 +7,6 @@ Los servicios encapsulan operaciones complejas y cálculos del dominio.
 
 from decimal import Decimal
 from django.db import transaction
-from django.utils import timezone
 from apps.reportes.models import ReporteDiario, VentaProducto
 from apps.gastos.models import Gasto
 from apps.productos.models import Producto
@@ -167,9 +166,7 @@ class ServicioReporte:
             dict: Diccionario con estadísticas calculadas
         """
         # Calcular total de ventas por productos
-        total_ventas_productos = sum(
-            venta.subtotal for venta in reporte.ventas_productos.all()
-        )
+        total_ventas_productos = sum(venta.subtotal for venta in reporte.ventas_productos.all())
 
         # Calcular diferencia (útil si venta_total difiere de suma de productos)
         diferencia = reporte.venta_total - total_ventas_productos

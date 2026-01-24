@@ -1,0 +1,186 @@
+PROYECTO: Mundo Reporte
+ARCHIVO: CALIDADUIUX.TXT
+
+==================================================
+1. PRINCIPIOS GENERALES DE UI / UX
+==================================================
+
+1.1 Claridad y previsibilidad
+- La interfaz debe ser clara, simple y consistente.
+- El usuario debe entender qué hacer sin instrucciones externas.
+- Cada pantalla debe tener un objetivo claro.
+- Evitar sobrecargar la pantalla con demasiados elementos.
+
+1.2 Prioridad en usabilidad
+- La facilidad de uso es más importante que la estética.
+- Pensado para adultos mayores y usuarios no técnicos.
+- Minimizar el número de clics para acciones frecuentes.
+- Formularios simples, ordenados y con etiquetas visibles.
+
+1.3 Consistencia
+- Misma estructura visual en todas las vistas.
+- Mismos colores, botones y comportamientos.
+- Evitar cambios bruscos de diseño entre secciones.
+
+==================================================
+2. PALETA DE COLORES Y TIPOGRAFÍA
+==================================================
+
+2.1 Color principal
+- Color base del sistema: VERDE OLIVA
+  HEX: #9B933B
+
+Este color se utilizará para:
+- Barra de navegación (navbar).
+- Botones primarios.
+- Indicadores activos.
+- Elementos de identidad visual.
+
+2.2 Colores complementarios
+- Blanco (#FFFFFF): fondo principal.
+- Gris claro (#F5F5F5): fondos secundarios.
+- Gris oscuro (#333333): texto principal.
+- Verde oscuro (#6F6A2A): hover y estados activos.
+- Rojo suave (#C94A4A): errores y alertas críticas.
+- Amarillo suave (#E0C65A): advertencias.
+
+2.3 Contraste y accesibilidad
+- Todo texto debe cumplir contraste WCAG AA mínimo.
+- Nunca usar texto verde oliva sobre fondo blanco sin oscurecer.
+- Botones deben tener estados hover y focus visibles.
+
+2.4 Tipografía
+- Tipografías estándar, sans-serif.
+- Ejemplos recomendados:
+  - Inter
+  - Roboto
+  - Open Sans
+
+- Tamaños mínimos:
+  - Texto base: 16px
+  - Títulos: ≥ 20px
+  - Botones: ≥ 16px
+
+==================================================
+3. HEURÍSTICAS DE USABILIDAD
+==================================================
+
+3.1 Feedback inmediato
+- Toda acción debe tener respuesta visible.
+- Ejemplos:
+  - “Guardando…”
+  - “Reporte guardado correctamente”
+  - Indicadores de carga (spinners)
+
+3.2 Errores claros
+- No usar mensajes genéricos.
+- Explicar:
+  - Qué ocurrió
+  - Por qué ocurrió
+  - Qué puede hacer el usuario
+
+Ejemplo:
+✗ “Error”
+✓ “La cantidad del producto debe ser un número entero positivo”
+
+3.3 Confirmaciones
+- Confirmar acciones críticas:
+  - Eliminar reporte
+  - Eliminar producto
+  - Eliminar categoría
+
+3.4 Estados visibles
+- Estados de carga.
+- Estados vacíos (ej: “No hay reportes aún”).
+- Estados de error.
+
+==================================================
+4. FORMULARIOS
+==================================================
+
+4.1 Diseño
+- Formularios verticales.
+- Campos claramente separados.
+- Etiquetas siempre visibles (no solo placeholder).
+
+4.2 Campos numéricos
+- Validación visual inmediata.
+- No permitir valores negativos.
+- Cantidades de productos:
+  - Solo enteros positivos.
+  - Controles + / - visibles.
+
+4.3 Acciones frecuentes
+- Botones grandes y bien espaciados.
+- Evitar iconos sin texto.
+
+==================================================
+5. NAVEGACIÓN
+==================================================
+
+5.1 Navbar
+Debe incluir claramente:
+- Dashboard
+- Nuevo reporte
+- Reportes
+- Estadísticas
+- Administración
+- Cerrar sesión
+
+5.2 Jerarquía
+- Opciones principales visibles.
+- Opciones secundarias dentro de secciones.
+- No usar menús escondidos innecesarios.
+
+==================================================
+6. ACCESIBILIDAD
+==================================================
+
+6.1 Navegación
+- Navegable completamente con teclado.
+- Focus visible en todos los elementos interactivos.
+
+6.2 Lectura
+- Textos claros y cortos.
+- Evitar tecnicismos innecesarios.
+
+6.3 Inputs
+- Labels asociados correctamente.
+- Mensajes de ayuda visibles cuando sea necesario.
+
+==================================================
+7. LOGO E IDENTIDAD VISUAL
+==================================================
+
+7.1 Logo obligatorio
+- El proyecto debe incluir un LOGO en formato SVG.
+- El logo debe:
+  - Usar el verde oliva #9B933B.
+  - Ser simple y legible.
+  - Funcionar bien en tamaños pequeños.
+  - No depender de imágenes rasterizadas.
+
+7.2 Uso del logo
+- Navbar (lado izquierdo).
+- Pantalla de inicio de sesión.
+- Dashboard principal.
+
+==================================================
+8. RESPONSIVE DESIGN
+==================================================
+
+8.1 Requisitos
+- Totalmente responsive.
+- Funcional en:
+  - Desktop
+  - Tablet
+  - Móvil
+
+8.2 Enfoque mobile
+- Formularios legibles.
+- Botones grandes.
+- Evitar tablas complejas en móvil.
+
+==================================================
+FIN DEL DOCUMENTO
+==================================================

@@ -1,0 +1,120 @@
+PROYECTO: Mundo Reporte
+ARCHIVO: RESTRICCIONES.TXT
+
+==================================================
+1. RESTRICCIONES TÉCNICAS
+==================================================
+
+1.1 Complejidad
+- Evitar complejidad innecesaria.
+- No implementar soluciones avanzadas sin una necesidad clara.
+- Preferir código simple, explícito y fácil de mantener.
+
+1.2 Rendimiento
+- No realizar cálculos pesados en cada request.
+- Las estadísticas deben calcularse bajo demanda.
+- Evitar consultas N+1.
+- Usar índices en base de datos cuando sea necesario.
+
+1.3 Validación de entradas
+- Ningún dato del cliente es confiable.
+- Validar:
+  - Tipos
+  - Rangos
+  - Formatos
+- Rechazar entradas inválidas desde el backend.
+
+==================================================
+2. ESCALABILIDAD
+==================================================
+
+2.1 Crecimiento progresivo
+- El sistema debe funcionar correctamente con:
+  - Pocos registros inicialmente.
+  - Miles de reportes en el futuro.
+- No asumir cargas masivas desde el inicio.
+
+2.2 Preparación para crecimiento
+- Arquitectura desacoplada.
+- API preparada para futuras apps móviles.
+- Evitar dependencias rígidas.
+
+2.3 Base de datos
+- Diseñar modelos normalizados.
+- Evitar duplicación de datos.
+- Permitir agregar nuevas entidades sin romper las existentes.
+
+==================================================
+3. MODULARIDAD
+==================================================
+
+3.1 Responsabilidad única
+Cada módulo debe tener una sola responsabilidad:
+- Reportes: lógica de reportes diarios.
+- Gastos: categorías y registros.
+- Productos: catálogo y precios.
+- Estadísticas: consultas y agregaciones.
+- Autenticación: acceso y permisos.
+
+3.2 Separación de capas
+- Frontend: React (presentación).
+- Backend: Django (lógica y persistencia).
+- Comunicación vía API REST.
+
+No mezclar responsabilidades entre capas.
+
+==================================================
+4. ESTRUCTURA DEL PROYECTO
+==================================================
+
+4.1 Estructura clara
+- Carpetas con propósito claro.
+- Evitar carpetas genéricas como:
+  - utils
+  - helpers
+  - misc
+sin justificación.
+
+4.2 Nombres descriptivos
+- Clases, funciones y archivos con nombres semánticos.
+- Evitar abreviaciones confusas.
+
+4.3 Organización sugerida (backend)
+- apps/reportes
+- apps/gastos
+- apps/productos
+- apps/estadisticas
+- apps/usuarios
+
+==================================================
+5. BUENAS PRÁCTICAS
+==================================================
+
+5.1 Código
+- Código legible antes que corto.
+- Evitar duplicación de lógica.
+- Refactorizar cuando sea necesario.
+
+5.2 Errores
+- Manejo centralizado de errores.
+- No exponer errores internos al usuario.
+
+5.3 Dependencias
+- Usar solo dependencias necesarias.
+- Mantener versiones controladas.
+
+==================================================
+6. LÍMITES DEL SISTEMA
+==================================================
+
+6.1 Exportaciones
+- Máximo 360 días por exportación.
+- Validar rangos antes de generar archivos.
+
+6.2 Usuarios
+- No se contempla multitienda en esta versión.
+- Un solo negocio por sistema.
+
+==================================================
+FIN DEL DOCUMENTO
+==================================================

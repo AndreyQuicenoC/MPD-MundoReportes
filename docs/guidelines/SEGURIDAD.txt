@@ -1,0 +1,121 @@
+PROYECTO: Mundo Reporte
+ARCHIVO: SEGURIDAD.TXT
+
+==================================================
+1. PRINCIPIOS GENERALES DE SEGURIDAD
+==================================================
+
+1.1 Enfoque
+- La seguridad es parte del diseño, no un agregado.
+- No confiar en datos provenientes del cliente.
+- Toda validación crítica se realiza en el backend.
+
+1.2 Alcance
+- Autenticación
+- Autorización
+- Validación de entradas
+- Protección de datos
+- Manejo de errores
+
+==================================================
+2. VALIDACIÓN DE ENTRADAS
+==================================================
+
+2.1 Regla base
+- Nunca confiar en datos enviados por el frontend.
+- Toda entrada debe validarse en el backend.
+
+2.2 Validaciones obligatorias
+- Tipo de dato correcto.
+- Rango válido.
+- Formato correcto.
+- Valores monetarios ≥ 0.
+- Cantidades de productos:
+  - Enteros positivos (naturales).
+
+2.3 Sanitización
+- Limpiar strings antes de almacenarlos.
+- Prevenir inyección SQL (ORM de Django).
+- Prevenir XSS (escape adecuado en frontend).
+
+==================================================
+3. AUTENTICACIÓN Y AUTORIZACIÓN
+==================================================
+
+3.1 Autenticación
+- Acceso únicamente mediante correo y contraseña.
+- Contraseñas:
+  - Hasheadas (nunca en texto plano).
+  - Usar mecanismos nativos de Django.
+- No implementar autenticación manual.
+
+3.2 Autorización
+- Separar autenticación de autorización.
+- Principio de mínimo privilegio.
+- Roles claros:
+  - Administrador
+  - Usuario
+
+3.3 Sesiones y tokens
+- Usar JWT o sesión segura.
+- Expiración controlada.
+- Protección contra sesiones inválidas.
+
+==================================================
+4. COMUNICACIÓN FRONTEND - BACKEND
+==================================================
+
+4.1 API
+- Validar siempre las respuestas.
+- Manejar errores de red.
+- No asumir respuestas exitosas.
+
+4.2 Seguridad en la API
+- No exponer datos sensibles.
+- No retornar información interna del sistema.
+- Controlar acceso a endpoints.
+
+==================================================
+5. MANEJO DE DATOS
+==================================================
+
+5.1 Datos sensibles
+- No exponer información privada en logs.
+- No enviar datos sensibles al frontend innecesariamente.
+
+5.2 Variables de entorno
+- Claves secretas en variables de entorno.
+- Nunca subir secretos al repositorio.
+
+==================================================
+6. ERRORES Y EXCEPCIONES
+==================================================
+
+6.1 Manejo de errores
+- Manejo centralizado.
+- Errores controlados y predecibles.
+
+6.2 Mensajes al usuario
+- Mensajes claros y genéricos.
+- No mostrar trazas internas.
+
+Ejemplo:
+✗ "IntegrityError at line 234"
+✓ "No fue posible guardar el reporte. Verifique los datos."
+
+6.3 Registro de errores
+- Logs internos para diagnóstico.
+- Sin información sensible.
+
+==================================================
+7. PROTECCIÓN ADICIONAL
+==================================================
+
+7.1 Medidas recomendadas
+- HTTPS obligatorio.
+- Protección CSRF.
+- Protección CORS bien configurada.
+
+==================================================
+FIN DEL DOCUMENTO
+==================================================

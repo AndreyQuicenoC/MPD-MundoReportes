@@ -1,0 +1,152 @@
+PROYECTO: Mundo Reporte
+ARCHIVO: METRICASYGESTION.TXT
+
+==================================================
+1. OBJETIVO DE LAS MÉTRICAS
+==================================================
+
+El sistema de métricas de Mundo Reporte tiene como objetivo:
+- Permitir entender el comportamiento del negocio.
+- Facilitar la toma de decisiones.
+- Detectar patrones de venta y gasto.
+- Evaluar la evolución del almacén en el tiempo.
+
+Las métricas deben ser:
+- Claras
+- Confiables
+- Relevantes
+- De bajo costo computacional
+
+==================================================
+2. RECOLECCIÓN DE MÉTRICAS
+==================================================
+
+2.1 Eventos a registrar
+El sistema debe registrar únicamente eventos relevantes, tales como:
+- Creación de reporte diario.
+- Modificación de un reporte existente.
+- Eliminación de un reporte.
+- Registro de gastos.
+- Registro de ventas por producto.
+
+No se deben registrar eventos irrelevantes de UI
+(clics, hover, navegación, etc.).
+
+2.2 Impacto en rendimiento
+- Las métricas deben derivarse de datos ya almacenados.
+- No usar procesos pesados en tiempo real.
+- Evitar cálculos innecesarios en cada request.
+
+==================================================
+3. MÉTRICAS DE NEGOCIO
+==================================================
+
+3.1 Ventas
+- Venta total diaria.
+- Venta total por mes.
+- Venta total por año.
+- Promedio diario de ventas por mes.
+- Comparativa de ventas entre meses.
+
+3.2 Gastos
+- Gasto total diario.
+- Gasto total mensual.
+- Gasto total anual.
+- Gasto por categoría:
+  - Diario
+  - Semanal
+  - Mensual
+  - Anual
+  - Rango personalizado
+
+3.3 Rentabilidad básica
+- Diferencia entre ventas y gastos por periodo.
+- Identificación de días con mayor gasto.
+
+==================================================
+4. MÉTRICAS POR PRODUCTO
+==================================================
+
+4.1 Productos vendidos
+- Cantidad total vendida por producto.
+- Cantidad vendida por periodo.
+- Productos más vendidos.
+- Productos menos vendidos.
+
+4.2 Enfoque
+- No generar métricas innecesarias.
+- Priorizar información útil para decisiones de compra.
+
+==================================================
+5. VISUALIZACIÓN DE MÉTRICAS
+==================================================
+
+5.1 Principios
+- Gráficos simples y comprensibles.
+- Un gráfico = una idea clara.
+- Evitar saturación de información.
+
+5.2 Tipos de gráficos permitidos
+- Gráficos de barras:
+  - Ventas por mes.
+  - Gastos por categoría.
+- Gráficos de líneas:
+  - Evolución de ventas en el tiempo.
+- Gráficos de torta:
+  - Distribución de gastos por categoría.
+
+5.3 Reglas de visualización
+- Etiquetas claras.
+- Unidades visibles (COP).
+- Colores consistentes.
+- Leyendas legibles.
+
+==================================================
+6. FILTROS Y PERIODOS
+==================================================
+
+6.1 Filtros obligatorios
+- Por rango de fechas.
+- Por mes.
+- Por año.
+
+6.2 Reglas
+- No permitir rangos inválidos.
+- Límite máximo de 360 días para consultas largas.
+- Validar fechas desde backend.
+
+==================================================
+7. DASHBOARD
+==================================================
+
+7.1 Propósito
+El dashboard debe mostrar:
+- Resumen rápido del estado del negocio.
+- Indicadores clave (KPIs).
+
+7.2 KPIs sugeridos
+- Ventas del mes actual.
+- Gasto del mes actual.
+- Promedio diario de ventas.
+- Categoría de gasto más alta.
+
+7.3 Reglas
+- No mostrar datos innecesarios.
+- Priorizar lectura rápida.
+- Mantener diseño limpio.
+
+==================================================
+8. TOMA DE DECISIONES
+==================================================
+
+Las métricas deben permitir:
+- Identificar meses fuertes y débiles.
+- Detectar gastos excesivos.
+- Analizar impacto de productos.
+- Mejorar planeación financiera.
+
+No se deben crear métricas sin un propósito claro.
+
+==================================================
+FIN DEL DOCUMENTO
+==================================================

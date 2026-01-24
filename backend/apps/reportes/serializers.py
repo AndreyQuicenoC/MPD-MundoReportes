@@ -20,9 +20,7 @@ class VentaProductoSerializer(serializers.ModelSerializer):
     """
 
     producto_nombre = serializers.CharField(source="producto.nombre", read_only=True)
-    subtotal = serializers.DecimalField(
-        max_digits=12, decimal_places=2, read_only=True
-    )
+    subtotal = serializers.DecimalField(max_digits=12, decimal_places=2, read_only=True)
 
     class Meta:
         model = VentaProducto
@@ -44,9 +42,7 @@ class VentaProductoInputSerializer(serializers.Serializer):
     Usado al crear/actualizar reportes.
     """
 
-    producto = serializers.PrimaryKeyRelatedField(
-        queryset=Producto.objects.filter(activo=True)
-    )
+    producto = serializers.PrimaryKeyRelatedField(queryset=Producto.objects.filter(activo=True))
     cantidad = serializers.IntegerField(min_value=1)
 
     def validate_cantidad(self, value):
@@ -94,9 +90,7 @@ class ReporteDiarioSerializer(serializers.ModelSerializer):
 
     gastos = GastoSimpleSerializer(many=True, read_only=True)
     ventas_productos = VentaProductoSerializer(many=True, read_only=True)
-    usuario_nombre = serializers.CharField(
-        source="usuario_creacion.nombre", read_only=True
-    )
+    usuario_nombre = serializers.CharField(source="usuario_creacion.nombre", read_only=True)
 
     class Meta:
         model = ReporteDiario
@@ -133,9 +127,7 @@ class ReporteDiarioListaSerializer(serializers.ModelSerializer):
     Solo incluye campos esenciales para visualización en listas.
     """
 
-    usuario_nombre = serializers.CharField(
-        source="usuario_creacion.nombre", read_only=True
-    )
+    usuario_nombre = serializers.CharField(source="usuario_creacion.nombre", read_only=True)
 
     class Meta:
         model = ReporteDiario
@@ -159,27 +151,19 @@ class CrearReporteDiarioSerializer(serializers.Serializer):
 
     # Datos del reporte
     fecha = serializers.DateField()
-    base_inicial = serializers.DecimalField(
-        max_digits=12, decimal_places=2, min_value=Decimal("0")
-    )
-    venta_total = serializers.DecimalField(
-        max_digits=12, decimal_places=2, min_value=Decimal("0")
-    )
+    base_inicial = serializers.DecimalField(max_digits=12, decimal_places=2, min_value=Decimal("0"))
+    venta_total = serializers.DecimalField(max_digits=12, decimal_places=2, min_value=Decimal("0"))
     entrega = serializers.DecimalField(
         max_digits=12,
         decimal_places=2,
         min_value=Decimal("0"),
         default=Decimal("0.00"),
     )
-    observacion = serializers.CharField(
-        required=False, allow_blank=True, default=""
-    )
+    observacion = serializers.CharField(required=False, allow_blank=True, default="")
 
     # Datos anidados
     gastos = GastoInputSerializer(many=True, required=False, default=list)
-    ventas_productos = VentaProductoInputSerializer(
-        many=True, required=False, default=list
-    )
+    ventas_productos = VentaProductoInputSerializer(many=True, required=False, default=list)
 
     def validate_fecha(self, value):
         """
@@ -196,9 +180,7 @@ class CrearReporteDiarioSerializer(serializers.Serializer):
         """
         # Solo validar en creación, no en actualización
         if not self.instance and ReporteDiario.objects.filter(fecha=value).exists():
-            raise serializers.ValidationError(
-                f"Ya existe un reporte para la fecha {value}"
-            )
+            raise serializers.ValidationError(f"Ya existe un reporte para la fecha {value}")
         return value
 
 
@@ -218,9 +200,7 @@ class ActualizarReporteDiarioSerializer(serializers.Serializer):
     entrega = serializers.DecimalField(
         max_digits=12, decimal_places=2, min_value=Decimal("0"), required=False
     )
-    observacion = serializers.CharField(
-        required=False, allow_blank=True
-    )
+    observacion = serializers.CharField(required=False, allow_blank=True)
 
     gastos = GastoInputSerializer(many=True, required=False)
     ventas_productos = VentaProductoInputSerializer(many=True, required=False)

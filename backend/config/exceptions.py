@@ -6,9 +6,7 @@ que formatea los errores de manera consistente y evita exponer
 detalles internos del sistema al cliente.
 """
 
-from rest_framework.views import exception_handler
-from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.views import exception_handler  # noqa: F401
 
 
 def custom_exception_handler(exc, context):

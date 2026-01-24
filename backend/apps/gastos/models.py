@@ -37,13 +37,9 @@ class CategoriaGasto(models.Model):
     )
 
     # Timestamps
-    fecha_creacion = models.DateTimeField(
-        verbose_name="fecha de creación", auto_now_add=True
-    )
+    fecha_creacion = models.DateTimeField(verbose_name="fecha de creación", auto_now_add=True)
 
-    fecha_actualizacion = models.DateTimeField(
-        verbose_name="fecha de actualización", auto_now=True
-    )
+    fecha_actualizacion = models.DateTimeField(verbose_name="fecha de actualización", auto_now=True)
 
     class Meta:
         verbose_name = "categoría de gasto"
@@ -100,9 +96,7 @@ class Gasto(models.Model):
     )
 
     # Timestamps
-    fecha_creacion = models.DateTimeField(
-        verbose_name="fecha de creación", auto_now_add=True
-    )
+    fecha_creacion = models.DateTimeField(verbose_name="fecha de creación", auto_now_add=True)
 
     class Meta:
         verbose_name = "gasto"
