@@ -137,7 +137,7 @@
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: calc(var(--spacing-lg) * 0.85);
+  gap: 1.7rem;
   animation: fadeInUp 0.8s ease-out 0.6s both;
 }
 
@@ -203,20 +203,17 @@
 
 @media (max-width: 480px) {
   .login-card {
-    padding: calc(var(--spacing-lg) * 0.85);
+    padding: 1.7rem;
     max-width: 100%;
-  }
-
-  .login-title {
-    font-size: calc(var(--font-size-h2) * 0.85);
-  }
-}
-    padding: calc(var(--spacing-lg) * 0.85);
     transform: scale(0.9);
   }
 
   .login-logo {
     width: 51px;
     height: 51px;
+  }
+
+  .login-title {
+    font-size: 1.5rem;
   }
 }

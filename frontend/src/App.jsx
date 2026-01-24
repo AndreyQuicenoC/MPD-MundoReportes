@@ -10,6 +10,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 import RoleRoute from './components/RoleRoute';
+import ScrollToTop from './components/ScrollToTop';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import Reportes from './pages/Reportes';
@@ -39,6 +40,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Toaster
           position="top-right"
           toastOptions={{

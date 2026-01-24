@@ -40,6 +40,30 @@ const reportesService = {
     return response.data;
   },
 
+  // Alias para compatibilidad
+  crearReporte: async data => {
+    const response = await apiClient.post('/reportes/crear/', data);
+    return response.data;
+  },
+
+  /**
+   * Obtener último reporte para obtener base siguiente.
+   *
+   * @returns {Promise} Último reporte
+   */
+  obtenerUltimoReporte: async () => {
+    try {
+      const response = await apiClient.get('/reportes/ultimo/');
+      return response.data;
+    } catch (error) {
+      // Si no hay reportes, retornar null
+      if (error.response?.status === 404) {
+        return null;
+      }
+      throw error;
+    }
+  },
+
   /**
    * Actualizar un reporte existente.
    *

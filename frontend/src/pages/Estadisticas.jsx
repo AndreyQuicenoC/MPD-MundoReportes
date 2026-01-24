@@ -54,10 +54,10 @@ const Estadisticas = () => {
       if (fechaFin) params.fecha_fin = fechaFin;
 
       const [stats, gastos, productos, ventas] = await Promise.all([
-        estadisticasService.obtenerEstadisticasVentas(params),
-        estadisticasService.obtenerGastosPorCategoria(params),
-        estadisticasService.obtenerProductosMasVendidos(params),
-        estadisticasService.obtenerVentasPorMes(),
+        estadisticasService.getEstadisticasVentas(params),
+        estadisticasService.getGastosPorCategoria(params),
+        estadisticasService.getProductosMasVendidos(params),
+        estadisticasService.getVentasMensuales(),
       ]);
 
       setEstadisticas(stats);

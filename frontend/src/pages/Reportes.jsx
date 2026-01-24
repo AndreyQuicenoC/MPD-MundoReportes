@@ -26,11 +26,14 @@ const Reportes = () => {
         reportesService.getReportes(),
         estadisticasService.getDashboard(),
       ]);
-      setReportes(reportesData);
+      // Asegurar que reportesData sea un array
+      setReportes(Array.isArray(reportesData) ? reportesData : reportesData?.results || []);
       setDashboard(dashboardData);
     } catch (error) {
       toast.error('Error al cargar datos');
+      // eslint-disable-next-line no-console
       console.error(error);
+      setReportes([]); // Asegurar que reportes sea array en caso de error
     } finally {
       setLoading(false);
     }
@@ -47,6 +50,7 @@ const Reportes = () => {
       cargarDatos();
     } catch (error) {
       toast.error('Error al eliminar reporte');
+      // eslint-disable-next-line no-console
       console.error(error);
     }
   };

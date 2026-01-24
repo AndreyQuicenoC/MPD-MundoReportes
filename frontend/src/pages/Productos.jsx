@@ -29,6 +29,7 @@ const Productos = () => {
       setProductos(data);
     } catch (error) {
       toast.error('Error al cargar productos');
+      // eslint-disable-next-line no-console
       console.error(error);
     } finally {
       setLoading(false);
@@ -82,6 +83,7 @@ const Productos = () => {
       cargarProductos();
     } catch (error) {
       toast.error(error.response?.data?.error || 'Error al guardar producto');
+      // eslint-disable-next-line no-console
       console.error(error);
     }
   };
@@ -97,6 +99,7 @@ const Productos = () => {
       cargarProductos();
     } catch (error) {
       toast.error('Error al eliminar producto');
+      // eslint-disable-next-line no-console
       console.error(error);
     }
   };

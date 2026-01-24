@@ -29,6 +29,7 @@ const Categorias = () => {
       setCategorias(data);
     } catch (error) {
       toast.error('Error al cargar categorías');
+      // eslint-disable-next-line no-console
       console.error(error);
     } finally {
       setLoading(false);
@@ -77,6 +78,7 @@ const Categorias = () => {
       cargarCategorias();
     } catch (error) {
       toast.error(error.response?.data?.error || 'Error al guardar categoría');
+      // eslint-disable-next-line no-console
       console.error(error);
     }
   };
@@ -92,6 +94,7 @@ const Categorias = () => {
       cargarCategorias();
     } catch (error) {
       toast.error('Error al eliminar categoría');
+      // eslint-disable-next-line no-console
       console.error(error);
     }
   };

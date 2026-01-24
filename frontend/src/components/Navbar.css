@@ -38,7 +38,7 @@
 }
 
 .navbar-title {
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   font-weight: 700;
   background: linear-gradient(90deg, #ffffff, #ffffff);
   -webkit-background-clip: text;
@@ -59,7 +59,7 @@
   border-radius: 8px;
   transition: all 0.3s ease;
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   text-decoration: none;
   position: relative;
   overflow: hidden;
@@ -136,18 +136,36 @@
 }
 
 .navbar-username {
-  font-weight: 600;
+  font-weight: 500;
   color: #fff;
   text-decoration: none;
   padding: 0.7rem 1.25rem;
   border-radius: 8px;
   transition: all 0.3s ease;
-  background: rgba(202, 197, 60, 0.374);
+  font-size: 0.88rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.navbar-username::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.navbar-username:hover::before {
+  left: 100%;
 }
 
 .navbar-username:hover {
-  background: rgba(194, 188, 21, 0.696);
+  background-color: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
+  color: #fff;
   color: #fff;
 }
 

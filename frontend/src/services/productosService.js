@@ -9,7 +9,7 @@ const productosService = {
    * @returns {Promise<Array>} Lista de productos
    */
   obtenerProductos: async () => {
-    const response = await api.get('/api/productos/');
+    const response = await api.get('/productos/');
     return response.data;
   },
 
@@ -19,7 +19,7 @@ const productosService = {
    * @returns {Promise<Object>} Datos del producto
    */
   obtenerProducto: async id => {
-    const response = await api.get(`/api/productos/${id}/`);
+    const response = await api.get(`/productos/${id}/`);
     return response.data;
   },
 
@@ -29,7 +29,7 @@ const productosService = {
    * @returns {Promise<Object>} Producto creado
    */
   crearProducto: async datos => {
-    const response = await api.post('/api/productos/', datos);
+    const response = await api.post('/productos/', datos);
     return response.data;
   },
 
@@ -40,7 +40,7 @@ const productosService = {
    * @returns {Promise<Object>} Producto actualizado
    */
   actualizarProducto: async (id, datos) => {
-    const response = await api.put(`/api/productos/${id}/`, datos);
+    const response = await api.put(`/productos/${id}/`, datos);
     return response.data;
   },
 
@@ -50,7 +50,7 @@ const productosService = {
    * @returns {Promise<void>}
    */
   eliminarProducto: async id => {
-    await api.delete(`/api/productos/${id}/`);
+    await api.delete(`/productos/${id}/`);
   },
 };
 
