@@ -1,5 +1,6 @@
 import os
 import sys
+import django  # noqa: E402
 
 # Agregar el directorio backend al path
 backend_dir = os.path.dirname(os.path.abspath(__file__))
@@ -7,11 +8,9 @@ sys.path.insert(0, backend_dir)
 
 # Configurar Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
-
-import django
 django.setup()
 
-from apps.usuarios.models import Usuario
+from apps.usuarios.models import Usuario  # noqa: E402
 
 # Crear usuarios
 usuarios_data = [
@@ -39,7 +38,7 @@ print("=" * 60)
 
 for user_data in usuarios_data:
     email = user_data["email"]
-    
+
     if Usuario.objects.filter(email=email).exists():
         print(f"✓ Usuario ya existe: {email}")
     else:

@@ -4,7 +4,7 @@ Vistas para gestión de usuarios por administradores y perfil de usuario.
 Incluye endpoints para CRUD de usuarios (solo admin) y gestión de perfil.
 """
 
-from rest_framework import viewsets, status, permissions
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated

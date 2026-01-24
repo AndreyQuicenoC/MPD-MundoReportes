@@ -330,7 +330,7 @@ class DashboardView(APIView):
             }
 
             return Response(dashboard, status=status.HTTP_200_OK)
-        except Exception as e:
+        except Exception:
             # Si hay algún error, retornar valores por defecto
             hoy = datetime.now().date()
             dashboard = {
