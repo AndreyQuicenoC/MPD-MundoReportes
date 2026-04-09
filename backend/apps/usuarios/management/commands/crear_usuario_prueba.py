@@ -34,8 +34,8 @@ class Command(BaseCommand):
                 cedula='1234567890',
                 is_staff=True,
                 is_superuser=True,
-                fecha_inicio_acceso=datetime.now(),
-                fecha_fin_acceso=datetime.now() + timedelta(days=365)
+                fecha_ingreso=datetime.now().date(),
+                fecha_fin=datetime.now().date() + timedelta(days=365)
             )
             self.stdout.write(self.style.SUCCESS(f'✅ Usuario creado: {email}'))
         
