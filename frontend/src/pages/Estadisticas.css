@@ -99,6 +99,10 @@
   color: var(--color-danger);
 }
 
+.stat-value.success {
+  color: #16a34a;
+}
+
 .stat-card small {
   color: var(--color-text-light);
   font-size: 0.875rem;

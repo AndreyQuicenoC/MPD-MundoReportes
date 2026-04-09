@@ -266,6 +266,22 @@ const Estadisticas = () => {
               <p className="stat-value">{formatearMoneda(estadisticas.total_entregas)}</p>
               <small>Acumulado</small>
             </div>
+
+            <div className="stat-card">
+              <h3>Margen de Ganancia</h3>
+              <p className="stat-value success">
+                {((((estadisticas.total_ventas - estadisticas.total_gastos) / estadisticas.total_ventas) * 100) || 0).toFixed(1)}%
+              </p>
+              <small>Beneficio/Ventas</small>
+            </div>
+
+            <div className="stat-card">
+              <h3>Ratio Gastos</h3>
+              <p className="stat-value">
+                {((estadisticas.total_gastos / estadisticas.total_ventas * 100) || 0).toFixed(1)}%
+              </p>
+              <small>Gastos vs Ventas</small>
+            </div>
           </div>
 
           {/* Gráficos */}
@@ -296,7 +312,7 @@ const Estadisticas = () => {
               <h2>Evolución de Ventas (Acumulado Mensual)</h2>
               <div className="chart-container">
                 {ventasPorMes.length > 0 ? (
-                  <Bar data={ventasData} options={chartOptions} />
+                  <Line data={ventasData} options={chartOptions} />
                 ) : (
                   <p className="no-data">No hay datos de ventas mensuales</p>
                 )}
