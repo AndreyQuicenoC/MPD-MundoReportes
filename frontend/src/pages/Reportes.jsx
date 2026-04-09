@@ -37,19 +37,30 @@ const Reportes = () => {
   const [fechaFin, setFechaFin] = useState('');
   const [filtroActivo, setFiltroActivo] = useState(false);
 
-  const cargarDatos = async () => {
+  const cargarDatos = async (filtroMesParam = null, filtroActivoParam = null, fechaInicioParam = null, fechaFinParam = null) => {
     try {
       setLoading(true);
+
+      // Usar parámetros si se proporcionan, sino usar estado
+      const mes = filtroMesParam !== null ? filtroMesParam : filtroMes;
+      const activo = filtroActivoParam !== null ? filtroActivoParam : filtroActivo;
+      const inicio = fechaInicioParam !== null ? fechaInicioParam : fechaInicio;
+      const fin = fechaFinParam !== null ? fechaFinParam : fechaFin;
+
+      console.log('cargarDatos() - Parámetros:', { mes, activo, inicio, fin });
+
       let reportesPromise;
 
       // Si hay filtro de fechas personalizado
-      if (filtroActivo && (fechaInicio || fechaFin)) {
+      if (activo && (inicio || fin)) {
+        console.log('Cargando con filtro de fechas:', { inicio, fin });
         reportesPromise = reportesService.getReportes({
-          fecha_inicio: fechaInicio,
-          fecha_fin: fechaFin,
+          fecha_inicio: inicio,
+          fecha_fin: fin,
         });
       } else {
-        // Cargar todos sin filtro
+        // Cargar todos sin filtro de backend
+        console.log('Cargando todos los reportes sin filtro backend');
         reportesPromise = reportesService.getReportes();
       }
 
@@ -63,14 +74,22 @@ const Reportes = () => {
         ? reportesData
         : reportesData?.results || [];
 
-      // Filtrar según el mes seleccionado - SOLO si filtroMes es 'actual' Y no hay filtro activo personalizado
-      if (filtroMes === 'actual' && !filtroActivo) {
+      console.log('Reportes recibidos del backend:', reportesProcessados.length);
+
+      // Filtrar según el mes seleccionado - SOLO si mes es 'actual' Y no hay filtro activo personalizado
+      if (mes === 'actual' && !activo) {
+        console.log('Aplicando filtro de mes actual');
         const ahora = new Date();
         const mesActual = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}`;
+        console.log('Mes actual:', mesActual);
+        const antes = reportesProcessados.length;
         reportesProcessados = reportesProcessados.filter(r => r.fecha.startsWith(mesActual));
+        console.log(`Filtrados de ${antes} a ${reportesProcessados.length} por mes`);
+      } else if (mes === 'todos') {
+        console.log('Sin filtro de mes - mostrando todos');
       }
-      // Si filtroMes es 'todos', muestra TODOS sin filtrar
-      // Si filtroActivo es true (rango personalizado), ya está filtrado por fechas arriba
+
+      console.log('Reportes finales a mostrar:', reportesProcessados.length);
 
       // Procesar deducibles
       const deduciblesArr = deduciblesRes.data.results || deduciblesRes.data;
@@ -109,8 +128,7 @@ const Reportes = () => {
       setPaginaActual(1);
     } catch (error) {
       toast.error('Error al cargar datos');
-      // eslint-disable-next-line no-console
-      console.error(error);
+      console.error('Error:', error);
       setReportes([]);
     } finally {
       setLoading(false);
@@ -119,26 +137,48 @@ const Reportes = () => {
 
   // Aplicar filtros
   const aplicarFiltros = () => {
+    console.log('aplicarFiltros() llamado con filtroMes:', filtroMes);
+    let nuevoFiltroActivo = filtroActivo;
+
     if (filtroMes === 'actual') {
-      setFiltroActivo(false);
-    } else if (fechaInicio || fechaFin) {
-      setFiltroActivo(true);
+      nuevoFiltroActivo = false;
+    } else if (filtroMes === 'personalizado' && (fechaInicio || fechaFin)) {
+      nuevoFiltroActivo = true;
+    } else if (filtroMes === 'todos') {
+      nuevoFiltroActivo = false;
     }
-    cargarDatos();
+
+    console.log('Nuevo filtroActivo:', nuevoFiltroActivo);
+
+    // Pasar los valores directamente a cargarDatos para evitar timing issues
+    cargarDatos(filtroMes, nuevoFiltroActivo, fechaInicio, fechaFin);
     toast.success('Filtro aplicado correctamente');
   };
 
   const limpiarFiltros = () => {
+    console.log('Limpiando filtros');
     setFiltroMes('actual');
     setFechaInicio('');
     setFechaFin('');
     setFiltroActivo(false);
-    cargarDatos();
+    // Pasar valores limpios directamente
+    cargarDatos('actual', false, '', '');
     toast.success('Filtros limpiados');
   };
 
+  // useEffect para detectar cambios en el select de filtroMes - recarga automáticamente
   useEffect(() => {
-    cargarDatos();
+    console.log('filtroMes cambió a:', filtroMes);
+    if (filtroMes === 'todos') {
+      console.log('Usuario seleccionó TODOS - cargando automáticamente');
+      cargarDatos(filtroMes, false, '', '');
+    }
+  }, [filtroMes]);
+
+  // useEffect inicial - solo cargar una vez
+  useEffect(() => {
+    console.log('Componente montado - cargando datos iniciales con filtroMes=actual');
+    cargarDatos('actual', false, '', '');
   }, []);
 
   // Calcular índices para la paginación
@@ -157,7 +197,8 @@ const Reportes = () => {
       toast.success('Reporte eliminado');
       setMostrarConfirmacion(false);
       setIdAEliminar(null);
-      cargarDatos();
+      // Recargar con los filtros actuales
+      cargarDatos(filtroMes, filtroActivo, fechaInicio, fechaFin);
     } catch (error) {
       toast.error('Error al eliminar reporte');
       console.error(error);

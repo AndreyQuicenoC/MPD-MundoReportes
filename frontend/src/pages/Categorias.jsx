@@ -104,14 +104,18 @@ const Categorias = () => {
 
   const handleConfirmarEliminar = async () => {
     try {
+      console.log('Eliminando categoría con ID:', idAEliminar);
       await categoriasService.eliminarCategoria(idAEliminar);
+      console.log('Categoría eliminada exitosamente');
       toast.success('Categoría eliminada');
       setMostrarConfirmacion(false);
       setIdAEliminar(null);
       cargarCategorias();
     } catch (error) {
-      toast.error('Error al eliminar');
-      console.error(error);
+      console.error('Error al eliminar categoría:', error);
+      console.error('Status:', error.response?.status);
+      console.error('Datos:', error.response?.data);
+      toast.error(error.response?.data?.detail || error.response?.data?.error || 'Error al eliminar categoría');
       setMostrarConfirmacion(false);
     }
   };
