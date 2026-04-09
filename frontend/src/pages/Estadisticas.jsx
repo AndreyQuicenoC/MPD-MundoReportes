@@ -125,7 +125,29 @@ const Estadisticas = () => {
       {
         label: 'Total Gastos',
         data: gastosPorCategoria.map(g => g.total),
-        backgroundColor: ['#9B933B', '#D4AF37', '#C9AE5D', '#8B7E39', '#A89842', '#BFB35E'],
+        backgroundColor: [
+          'var(--chart-color-1)', // Oliva
+          'var(--chart-color-2)', // Azul
+          'var(--chart-color-3)', // Rojo
+          'var(--chart-color-4)', // Verde
+          'var(--chart-color-5)', // Naranja
+          'var(--chart-color-6)', // Púrpura
+          'var(--chart-color-7)', // Cian
+          'var(--chart-color-8)', // Rosa
+        ].map(color => {
+          // Convertir las variables CSS a colores reales
+          const colorMap = {
+            'var(--chart-color-1)': '#9b933b',
+            'var(--chart-color-2)': '#2563eb',
+            'var(--chart-color-3)': '#dc2626',
+            'var(--chart-color-4)': '#16a34a',
+            'var(--chart-color-5)': '#f59e0b',
+            'var(--chart-color-6)': '#8b5cf6',
+            'var(--chart-color-7)': '#06b6d4',
+            'var(--chart-color-8)': '#ec4899',
+          };
+          return colorMap[color];
+        }),
       },
     ],
   };
@@ -136,7 +158,16 @@ const Estadisticas = () => {
       {
         label: 'Cantidad Vendida',
         data: productosMasVendidos.map(p => p.cantidad_total),
-        backgroundColor: '#9B933B',
+        backgroundColor: [
+          '#9b933b',
+          '#2563eb',
+          '#dc2626',
+          '#16a34a',
+          '#f59e0b',
+          '#8b5cf6',
+          '#06b6d4',
+          '#ec4899',
+        ],
       },
     ],
   };
@@ -150,6 +181,11 @@ const Estadisticas = () => {
         borderColor: '#9B933B',
         backgroundColor: 'rgba(155, 147, 59, 0.1)',
         tension: 0.4,
+        fill: true,
+        pointBackgroundColor: '#9B933B',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointRadius: 5,
       },
     ],
   };
