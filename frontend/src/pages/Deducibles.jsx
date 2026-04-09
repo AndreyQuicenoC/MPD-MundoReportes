@@ -188,13 +188,14 @@ const Deducibles = () => {
         )}
       </div>
 
-      <FormModal
-        isOpen={mostrarModal && esAdmin}
-        titulo={deducibleEditando ? 'Editar Deducible' : 'Nuevo Deducible'}
-        submitText={deducibleEditando ? 'Actualizar' : 'Crear'}
-        onClose={cancelar}
-        onSubmit={handleSubmit}
-      >
+      {esAdmin && (
+        <FormModal
+          isOpen={mostrarModal}
+          titulo={deducibleEditando ? 'Editar Deducible' : 'Nuevo Deducible'}
+          submitText={deducibleEditando ? 'Actualizar' : 'Crear'}
+          onClose={cancelar}
+          onSubmit={handleSubmit}
+        >
         <div className="form-group">
           <label htmlFor="categoria">Categoría *</label>
           <select

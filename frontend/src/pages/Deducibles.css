@@ -353,8 +353,10 @@
   }
 
   .btn-sm {
-    flex: none;
-    width: 100%;
+    flex: 1;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+    width: auto;
   }
 
   .modal-content {

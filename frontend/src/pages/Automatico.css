@@ -224,6 +224,16 @@
   flex: 1;
 }
 
+/* Mobile: Botones pequeños lado a lado */
+@media (max-width: 640px) {
+  .btn-sm {
+    flex: 1;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+    min-width: auto;
+    width: auto;
+  }
+
 /* Empty State */
 .empty-state {
   text-align: center;
@@ -259,10 +269,5 @@
 
   .form-actions {
     flex-direction: column;
-  }
-
-  .btn-sm {
-    flex: none;
-    width: 100%;
   }
 }
