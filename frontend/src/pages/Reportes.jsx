@@ -18,30 +18,78 @@ const Reportes = () => {
   const [paginaActual, setPaginaActual] = useState(1);
   const itemsPorPagina = 10;
 
-  useEffect(() => {
-    cargarDatos();
-  }, []);
+  // Estados para filtros
+  const [filtroMes, setFiltroMes] = useState('actual'); // 'actual' o 'todos'
+  const [fechaInicio, setFechaInicio] = useState('');
+  const [fechaFin, setFechaFin] = useState('');
+  const [filtroActivo, setFiltroActivo] = useState(false);
 
   const cargarDatos = async () => {
     try {
       setLoading(true);
+      let reportesPromise;
+
+      // Si hay filtro de fechas personalizado
+      if (filtroActivo && (fechaInicio || fechaFin)) {
+        reportesPromise = reportesService.getReportes({
+          fecha_inicio: fechaInicio,
+          fecha_fin: fechaFin,
+        });
+      } else {
+        // Cargar todos y filtrar por mes en el cliente
+        reportesPromise = reportesService.getReportes();
+      }
+
       const [reportesData, dashboardData] = await Promise.all([
-        reportesService.getReportes(),
+        reportesPromise,
         estadisticasService.getDashboard(),
       ]);
-      // Asegurar que reportesData sea un array
-      setReportes(Array.isArray(reportesData) ? reportesData : reportesData?.results || []);
+
+      let reportesProcessados = Array.isArray(reportesData)
+        ? reportesData
+        : reportesData?.results || [];
+
+      // Si filtro de mes actual, filtrar por el mes actual
+      if (!filtroActivo && filtroMes === 'actual') {
+        const ahora = new Date();
+        const mesActual = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}`;
+        reportesProcessados = reportesProcessados.filter(r => r.fecha.startsWith(mesActual));
+      }
+
+      setReportes(reportesProcessados);
       setDashboard(dashboardData);
-      setPaginaActual(1); // Resetear a primera página
+      setPaginaActual(1);
     } catch (error) {
       toast.error('Error al cargar datos');
       // eslint-disable-next-line no-console
       console.error(error);
-      setReportes([]); // Asegurar que reportes sea array en caso de error
+      setReportes([]);
     } finally {
       setLoading(false);
     }
   };
+
+  // Aplicar filtros
+  const aplicarFiltros = () => {
+    if (filtroMes === 'actual') {
+      setFiltroActivo(false);
+    } else if (fechaInicio || fechaFin) {
+      setFiltroActivo(true);
+    }
+    cargarDatos();
+  };
+
+  const limpiarFiltros = () => {
+    setFiltroMes('actual');
+    setFechaInicio('');
+    setFechaFin('');
+    setFiltroActivo(false);
+    cargarDatos();
+  };
+
+  useEffect(() => {
+    cargarDatos();
+  }, []);
 
   // Calcular índices para la paginación
   const indiceInicio = (paginaActual - 1) * itemsPorPagina;
@@ -92,6 +140,62 @@ const Reportes = () => {
         <button className="btn btn-primary" onClick={() => navigate('/reportes/nuevo')}>
           + Nuevo Reporte
         </button>
+      </div>
+
+      {/* Filtros */}
+      <div className="filtros-section">
+        <div className="filtros-group">
+          <div className="filtro-item">
+            <label htmlFor="filtroMes">Filtrar por:</label>
+            <select
+              id="filtroMes"
+              value={filtroMes}
+              onChange={(e) => setFiltroMes(e.target.value)}
+              className="filtro-select"
+            >
+              <option value="actual">Mes Actual</option>
+              <option value="todos">Todos los reportes</option>
+              <option value="personalizado">Rango personalizado</option>
+            </select>
+          </div>
+
+          {filtroMes === 'personalizado' && (
+            <>
+              <div className="filtro-item">
+                <label htmlFor="fechaInicio">Fecha Inicio:</label>
+                <input
+                  type="date"
+                  id="fechaInicio"
+                  value={fechaInicio}
+                  onChange={(e) => setFechaInicio(e.target.value)}
+                  className="filtro-input"
+                />
+              </div>
+
+              <div className="filtro-item">
+                <label htmlFor="fechaFin">Fecha Fin:</label>
+                <input
+                  type="date"
+                  id="fechaFin"
+                  value={fechaFin}
+                  onChange={(e) => setFechaFin(e.target.value)}
+                  className="filtro-input"
+                />
+              </div>
+            </>
+          )}
+
+          <div className="filtros-acciones">
+            <button onClick={aplicarFiltros} className="btn btn-sm btn-primary">
+              Aplicar Filtro
+            </button>
+            {filtroActivo && (
+              <button onClick={limpiarFiltros} className="btn btn-sm btn-secondary">
+                Limpiar
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Dashboard - Métricas principales */}
