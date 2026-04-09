@@ -40,6 +40,5 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f'✅ Usuario creado: {email}'))
         
         self.stdout.write(self.style.SUCCESS(f'Email: {email}'))
-        self.stdout.write(self.style.SUCCESS(f'Password: {password}'))
-        self.stdout.write(self.style.SUCCESS(f'Rol: {usuario.rol}'))
-        self.stdout.write(self.style.SUCCESS(f'Activo: {usuario.is_active}'))
+        self.stdout.write(self.style.SUCCESS('Rol: {}'.format(usuario.rol)))
+        self.stdout.write(self.style.SUCCESS('Activo: {}'.format(usuario.is_active)))
