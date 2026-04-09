@@ -409,6 +409,7 @@ const Estadisticas = () => {
 
           {/* Gráficos */}
           <div className="charts-grid">
+            {/* Fila 1: Gastos por Categoría + Todos los Productos Vendidos */}
             <div className="chart-card">
               <h2>Gastos por Categoría</h2>
               <div className="chart-container">
@@ -421,27 +422,16 @@ const Estadisticas = () => {
             </div>
 
             <div className="chart-card">
-              <h2>Productos Más Vendidos</h2>
-              <div className="chart-container">
-                {productosMasVendidos.length > 0 ? (
-                  <Bar data={productosData} options={chartOptions} />
-                ) : (
-                  <p className="no-data">No hay datos de ventas de productos</p>
-                )}
+              <h2>Todos los Productos Vendidos</h2>
+              <div className="chart-container-horizontal">
+                <ProductosTodosVendidos productos={todosProductosVendidos} chartOptions={chartOptions} />
               </div>
             </div>
 
-            <div className="chart-card">
-              <h2>Productos Menos Vendidos</h2>
-              <div className="chart-container">
-                {productosMenosVendidos.length > 0 ? (
-                  <Bar data={productosMenosData} options={chartOptions} />
-                ) : (
-                  <p className="no-data">No hay datos</p>
-                )}
-              </div>
-            </div>
+            {/* Fila 2: Rankings de Productos */}
+            <RankingProductos productosTop={productosMasVendidos} productosBajo={productosMenosVendidos} />
 
+            {/* Fila 3: Evolución de Ventas */}
             <div className="chart-card full-width">
               <div className="chart-header">
                 <h2>Evolución de Ventas (Acumulado Mensual)</h2>
@@ -479,34 +469,13 @@ const Estadisticas = () => {
               </div>
             </div>
 
+            {/* Fila 4: % Mejora Entre Meses */}
             <div className="chart-card full-width">
-              <h2>Cambio Porcentual Mes a Mes (Ventas)</h2>
+              <h2>% Mejora Entre Meses</h2>
               <div className="chart-container">
-                {cambiosVentas.length > 0 ? (
-                  <Bar data={cambiosVentasData} options={chartOptions} />
-                ) : (
-                  <p className="no-data">Insuficientes datos</p>
-                )}
+                <RankingMeses ventasPorMes={ventasPorMes} chartOptions={chartOptions} />
               </div>
             </div>
-
-            <div className="chart-card full-width">
-              <h2>Cambio Porcentual Categorías (Gastos)</h2>
-              <div className="chart-container">
-                {cambiosGastosData.labels.length > 0 ? (
-                  <Bar data={cambiosGastosData} options={chartOptions} />
-                ) : (
-                  <p className="no-data">Insuficientes datos</p>
-                )}
-              </div>
-            </div>
-
-            {/* Nuevos Componentes de Rankings y Productos */}
-            <RankingMeses ventasPorMes={ventasPorMes} chartOptions={chartOptions} />
-
-            <ProductosTodosVendidos productos={todosProductosVendidos} chartOptions={chartOptions} />
-
-            <RankingProductos productosTop={productosMasVendidos} productosBajo={productosMenosVendidos} />
           </div>
         </div>
       )}

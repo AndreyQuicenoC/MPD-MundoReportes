@@ -1,101 +1,11 @@
 .ranking-meses-container {
-  margin: 2rem 0;
-}
-
-.chart-card {
-  background: white;
-  border-radius: 8px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-}
-
-.chart-card h2 {
-  margin-top: 0;
-  margin-bottom: 0.5rem;
-  font-size: 1.25rem;
-  color: #1f2937;
-}
-
-.subtitle {
-  margin: 0 0 1.5rem 0;
-  color: #6b7280;
-  font-size: 0.9rem;
-}
-
-.chart-container {
-  height: 400px;
-  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 .no-data {
   text-align: center;
   color: #9ca3af;
   padding: 2rem;
-}
-
-.comparacion-tabla {
-  background: white;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-}
-
-.comparacion-tabla h2 {
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  font-size: 1.1rem;
-  color: #1f2937;
-}
-
-.tabla-cambios {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.tabla-cambios thead {
-  background: #f9fafb;
-  border-bottom: 2px solid #e5e7eb;
-}
-
-.tabla-cambios th {
-  padding: 1rem;
-  text-align: left;
-  font-weight: 600;
-  color: #374151;
-  font-size: 0.9rem;
-}
-
-.tabla-cambios td {
-  padding: 1rem;
-  border-bottom: 1px solid #f3f4f6;
-  color: #1f2937;
-}
-
-.tabla-cambios tbody tr:hover {
-  background: #f9fafb;
-}
-
-.tabla-cambios .positivo {
-  color: #10b981;
-  font-weight: 600;
-}
-
-.tabla-cambios .negativo {
-  color: #ef4444;
-  font-weight: 600;
-}
-
-@media (max-width: 768px) {
-  .chart-container {
-    height: 300px;
-  }
-
-  .tabla-cambios th,
-  .tabla-cambios td {
-    padding: 0.75rem 0.5rem;
-    font-size: 0.85rem;
-  }
+  font-size: 0.95rem;
 }

@@ -69,45 +69,10 @@ const RankingMeses = ({
 
   return (
     <div className="ranking-meses-container">
-      <div className="chart-card full-width">
-        <h2>% Mejora Entre Meses</h2>
-        <p className="subtitle">Comparación mes a mes de cambios en ventas y gastos</p>
-        <div className="chart-container">
-          {cambios.length > 0 ? (
-            <Bar data={dataGrafico} options={opciones} />
-          ) : (
-            <p className="no-data">Insuficientes datos para comparar</p>
-          )}
-        </div>
-      </div>
-
-      {/* Tabla comparativa de detalles */}
-      {cambios.length > 0 && (
-        <div className="comparacion-tabla">
-          <h2>Detalle de Cambios Mes a Mes</h2>
-          <table className="tabla-cambios">
-            <thead>
-              <tr>
-                <th>Período</th>
-                <th>Cambio Ventas</th>
-                <th>Cambio Gastos</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cambios.map((cambio, idx) => (
-                <tr key={idx}>
-                  <td>{cambio.periodo}</td>
-                  <td className={cambio.cambioVentas >= 0 ? 'positivo' : 'negativo'}>
-                    {cambio.cambioVentas >= 0 ? '+' : ''}{cambio.cambioVentas.toFixed(1)}%
-                  </td>
-                  <td className={cambio.cambioGastos >= 0 ? 'positivo' : 'negativo'}>
-                    {cambio.cambioGastos >= 0 ? '+' : ''}{cambio.cambioGastos.toFixed(1)}%
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      {cambios.length > 0 ? (
+        <Bar data={dataGrafico} options={opciones} />
+      ) : (
+        <p className="no-data">Insuficientes datos para comparar</p>
       )}
     </div>
   );

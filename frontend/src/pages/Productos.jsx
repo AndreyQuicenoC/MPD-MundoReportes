@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { productosService } from '../services/productosService';
+import FormModal from '../components/FormModal';
 import Pagination from '../components/Pagination';
 import ModalConfirmacion from '../components/ModalConfirmacion';
 import toast from 'react-hot-toast';
@@ -145,62 +146,54 @@ const Productos = () => {
         )}
       </div>
 
-      {mostrarForm && (
-        <div className="form-card">
-          <h2>{productoEditando ? 'Editar' : 'Nuevo'} Producto</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="nombre">Nombre *</label>
-              <input
-                type="text"
-                id="nombre"
-                name="nombre"
-                value={formData.nombre}
-                onChange={handleInputChange}
-                required
-                placeholder="Ej: Pintura Blanca 1L"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="precio_unitario">Precio Unitario *</label>
-              <input
-                type="text"
-                id="precio_unitario"
-                name="precio_unitario"
-                value={formData.precio_unitario}
-                onChange={e => {
-                  const valor = e.target.value.replace(/[^0-9.]/g, '');
-                  setFormData({ ...formData, precio_unitario: valor });
-                }}
-                required
-                placeholder="0.00"
-              />
-            </div>
-
-            <div className="form-group checkbox-group">
-              <label>
-                <input
-                  type="checkbox"
-                  name="activo"
-                  checked={formData.activo}
-                  onChange={handleInputChange}
-                />
-                Producto activo
-              </label>
-            </div>
-
-            <div className="form-actions">
-              <button type="button" className="btn btn-secondary" onClick={cancelar}>
-                Cancelar
-              </button>
-              <button type="submit" className="btn btn-primary">
-                {productoEditando ? 'Actualizar' : 'Crear'}
-              </button>
-            </div>
-          </form>
+      <FormModal
+        isOpen={mostrarForm}
+        titulo={productoEditando ? 'Editar Producto' : 'Nuevo Producto'}
+        submitText={productoEditando ? 'Actualizar' : 'Crear'}
+        onClose={cancelar}
+        onSubmit={handleSubmit}
+      >
+        <div className="form-group">
+          <label htmlFor="nombre">Nombre *</label>
+          <input
+            type="text"
+            id="nombre"
+            name="nombre"
+            value={formData.nombre}
+            onChange={handleInputChange}
+            required
+            placeholder="Ej: Pintura Blanca 1L"
+          />
         </div>
-      )}
+
+        <div className="form-group">
+          <label htmlFor="precio_unitario">Precio Unitario *</label>
+          <input
+            type="text"
+            id="precio_unitario"
+            name="precio_unitario"
+            value={formData.precio_unitario}
+            onChange={e => {
+              const valor = e.target.value.replace(/[^0-9.]/g, '');
+              setFormData({ ...formData, precio_unitario: valor });
+            }}
+            required
+            placeholder="0.00"
+          />
+        </div>
+
+        <div className="form-group checkbox-group">
+          <label>
+            <input
+              type="checkbox"
+              name="activo"
+              checked={formData.activo}
+              onChange={handleInputChange}
+            />
+            Producto activo
+          </label>
+        </div>
+      </FormModal>
 
       {productos.length === 0 ? (
         <div className="empty-state">

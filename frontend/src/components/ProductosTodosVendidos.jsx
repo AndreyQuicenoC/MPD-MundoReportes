@@ -4,7 +4,7 @@ import '../styles/ProductosTodosVendidos.css';
 
 /**
  * Componente de Gráfico de Todos los Productos Vendidos.
- * Muestra barras de todos los productos ordenados por cantidad vendida.
+ * Muestra barras horizontales de todos los productos ordenados por cantidad vendida.
  */
 const ProductosTodosVendidos = ({ productos = [], chartOptions = {} }) => {
   // Paleta de colores mejorada
@@ -48,43 +48,10 @@ const ProductosTodosVendidos = ({ productos = [], chartOptions = {} }) => {
 
   return (
     <div className="productos-todos-vendidos">
-      <div className="chart-card full-width">
-        <h2>Todos los Productos Vendidos</h2>
-        <p className="subtitle">Cantidad total vendida por producto durante el período seleccionado</p>
-        <div className="chart-container-horizontal">
-          {productos.length > 0 ? (
-            <Bar data={dataGrafico} options={opciones} />
-          ) : (
-            <p className="no-data">No hay datos de productos vendidos</p>
-          )}
-        </div>
-      </div>
-
-      {/* Estadísticas resumidas */}
-      {productos.length > 0 && (
-        <div className="productos-stats">
-          <div className="stat-item">
-            <p className="stat-label">Total de Productos</p>
-            <p className="stat-value">{productos.length}</p>
-          </div>
-          <div className="stat-item">
-            <p className="stat-label">Total Unidades Vendidas</p>
-            <p className="stat-value">
-              {productos.reduce((sum, p) => sum + p.cantidad_total, 0)}
-            </p>
-          </div>
-          <div className="stat-item">
-            <p className="stat-label">Promedio por Producto</p>
-            <p className="stat-value">
-              {(productos.reduce((sum, p) => sum + p.cantidad_total, 0) / productos.length).toFixed(0)}
-            </p>
-          </div>
-          <div className="stat-item">
-            <p className="stat-label">Producto Más Vendido</p>
-            <p className="stat-value">{productos[0]?.producto}</p>
-            <p className="stat-detail">{productos[0]?.cantidad_total} unidades</p>
-          </div>
-        </div>
+      {productos.length > 0 ? (
+        <Bar data={dataGrafico} options={opciones} />
+      ) : (
+        <p className="no-data">No hay datos de productos vendidos</p>
       )}
     </div>
   );
