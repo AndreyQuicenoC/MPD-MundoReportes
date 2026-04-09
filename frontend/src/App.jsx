@@ -17,7 +17,6 @@ import Reportes from './pages/Reportes';
 import NuevoReporte from './pages/NuevoReporte';
 import DetalleReporte from './pages/DetalleReporte';
 import Estadisticas from './pages/Estadisticas';
-import EstadisticasPreviewPDF from './pages/EstadisticasPreviewPDF';
 import Productos from './pages/Productos';
 import Categorias from './pages/Categorias';
 import Automatico from './pages/Automatico';
@@ -118,14 +117,6 @@ function App() {
               element={
                 <RoleRoute allowedRoles={['usuario']}>
                   <Estadisticas />
-                </RoleRoute>
-              }
-            />
-            <Route
-              path="estadisticas/preview-pdf"
-              element={
-                <RoleRoute allowedRoles={['usuario']}>
-                  <EstadisticasPreviewPDF />
                 </RoleRoute>
               }
             />

@@ -247,8 +247,11 @@ const Categorias = () => {
         isOpen={mostrarConfirmacion}
         titulo="Eliminar Categoría"
         mensaje="¿Estás seguro de que deseas eliminar esta categoría?"
-        onConfirmar={handleConfirmarEliminar}
-        onCancelar={() => setMostrarConfirmacion(false)}
+        onConfirm={handleConfirmarEliminar}
+        onCancel={() => setMostrarConfirmacion(false)}
+        isDanger={true}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
       />
     </div>
   );

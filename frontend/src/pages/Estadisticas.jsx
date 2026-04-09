@@ -331,16 +331,6 @@ const Estadisticas = () => {
             <button type="button" onClick={handleExportPDF} className="btn-action">
               PDF
             </button>
-            <button
-              type="button"
-              onClick={() => {
-                window.open('/estadisticas/preview-pdf', '_blank');
-              }}
-              className="btn-action"
-              style={{ backgroundColor: '#8b5cf6' }}
-            >
-              Previsualizar PDF
-            </button>
           </div>
         </form>
       </div>
