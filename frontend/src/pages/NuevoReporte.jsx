@@ -269,8 +269,10 @@ const NuevoReporte = ({ esEdicion = false }) => {
                 id="fecha"
                 value={fecha}
                 onChange={e => setFecha(e.target.value)}
+                disabled={esEdicion}
                 required
               />
+              {esEdicion && <small style={{ marginTop: '5px', color: '#666' }}>La fecha no se puede cambiar al editar</small>}
             </div>
 
             <div className="form-group">

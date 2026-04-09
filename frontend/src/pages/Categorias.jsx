@@ -242,6 +242,14 @@ const Categorias = () => {
           )}
         </>
       )}
+
+      <ModalConfirmacion
+        isOpen={mostrarConfirmacion}
+        titulo="Eliminar Categoría"
+        mensaje="¿Estás seguro de que deseas eliminar esta categoría?"
+        onConfirmar={handleConfirmarEliminar}
+        onCancelar={() => setMostrarConfirmacion(false)}
+      />
     </div>
   );
 };
