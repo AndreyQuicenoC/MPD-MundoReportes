@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { estadisticasService } from '../services/estadisticasService';
+import api from '../services/api';
 import {
   Chart as ChartJS,
   ArcElement,
@@ -40,12 +41,21 @@ const Estadisticas = () => {
   const [estadisticas, setEstadisticas] = useState(null);
   const [gastosPorCategoria, setGastosPorCategoria] = useState([]);
   const [productosMasVendidos, setProductosMasVendidos] = useState([]);
+  const [productosMenosVendidos, setProductosMenosVendidos] = useState([]);
   const [ventasPorMes, setVentasPorMes] = useState([]);
-  const [periodoVentas, setPeriodoVentas] = useState('mensual'); // mensual, semanal, diario
+  const [deducibles, setDeducibles] = useState([]);
+  const [gastosParaDeducir, setGastosParaDeducir] = useState({
+    ingreso: 0,
+    ahorro: 0,
+    transferencia: 0,
+  });
+  const [periodoVentas, setPeriodoVentas] = useState('mensual');
+  const [tipoGraficoVentas, setTipoGraficoVentas] = useState('bar'); // bar, line, area
 
   // Filtros
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
+  const [anoFiltro, setAnoFiltro] = useState(new Date().getFullYear());
 
   const pdfRef = useRef(null);
 
@@ -57,17 +67,35 @@ const Estadisticas = () => {
       if (fechaInicio) params.fecha_inicio = fechaInicio;
       if (fechaFin) params.fecha_fin = fechaFin;
 
-      const [stats, gastos, productos, ventas] = await Promise.all([
+      const [stats, gastos, productos, ventas, deduciblesRes] = await Promise.all([
         estadisticasService.getEstadisticasVentas(params),
         estadisticasService.getGastosPorCategoria(params),
         estadisticasService.getProductosMasVendidos(params),
         estadisticasService.getVentasMensuales(),
+        api.get('/gastos/deducibles/'),
       ]);
 
       setEstadisticas(stats);
       setGastosPorCategoria(gastos);
       setProductosMasVendidos(productos);
       setVentasPorMes(ventas);
+
+      // Procesar deducibles
+      const deduciblesArr = deduciblesRes.data.results || deduciblesRes.data;
+      setDeducibles(deduciblesArr);
+
+      // Calcular total de deducibles (simulado para ahora)
+      setGastosParaDeducir({
+        ingreso: deduciblesArr.filter(d => d.tipo === 'ingreso').reduce((sum, d) => sum + (d.valor || 0), 0),
+        ahorro: deduciblesArr.filter(d => d.tipo === 'ahorro').reduce((sum, d) => sum + (d.valor || 0), 0),
+        transferencia: deduciblesArr.filter(d => d.tipo === 'transferencia').reduce((sum, d) => sum + (d.valor || 0), 0),
+      });
+
+      // Calcular productos menos vendidos (inverso de más vendidos)
+      if (Array.isArray(productos)) {
+        const todosProd = [...productos].reverse();
+        setProductosMenosVendidos(todosProd.slice(0, 5));
+      }
     } catch (error) {
       toast.error('Error al cargar estadísticas');
       // eslint-disable-next-line no-console
@@ -84,12 +112,15 @@ const Estadisticas = () => {
   const handleFiltrar = e => {
     e.preventDefault();
     cargarEstadisticas();
+    toast.success('Filtro aplicado correctamente');
   };
 
   const handleLimpiar = () => {
     setFechaInicio('');
     setFechaFin('');
+    setAnoFiltro(new Date().getFullYear());
     cargarEstadisticas();
+    toast.success('Filtros limpiados');
   };
 
   const handleExportPDF = async () => {
@@ -108,6 +139,22 @@ const Estadisticas = () => {
     }
   };
 
+  // Paleta de colores mejorada (12 colores variados)
+  const paletaColores = [
+    '#9b933b', // Oliva
+    '#2563eb', // Azul
+    '#dc2626', // Rojo
+    '#16a34a', // Verde
+    '#f59e0b', // Naranja
+    '#8b5cf6', // Púrpura
+    '#06b6d4', // Cian
+    '#ec4899', // Rosa
+    '#6366f1', // Índigo
+    '#14b8a6', // Turquesa
+    '#ca8a04', // Amber
+    '#7c3aed', // Violeta
+  ];
+
   // Configuración de gráficos
   const chartOptions = {
     responsive: true,
@@ -125,29 +172,7 @@ const Estadisticas = () => {
       {
         label: 'Total Gastos',
         data: gastosPorCategoria.map(g => g.total),
-        backgroundColor: [
-          'var(--chart-color-1)', // Oliva
-          'var(--chart-color-2)', // Azul
-          'var(--chart-color-3)', // Rojo
-          'var(--chart-color-4)', // Verde
-          'var(--chart-color-5)', // Naranja
-          'var(--chart-color-6)', // Púrpura
-          'var(--chart-color-7)', // Cian
-          'var(--chart-color-8)', // Rosa
-        ].map(color => {
-          // Convertir las variables CSS a colores reales
-          const colorMap = {
-            'var(--chart-color-1)': '#9b933b',
-            'var(--chart-color-2)': '#2563eb',
-            'var(--chart-color-3)': '#dc2626',
-            'var(--chart-color-4)': '#16a34a',
-            'var(--chart-color-5)': '#f59e0b',
-            'var(--chart-color-6)': '#8b5cf6',
-            'var(--chart-color-7)': '#06b6d4',
-            'var(--chart-color-8)': '#ec4899',
-          };
-          return colorMap[color];
-        }),
+        backgroundColor: gastosPorCategoria.map((_, idx) => paletaColores[idx % paletaColores.length]),
       },
     ],
   };
@@ -158,16 +183,18 @@ const Estadisticas = () => {
       {
         label: 'Cantidad Vendida',
         data: productosMasVendidos.map(p => p.cantidad_total),
-        backgroundColor: [
-          '#9b933b',
-          '#2563eb',
-          '#dc2626',
-          '#16a34a',
-          '#f59e0b',
-          '#8b5cf6',
-          '#06b6d4',
-          '#ec4899',
-        ],
+        backgroundColor: productosMasVendidos.map((_, idx) => paletaColores[idx % paletaColores.length]),
+      },
+    ],
+  };
+
+  const productosMenosData = {
+    labels: productosMenosVendidos.map(p => p.producto),
+    datasets: [
+      {
+        label: 'Cantidad Vendida',
+        data: productosMenosVendidos.map(p => p.cantidad_total),
+        backgroundColor: productosMenosVendidos.map((_, idx) => paletaColores[(idx + 6) % paletaColores.length]),
       },
     ],
   };
@@ -179,9 +206,10 @@ const Estadisticas = () => {
         label: 'Ventas Totales',
         data: ventasPorMes.map(v => v.total_ventas),
         borderColor: '#9B933B',
-        backgroundColor: 'rgba(155, 147, 59, 0.1)',
+        backgroundColor: tipoGraficoVentas === 'area' ? 'rgba(155, 147, 59, 0.15)' : 'rgba(155, 147, 59, 0.05)',
+        borderWidth: 2,
         tension: 0.4,
-        fill: true,
+        fill: tipoGraficoVentas === 'area' || tipoGraficoVentas === 'line',
         pointBackgroundColor: '#9B933B',
         pointBorderColor: '#fff',
         pointBorderWidth: 2,
@@ -284,6 +312,34 @@ const Estadisticas = () => {
             </div>
           </div>
 
+          {/* Tarjetas de Deducibles */}
+          {deducibles.length > 0 && (
+            <div className="stats-cards">
+              <div className="stat-card">
+                <h3>Ingresos Deducibles</h3>
+                <p className="stat-value">${Number(gastosParaDeducir.ingreso).toLocaleString('es-CO')}</p>
+                <small>No restados</small>
+              </div>
+              <div className="stat-card">
+                <h3>Ahorros Deducibles</h3>
+                <p className="stat-value">${Number(gastosParaDeducir.ahorro).toLocaleString('es-CO')}</p>
+                <small>No restados</small>
+              </div>
+              <div className="stat-card">
+                <h3>Transferencias Deducibles</h3>
+                <p className="stat-value">${Number(gastosParaDeducir.transferencia).toLocaleString('es-CO')}</p>
+                <small>No restados</small>
+              </div>
+              <div className="stat-card">
+                <h3>Gasto Ajustado</h3>
+                <p className="stat-value">
+                  ${(Number(estadisticas.total_gastos) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia)).toLocaleString('es-CO')}
+                </p>
+                <small>Gastos reales</small>
+              </div>
+            </div>
+          )}
+
           {/* Gráficos */}
           <div className="charts-grid">
             <div className="chart-card">
@@ -308,11 +364,48 @@ const Estadisticas = () => {
               </div>
             </div>
 
+            <div className="chart-card">
+              <h2>Productos Menos Vendidos</h2>
+              <div className="chart-container">
+                {productosMenosVendidos.length > 0 ? (
+                  <Bar data={productosMenosData} options={chartOptions} />
+                ) : (
+                  <p className="no-data">No hay datos</p>
+                )}
+              </div>
+            </div>
+
             <div className="chart-card full-width">
-              <h2>Evolución de Ventas (Acumulado Mensual)</h2>
+              <div className="chart-header">
+                <h2>Evolución de Ventas (Acumulado Mensual)</h2>
+                <div className="chart-controls">
+                  <button
+                    className={`btn-chart-type ${tipoGraficoVentas === 'bar' ? 'active' : ''}`}
+                    onClick={() => setTipoGraficoVentas('bar')}
+                  >
+                    Barras
+                  </button>
+                  <button
+                    className={`btn-chart-type ${tipoGraficoVentas === 'line' ? 'active' : ''}`}
+                    onClick={() => setTipoGraficoVentas('line')}
+                  >
+                    Líneas
+                  </button>
+                  <button
+                    className={`btn-chart-type ${tipoGraficoVentas === 'area' ? 'active' : ''}`}
+                    onClick={() => setTipoGraficoVentas('area')}
+                  >
+                    Área
+                  </button>
+                </div>
+              </div>
               <div className="chart-container">
                 {ventasPorMes.length > 0 ? (
-                  <Line data={ventasData} options={chartOptions} />
+                  tipoGraficoVentas === 'bar' ? (
+                    <Bar data={ventasData} options={chartOptions} />
+                  ) : (
+                    <Line data={ventasData} options={chartOptions} />
+                  )
                 ) : (
                   <p className="no-data">No hay datos de ventas mensuales</p>
                 )}

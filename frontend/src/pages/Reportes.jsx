@@ -119,6 +119,7 @@ const Reportes = () => {
       setFiltroActivo(true);
     }
     cargarDatos();
+    toast.success('Filtro aplicado correctamente');
   };
 
   const limpiarFiltros = () => {
@@ -127,6 +128,7 @@ const Reportes = () => {
     setFechaFin('');
     setFiltroActivo(false);
     cargarDatos();
+    toast.success('Filtros limpiados');
   };
 
   useEffect(() => {
@@ -282,27 +284,30 @@ const Reportes = () => {
           </div>
 
           {/* Deducibles Summary */}
-          <div className="deducibles-summary">
-            <h3>Análisis de Gastos Deducibles</h3>
-            <div className="deducibles-grid">
-              <div className="deducible-stat ingreso">
-                <p className="stat-label">Ingresos (No Gastos)</p>
-                <p className="stat-value">${Number(gastosParaDeducir.ingreso).toLocaleString('es-CO')}</p>
-              </div>
-              <div className="deducible-stat ahorro">
-                <p className="stat-label">Ahorros (No Gastos)</p>
-                <p className="stat-value">${Number(gastosParaDeducir.ahorro).toLocaleString('es-CO')}</p>
-              </div>
-              <div className="deducible-stat transferencia">
-                <p className="stat-label">Transferencias (No Gastos)</p>
-                <p className="stat-value">${Number(gastosParaDeducir.transferencia).toLocaleString('es-CO')}</p>
-              </div>
-              <div className="deducible-stat ajustado">
-                <p className="stat-label">Gasto Ajustado</p>
-                <p className="stat-value">
-                  ${(Number(dashboard.total_gastos_mes) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia)).toLocaleString('es-CO')}
-                </p>
-              </div>
+          <div className="dashboard-grid">
+            <div className="dashboard-card">
+              <h3>Ingresos (No Gastos)</h3>
+              <p className="dashboard-value">
+                ${Number(gastosParaDeducir.ingreso).toLocaleString('es-CO')}
+              </p>
+            </div>
+            <div className="dashboard-card">
+              <h3>Ahorros (No Gastos)</h3>
+              <p className="dashboard-value">
+                ${Number(gastosParaDeducir.ahorro).toLocaleString('es-CO')}
+              </p>
+            </div>
+            <div className="dashboard-card">
+              <h3>Transferencias (No Gastos)</h3>
+              <p className="dashboard-value">
+                ${Number(gastosParaDeducir.transferencia).toLocaleString('es-CO')}
+              </p>
+            </div>
+            <div className="dashboard-card">
+              <h3>Gasto Ajustado</h3>
+              <p className="dashboard-value">
+                ${(Number(dashboard.total_gastos_mes) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia)).toLocaleString('es-CO')}
+              </p>
             </div>
           </div>
         </>

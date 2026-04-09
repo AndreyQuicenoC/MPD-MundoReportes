@@ -126,6 +126,50 @@
   grid-column: 1 / -1;
 }
 
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.chart-header h2 {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 1.25rem;
+  flex: 1 1 auto;
+}
+
+.chart-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-chart-type {
+  padding: 6px 12px;
+  border: 2px solid #ddd;
+  background: white;
+  border-radius: 6px;
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-chart-type:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn-chart-type.active {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
 .chart-card h2 {
   margin: 0 0 var(--spacing-md) 0;
   color: var(--color-primary);
