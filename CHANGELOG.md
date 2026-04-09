@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.1.0] - 2026-04-09
+## [1.2.0] - 2026-04-09
 
 ### Features Agregadas
 
