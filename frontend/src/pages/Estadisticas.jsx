@@ -92,6 +92,12 @@ const Estadisticas = () => {
       setDeducibles(deduciblesArr);
 
       // Usar los deducibles calculados del backend
+      console.log('=== DEDUCIBLES CALCULADOS ===');
+      console.log('deduciblesCalc:', deduciblesCalc);
+      console.log('Ingreso:', deduciblesCalc.ingreso);
+      console.log('Ahorro:', deduciblesCalc.ahorro);
+      console.log('Transferencia:', deduciblesCalc.transferencia);
+
       setGastosParaDeducir({
         ingreso: deduciblesCalc.ingreso || 0,
         ahorro: deduciblesCalc.ahorro || 0,
