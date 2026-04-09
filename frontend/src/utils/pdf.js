@@ -7,17 +7,12 @@ import { formatearMoneda } from './reportes';
  * Asegura colores vibrantes y buen rendering
  */
 const getCanvas2Options = () => ({
-  scale: 3, // Mayor escala para mejor calidad
+  scale: 2,
   useCORS: true,
   allowTaint: true,
   logging: false,
   backgroundColor: '#ffffff',
-  windowHeight: document.documentElement.scrollHeight,
-  windowWidth: document.documentElement.scrollWidth,
-  // Opciones para mejor rendering de colores
-  imageTimeout: 0,
-  removeContainer: true,
-  foreignObjectRendering: true,
+  // NO usar foreignObjectRendering ni onclone con gráficos
 });
 
 /**
@@ -29,13 +24,7 @@ export const exportarReportePDF = async (reporte, element) => {
   try {
     console.log('Generando PDF de reporte...');
 
-    // Crear elemento temporal para captura
-    const tempElement = element.cloneNode(true);
-    tempElement.style.background = 'white';
-    tempElement.style.padding = '0';
-    tempElement.style.margin = '0';
-
-    const canvas = await html2canvas(tempElement, getCanvas2Options());
+    const canvas = await html2canvas(element, getCanvas2Options());
 
     const pdf = new jsPDF({
       orientation: 'portrait',
@@ -101,43 +90,34 @@ export const exportarReportePDF = async (reporte, element) => {
 
 /**
  * Exporta las estadísticas como PDF con márgenes de 1cm
- * Arreglo para colores vibrantes y mejor calidad de impresión
+ * Diseñada para capturar gráficos de Chart.js correctamente
  * @param {Object} estadisticas - Datos de estadísticas
  * @param {HTMLElement} element - Elemento a convertir a PDF
  */
 export const exportarEstadisticasPDF = async (estadisticas, element) => {
   try {
     console.log('Generando PDF de estadísticas...');
+    console.log('Elemento a capturar:', element);
 
-    // Crear elemento temporal para captura
-    const tempElement = element.cloneNode(true);
-    tempElement.style.background = 'white';
-    tempElement.style.padding = '0';
-    tempElement.style.margin = '0';
+    // Esperar a que los gráficos se rendericen completamente
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // Forzar visibilidad de todos los elementos
-    const allElements = tempElement.querySelectorAll('*');
-    allElements.forEach(el => {
-      el.style.opacity = '1';
-      el.style.visibility = 'visible';
-    });
+    // Opciones simplificadas para html2canvas
+    // Evitar problemas con canvas clonado
+    const options = {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      logging: true,
+      backgroundColor: '#ffffff',
+      width: element.offsetWidth,
+      height: element.offsetHeight,
+      // NO usar onclone ni foreignObjectRendering con gráficos Chart.js
+    };
 
-    console.log('Capturando canvas...');
-    const canvas = await html2canvas(tempElement, {
-      ...getCanvas2Options(),
-      // Opciones específicas para estadísticas
-      onclone: (document) => {
-        // Asegurar que todos los elementos sean visibles y con colores completos
-        const elements = document.querySelectorAll('[class*="stat"], [class*="chart"], [class*="card"]');
-        elements.forEach(el => {
-          el.style.opacity = '1';
-          el.style.filter = 'none';
-          el.style.textShadow = 'none';
-        });
-      },
-    });
-
-    console.log('Canvas capturado, calculando PDF...');
+    console.log('Capturando canvas con opciones:', options);
+    const canvas = await html2canvas(element, options);
+    console.log('Canvas capturado exitosamente');
 
     const pdf = new jsPDF({
       orientation: 'portrait',
@@ -167,6 +147,9 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
     // Usar calidad máxima para la imagen
     const imgData = canvas.toDataURL('image/png', 1.0);
 
+    console.log('Agregando imagen a PDF...');
+    console.log(`Altura total imagen: ${imgHeight}mm, Altura página: ${pageHeightAvailable}mm`);
+
     // Primera página
     pdf.addImage(
       imgData,
@@ -179,8 +162,10 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
     heightLeft -= pageHeightAvailable;
 
     // Páginas adicionales si es necesario
+    let pageCount = 1;
     while (heightLeft > 0) {
       position = heightLeft - imgHeight;
+      console.log(`Agregando página ${pageCount + 1}...`);
       pdf.addPage();
       pdf.addImage(
         imgData,
@@ -191,13 +176,15 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
         imgHeight
       );
       heightLeft -= pageHeightAvailable;
+      pageCount++;
     }
 
     const fechaActual = new Date().toLocaleDateString('es-CO');
     pdf.save(`Estadisticas-${fechaActual}.pdf`);
-    console.log('PDF de estadísticas generado exitosamente');
+    console.log(`PDF de estadísticas generado exitosamente (${pageCount} páginas)`);
   } catch (error) {
     console.error('Error al generar PDF de estadísticas:', error);
-    throw new Error('Error al generar el PDF de estadísticas');
+    console.error('Stack:', error.stack);
+    throw new Error('Error al generar el PDF de estadísticas: ' + error.message);
   }
 };
