@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react';
 import { categoriasService } from '../services/categoriasService';
+import Pagination from '../components/Pagination';
 import toast from 'react-hot-toast';
 import './Productos.css'; // Reutilizamos los mismos estilos
 
 /**
  * Página de gestión de categorías de gastos.
- * CRUD completo de categorías.
+ * CRUD completo de categorías con paginación.
  */
 const Categorias = () => {
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [categoriaEditando, setCategoriaEditando] = useState(null);
+  const [paginaActual, setPaginaActual] = useState(1);
+  const itemsPorPagina = 10;
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
@@ -28,6 +31,7 @@ const Categorias = () => {
       const data = await categoriasService.obtenerCategorias();
       // Asegurar que sea un array
       setCategorias(Array.isArray(data) ? data : data?.results || []);
+      setPaginaActual(1); // Resetear a primera página
     } catch (error) {
       toast.error('Error al cargar categorías');
       // eslint-disable-next-line no-console
@@ -37,6 +41,11 @@ const Categorias = () => {
       setLoading(false);
     }
   };
+
+  // Calcular índices para la paginación
+  const indiceInicio = (paginaActual - 1) * itemsPorPagina;
+  const indiceFin = indiceInicio + itemsPorPagina;
+  const categoriasPaginadas = categorias.slice(indiceInicio, indiceFin);
 
   const abrirModalNuevo = () => {
     setCategoriaEditando(null);
@@ -137,7 +146,7 @@ const Categorias = () => {
                 </td>
               </tr>
             ) : (
-              categorias.map(categoria => (
+              categoriasPaginadas.map(categoria => (
                 <tr key={categoria.id}>
                   <td>{categoria.nombre}</td>
                   <td>{categoria.descripcion || '-'}</td>
@@ -165,6 +174,15 @@ const Categorias = () => {
             )}
           </tbody>
         </table>
+
+        {categorias.length > 0 && (
+          <Pagination
+            paginaActual={paginaActual}
+            totalItems={categorias.length}
+            itemsPorPagina={itemsPorPagina}
+            onPaginaChange={setPaginaActual}
+          />
+        )}
       </div>
 
       {/* Modal */}

@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react';
 import { productosService } from '../services/productosService';
+import Pagination from '../components/Pagination';
 import toast from 'react-hot-toast';
 import './Productos.css';
 
 /**
  * Página de gestión de productos.
- * CRUD completo de productos del catálogo.
+ * CRUD completo de productos del catálogo con paginación.
  */
 const Productos = () => {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [productoEditando, setProductoEditando] = useState(null);
+  const [paginaActual, setPaginaActual] = useState(1);
+  const itemsPorPagina = 10;
   const [formData, setFormData] = useState({
     nombre: '',
     precio_unitario: '',
@@ -28,6 +31,7 @@ const Productos = () => {
       const data = await productosService.obtenerProductos();
       // Asegurar que sea un array
       setProductos(Array.isArray(data) ? data : data?.results || []);
+      setPaginaActual(1); // Resetear a primera página
     } catch (error) {
       toast.error('Error al cargar productos');
       // eslint-disable-next-line no-console
@@ -37,6 +41,11 @@ const Productos = () => {
       setLoading(false);
     }
   };
+
+  // Calcular índices para la paginación
+  const indiceInicio = (paginaActual - 1) * itemsPorPagina;
+  const indiceFin = indiceInicio + itemsPorPagina;
+  const productosPaginados = productos.slice(indiceInicio, indiceFin);
 
   const abrirModalNuevo = () => {
     setProductoEditando(null);
@@ -142,7 +151,7 @@ const Productos = () => {
                 </td>
               </tr>
             ) : (
-              productos.map(producto => (
+              productosPaginados.map(producto => (
                 <tr key={producto.id}>
                   <td>{producto.nombre}</td>
                   <td>${Number(producto.precio_unitario).toLocaleString('es-CO')}</td>
@@ -170,6 +179,15 @@ const Productos = () => {
             )}
           </tbody>
         </table>
+
+        {productos.length > 0 && (
+          <Pagination
+            paginaActual={paginaActual}
+            totalItems={productos.length}
+            itemsPorPagina={itemsPorPagina}
+            onPaginaChange={setPaginaActual}
+          />
+        )}
       </div>
 
       {/* Modal */}

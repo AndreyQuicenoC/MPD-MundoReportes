@@ -2,18 +2,21 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { reportesService } from '../services/reportesService';
 import estadisticasService from '../services/estadisticasService';
+import Pagination from '../components/Pagination';
 import toast from 'react-hot-toast';
 import './Reportes.css';
 
 /**
  * Página principal de Reportes.
- * Muestra dashboard con métricas y tabla de reportes con CRUD.
+ * Muestra dashboard con métricas y tabla de reportes con CRUD y paginación.
  */
 const Reportes = () => {
   const navigate = useNavigate();
   const [reportes, setReportes] = useState([]);
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [paginaActual, setPaginaActual] = useState(1);
+  const itemsPorPagina = 10;
 
   useEffect(() => {
     cargarDatos();
@@ -29,6 +32,7 @@ const Reportes = () => {
       // Asegurar que reportesData sea un array
       setReportes(Array.isArray(reportesData) ? reportesData : reportesData?.results || []);
       setDashboard(dashboardData);
+      setPaginaActual(1); // Resetear a primera página
     } catch (error) {
       toast.error('Error al cargar datos');
       // eslint-disable-next-line no-console
@@ -38,6 +42,11 @@ const Reportes = () => {
       setLoading(false);
     }
   };
+
+  // Calcular índices para la paginación
+  const indiceInicio = (paginaActual - 1) * itemsPorPagina;
+  const indiceFin = indiceInicio + itemsPorPagina;
+  const reportesPaginados = reportes.slice(indiceInicio, indiceFin);
 
   const handleEliminar = async id => {
     if (!window.confirm('¿Estás seguro de eliminar este reporte?')) {
@@ -139,7 +148,7 @@ const Reportes = () => {
                   </td>
                 </tr>
               ) : (
-                reportes.map(reporte => (
+                reportesPaginados.map(reporte => (
                   <tr key={reporte.id}>
                     <td>{new Date(reporte.fecha + 'T00:00:00').toLocaleDateString('es-CO')}</td>
                     <td>${Number(reporte.base_inicial || 0).toLocaleString('es-CO')}</td>
@@ -175,6 +184,15 @@ const Reportes = () => {
             </tbody>
           </table>
         </div>
+
+        {reportes.length > 0 && (
+          <Pagination
+            paginaActual={paginaActual}
+            totalItems={reportes.length}
+            itemsPorPagina={itemsPorPagina}
+            onPaginaChange={setPaginaActual}
+          />
+        )}
       </div>
     </div>
   );
