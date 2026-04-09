@@ -116,6 +116,18 @@ const Estadisticas = () => {
     cargarEstadisticas();
   }, [cargarEstadisticas]);
 
+  useEffect(() => {
+    console.log('=== ESTADÍSTICAS CARGADAS ===');
+    console.log('Estadísticas:', estadisticas);
+    console.log('Gastos por categoría:', gastosPorCategoria);
+    console.log('Productos más vendidos:', productosMasVendidos);
+    console.log('Productos menos vendidos:', productosMenosVendidos);
+    console.log('Todos los productos:', todosProductosVendidos);
+    console.log('Ventas por mes:', ventasPorMes);
+    console.log('Deducibles:', deducibles);
+    console.log('Gastos para deducir:', gastosParaDeducir);
+  }, [estadisticas, gastosPorCategoria, productosMasVendidos, productosMenosVendidos, todosProductosVendidos, ventasPorMes]);
+
   const handleFiltrar = e => {
     e.preventDefault();
     cargarEstadisticas();
