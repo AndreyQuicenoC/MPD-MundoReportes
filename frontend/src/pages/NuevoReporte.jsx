@@ -117,21 +117,6 @@ const NuevoReporte = ({ esEdicion = false }) => {
     setGastos(nuevosGastos);
   };
 
-  // Nuevas funciones para manejar cantidades de productos
-  const incrementarProducto = idProducto => {
-    setCantidadesProductos(prev => ({
-      ...prev,
-      [idProducto]: (prev[idProducto] || 0) + 1,
-    }));
-  };
-
-  const decrementarProducto = idProducto => {
-    setCantidadesProductos(prev => ({
-      ...prev,
-      [idProducto]: Math.max(0, (prev[idProducto] || 0) - 1),
-    }));
-  };
-
   const cambiarCantidadProducto = (idProducto, valor) => {
     const cantidad = parseInt(valor) || 0;
     setCantidadesProductos(prev => ({
@@ -393,28 +378,14 @@ const NuevoReporte = ({ esEdicion = false }) => {
                       </span>
                     </div>
                     <div className="producto-contador">
-                      <button
-                        type="button"
-                        className="btn-contador"
-                        onClick={() => decrementarProducto(producto.id)}
-                        disabled={!cantidadesProductos[producto.id]}
-                      >
-                        −
-                      </button>
                       <input
                         type="number"
                         className="cantidad-input"
                         value={cantidadesProductos[producto.id] || 0}
                         onChange={e => cambiarCantidadProducto(producto.id, e.target.value)}
                         min="0"
+                        placeholder="Cantidad"
                       />
-                      <button
-                        type="button"
-                        className="btn-contador"
-                        onClick={() => incrementarProducto(producto.id)}
-                      >
-                        +
-                      </button>
                     </div>
                   </div>
                 ))

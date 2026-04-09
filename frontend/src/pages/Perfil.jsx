@@ -242,7 +242,7 @@ const Perfil = () => {
           )}
           {!modoEdicion && (
             <button onClick={() => setModoEdicion(true)} className="btn btn-primary">
-              Editar Perfil
+              Modificar Información Personal
             </button>
           )}
         </div>
