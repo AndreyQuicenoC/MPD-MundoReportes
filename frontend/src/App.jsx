@@ -147,7 +147,7 @@ function App() {
             <Route
               path="deducibles"
               element={
-                <RoleRoute allowedRoles={['usuario']}>
+                <RoleRoute allowedRoles={['usuario', 'admin']}>
                   <Deducibles />
                 </RoleRoute>
               }
