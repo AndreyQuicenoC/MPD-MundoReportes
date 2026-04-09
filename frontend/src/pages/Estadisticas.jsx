@@ -235,15 +235,46 @@ const Estadisticas = () => {
   };
 
   const cambiosVentas = calcularCambios(ventasPorMes.map(v => v.total_ventas));
-  const cambiosGastos = calcularCambios(gastosPorCategoria.map(g => g.total));
+  const cambiosGastos = ventasPorMes.length > 0
+    ? calcularCambios(ventasPorMes.map(v => v.total_ventas))
+    : [];
 
   const cambiosVentasData = {
-    labels: cambiosVentas.map(c => c.mes),
+    labels: cambiosVentas.map((_, idx) => {
+      if (idx + 1 < ventasPorMes.length) {
+        return `${ventasPorMes[idx].mes}/${ventasPorMes[idx].anio}`;
+      }
+      return '';
+    }),
     datasets: [
       {
         label: 'Cambio %',
         data: cambiosVentas.map(c => c.cambio),
-        backgroundColor: cambiosVentas.map(c => c.cambio >= 0 ? '#16a34a' : '#dc2626'),
+        backgroundColor: cambiosVentas.map(c => c.cambio >= 0 ? '#10B981' : '#EF4444'),
+      },
+    ],
+  };
+
+  const cambiosGastosData = {
+    labels: gastosPorCategoria.length > 0
+      ? gastosPorCategoria.slice(0, gastosPorCategoria.length - 1).map((g, idx) => `${g.categoria || 'Sin cat'} vs siguiente`)
+      : [],
+    datasets: [
+      {
+        label: 'Cambio %',
+        data: gastosPorCategoria.length > 0
+          ? gastosPorCategoria.slice(0, -1).map((g, idx) => {
+              const siguiente = gastosPorCategoria[idx + 1]?.total || 0;
+              return ((siguiente - g.total) / g.total) * 100;
+            })
+          : [],
+        backgroundColor: gastosPorCategoria.length > 0
+          ? gastosPorCategoria.slice(0, -1).map((g, idx) => {
+              const siguiente = gastosPorCategoria[idx + 1]?.total || 0;
+              const cambio = ((siguiente - g.total) / g.total) * 100;
+              return cambio >= 0 ? '#10B981' : '#EF4444';
+            })
+          : [],
       },
     ],
   };
@@ -447,6 +478,17 @@ const Estadisticas = () => {
               <div className="chart-container">
                 {cambiosVentas.length > 0 ? (
                   <Bar data={cambiosVentasData} options={chartOptions} />
+                ) : (
+                  <p className="no-data">Insuficientes datos</p>
+                )}
+              </div>
+            </div>
+
+            <div className="chart-card full-width">
+              <h2>Cambio Porcentual Categorías (Gastos)</h2>
+              <div className="chart-container">
+                {cambiosGastosData.labels.length > 0 ? (
+                  <Bar data={cambiosGastosData} options={chartOptions} />
                 ) : (
                   <p className="no-data">Insuficientes datos</p>
                 )}

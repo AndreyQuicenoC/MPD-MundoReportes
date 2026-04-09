@@ -75,23 +75,28 @@ const Reportes = () => {
       const deduciblesArr = deduciblesRes.data.results || deduciblesRes.data;
       setDeducibles(deduciblesArr);
 
-      // Calcular totales de gastos deducibles
-      const deduciblesIds = new Set(deduciblesArr.filter(d => d.activo).map(d => d.categoria));
+      // Crear map de deducibles por categoria ID
+      const deduciblesMap = {};
+      deduciblesArr.forEach(d => {
+        if (d.activo) {
+          deduciblesMap[d.categoria] = d.tipo;
+        }
+      });
+
       const totalesDeducibles = {
         ingreso: 0,
         ahorro: 0,
         transferencia: 0,
       };
 
+      // Calcular totales iterando reportes
       reportesProcessados.forEach(reporte => {
         if (reporte.gastos && Array.isArray(reporte.gastos)) {
           reporte.gastos.forEach(gasto => {
-            if (deduciblesIds.has(gasto.categoria)) {
-              const deducible = deduciblesArr.find(d => d.categoria === gasto.categoria);
-              if (deducible && deducible.activo) {
-                const tipo = deducible.tipo;
-                totalesDeducibles[tipo] += Number(gasto.valor) || 0;
-              }
+            // gasto.categoria puede ser ID o nombre, intentar ambos
+            const tipo = deduciblesMap[gasto.categoria] || deduciblesMap[gasto.categoria_nombre];
+            if (tipo) {
+              totalesDeducibles[tipo] += Number(gasto.valor) || 0;
             }
           });
         }
