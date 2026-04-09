@@ -16,7 +16,6 @@ const Perfil = () => {
   const [formData, setFormData] = useState({
     nombre: '',
     edad: '',
-    fecha_ingreso: '',
   });
 
   const [contrasenaData, setContrasenaData] = useState({
@@ -37,7 +36,6 @@ const Perfil = () => {
       setFormData({
         nombre: response.data.nombre,
         edad: response.data.edad || '',
-        fecha_ingreso: response.data.fecha_ingreso || '',
       });
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -123,7 +121,6 @@ const Perfil = () => {
     setFormData({
       nombre: perfil.nombre,
       edad: perfil.edad || '',
-      fecha_ingreso: perfil.fecha_ingreso || '',
     });
   };
 
