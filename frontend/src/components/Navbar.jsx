@@ -95,6 +95,20 @@ const Navbar = () => {
               >
                 Categorías
               </Link>
+              <Link
+                to="/automatico"
+                className={`navbar-link ${esRutaActiva('/automatico') ? 'active' : ''}`}
+                onClick={cerrarMenu}
+              >
+                Automático
+              </Link>
+              <Link
+                to="/deducibles"
+                className={`navbar-link ${esRutaActiva('/deducibles') ? 'active' : ''}`}
+                onClick={cerrarMenu}
+              >
+                Deducibles
+              </Link>
             </>
           )}
         </div>
