@@ -198,10 +198,21 @@ const NuevoReporte = ({ esEdicion = false }) => {
       navigate('/reportes');
     } catch (error) {
       if (error.response?.data) {
-        const errores = error.response.data;
-        Object.keys(errores).forEach(campo => {
-          toast.error(`${campo}: ${errores[campo]}`);
-        });
+        const datos = error.response.data;
+
+        // Manejo específico de reporte duplicado
+        if (datos.codigo_error === 'REPORTE_EXISTE') {
+          toast.error(`Ya existe un reporte para la fecha ${fecha}. Por favor selecciona otra fecha.`);
+        } else if (datos.error) {
+          toast.error(datos.error);
+        } else if (datos.mensaje) {
+          toast.error(datos.mensaje);
+        } else {
+          // Si es validación de campos
+          Object.keys(datos).forEach(campo => {
+            toast.error(`${campo}: ${datos[campo]}`);
+          });
+        }
       } else {
         toast.error(esEdicion ? 'Error al actualizar el reporte' : 'Error al crear el reporte');
       }
