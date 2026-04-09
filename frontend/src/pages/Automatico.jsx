@@ -134,124 +134,132 @@ const Automatico = () => {
         <p>Define gastos predefinidos que se pueden insertar rápidamente en reportes</p>
       </div>
 
-      {!mostrarForm && (
-        <button onClick={() => setMostrarForm(true)} className="btn btn-primary">
-          Agregar Gasto Automático
-        </button>
-      )}
+      <div className="automatico-layout">
+        {/* Columna derecha: Formulario / Botón de agregar */}
+        <div className="automatico-form-section">
+          {!mostrarForm && (
+            <button onClick={() => setMostrarForm(true)} className="btn btn-primary btn-agregar">
+              + Agregar Gasto Automático
+            </button>
+          )}
 
-      {mostrarForm && (
-        <div className="form-card">
-          <h2>{editando ? 'Editar' : 'Nuevo'} Gasto Automático</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="categoria">Categoría *</label>
-              <select
-                id="categoria"
-                name="categoria"
-                value={formData.categoria}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Selecciona una categoría</option>
-                {categorias.map(cat => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
+          {mostrarForm && (
+            <div className="form-card">
+              <h2>{editando ? 'Editar' : 'Nuevo'} Gasto Automático</h2>
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="categoria">Categoría *</label>
+                  <select
+                    id="categoria"
+                    name="categoria"
+                    value={formData.categoria}
+                    onChange={handleInputChange}
+                    required
+                  >
+                    <option value="">Selecciona una categoría</option>
+                    {categorias.map(cat => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-            <div className="form-group">
-              <label htmlFor="descripcion">Descripción *</label>
-              <input
-                type="text"
-                id="descripcion"
-                name="descripcion"
-                value={formData.descripcion}
-                onChange={handleInputChange}
-                placeholder="Descripción del gasto"
-                required
-              />
-            </div>
+                <div className="form-group">
+                  <label htmlFor="descripcion">Descripción *</label>
+                  <input
+                    type="text"
+                    id="descripcion"
+                    name="descripcion"
+                    value={formData.descripcion}
+                    onChange={handleInputChange}
+                    placeholder="Descripción del gasto"
+                    required
+                  />
+                </div>
 
-            <div className="form-group">
-              <label htmlFor="valor">Valor *</label>
-              <input
-                type="number"
-                id="valor"
-                name="valor"
-                value={formData.valor}
-                onChange={handleInputChange}
-                step="0.01"
-                min="0"
-                placeholder="0.00"
-                required
-              />
-            </div>
+                <div className="form-group">
+                  <label htmlFor="valor">Valor *</label>
+                  <input
+                    type="number"
+                    id="valor"
+                    name="valor"
+                    value={formData.valor}
+                    onChange={handleInputChange}
+                    step="0.01"
+                    min="0"
+                    placeholder="0.00"
+                    required
+                  />
+                </div>
 
-            <div className="form-group checkbox">
-              <input
-                type="checkbox"
-                id="activo"
-                name="activo"
-                checked={formData.activo}
-                onChange={handleInputChange}
-              />
-              <label htmlFor="activo">Activo</label>
-            </div>
+                <div className="form-group checkbox">
+                  <input
+                    type="checkbox"
+                    id="activo"
+                    name="activo"
+                    checked={formData.activo}
+                    onChange={handleInputChange}
+                  />
+                  <label htmlFor="activo">Activo</label>
+                </div>
 
-            <div className="form-actions">
-              <button type="button" onClick={cancelar} className="btn btn-secondary">
-                Cancelar
-              </button>
-              <button type="submit" className="btn btn-primary">
-                {editando ? 'Actualizar' : 'Crear'}
-              </button>
+                <div className="form-actions">
+                  <button type="button" onClick={cancelar} className="btn btn-secondary">
+                    Cancelar
+                  </button>
+                  <button type="submit" className="btn btn-primary">
+                    {editando ? 'Actualizar' : 'Crear'}
+                  </button>
+                </div>
+              </form>
             </div>
-          </form>
+          )}
         </div>
-      )}
 
-      {gastos.length === 0 ? (
-        <div className="empty-state">
-          <p>No hay gastos automáticos configurados</p>
-        </div>
-      ) : (
-        <div className="gastos-grid">
-          {gastos.map(gasto => (
-            <div key={gasto.id} className="gasto-card">
-              <div className="gasto-header">
-                <h3>{gasto.descripcion}</h3>
-                <span className={`badge ${gasto.activo ? 'badge-success' : 'badge-inactive'}`}>
-                  {gasto.activo ? 'Activo' : 'Inactivo'}
-                </span>
-              </div>
-
-              <div className="gasto-info">
-                <p>
-                  <strong>Categoría:</strong> {getNombreCategoria(gasto.categoria)}
-                </p>
-                <p>
-                  <strong>Valor:</strong> ${Number(gasto.valor).toLocaleString('es-CO')}
-                </p>
-              </div>
-
-              <div className="gasto-actions">
-                <button onClick={() => handleEditar(gasto)} className="btn btn-small btn-secondary">
-                  Editar
-                </button>
-                <button
-                  onClick={() => handleEliminar(gasto.id)}
-                  className="btn btn-small btn-danger"
-                >
-                  Eliminar
-                </button>
-              </div>
+        {/* Columna izquierda: Lista de gastos */}
+        <div className="automatico-list-section">
+          {gastos.length === 0 ? (
+            <div className="empty-state">
+              <p>No hay gastos automáticos configurados</p>
             </div>
-          ))}
+          ) : (
+            <div className="gastos-grid">
+              {gastos.map(gasto => (
+                <div key={gasto.id} className="gasto-card">
+                  <div className="gasto-header">
+                    <h3>{gasto.descripcion}</h3>
+                    <span className={`badge ${gasto.activo ? 'badge-success' : 'badge-inactive'}`}>
+                      {gasto.activo ? 'Activo' : 'Inactivo'}
+                    </span>
+                  </div>
+
+                  <div className="gasto-info">
+                    <p>
+                      <strong>Categoría:</strong> {getNombreCategoria(gasto.categoria)}
+                    </p>
+                    <p>
+                      <strong>Valor:</strong> ${Number(gasto.valor).toLocaleString('es-CO')}
+                    </p>
+                  </div>
+
+                  <div className="gasto-actions">
+                    <button onClick={() => handleEditar(gasto)} className="btn btn-small btn-secondary">
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleEliminar(gasto.id)}
+                      className="btn btn-small btn-danger"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

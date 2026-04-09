@@ -42,7 +42,7 @@ const Reportes = () => {
           fecha_fin: fechaFin,
         });
       } else {
-        // Cargar todos y filtrar por mes en el cliente
+        // Cargar todos sin filtro
         reportesPromise = reportesService.getReportes();
       }
 
@@ -55,12 +55,13 @@ const Reportes = () => {
         ? reportesData
         : reportesData?.results || [];
 
-      // Si filtro de mes actual, filtrar por el mes actual
-      if (!filtroActivo && filtroMes === 'actual') {
+      // Filtrar según el mes seleccionado
+      if (filtroMes === 'actual' && !filtroActivo) {
         const ahora = new Date();
         const mesActual = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}`;
         reportesProcessados = reportesProcessados.filter(r => r.fecha.startsWith(mesActual));
       }
+      // Si filtroMes es 'todos', no filtra, muestra todos
 
       setReportes(reportesProcessados);
       setDashboard(dashboardData);
