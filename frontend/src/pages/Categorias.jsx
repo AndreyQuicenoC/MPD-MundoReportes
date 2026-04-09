@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { categoriasService } from '../services/categoriasService';
+import FormModal from '../components/FormModal';
 import Pagination from '../components/Pagination';
 import ModalConfirmacion from '../components/ModalConfirmacion';
 import toast from 'react-hot-toast';
@@ -140,58 +141,50 @@ const Categorias = () => {
         )}
       </div>
 
-      {mostrarForm && (
-        <div className="form-card">
-          <h2>{categoriaEditando ? 'Editar' : 'Nueva'} Categoría</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="nombre">Nombre *</label>
-              <input
-                type="text"
-                id="nombre"
-                name="nombre"
-                value={formData.nombre}
-                onChange={handleInputChange}
-                required
-                placeholder="Ej: Servicios Públicos"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="descripcion">Descripción</label>
-              <textarea
-                id="descripcion"
-                name="descripcion"
-                value={formData.descripcion}
-                onChange={handleInputChange}
-                rows="3"
-                placeholder="Descripción opcional..."
-              />
-            </div>
-
-            <div className="form-group checkbox-group">
-              <label>
-                <input
-                  type="checkbox"
-                  name="activa"
-                  checked={formData.activa}
-                  onChange={handleInputChange}
-                />
-                Categoría activa
-              </label>
-            </div>
-
-            <div className="form-actions">
-              <button type="button" className="btn btn-secondary" onClick={cancelar}>
-                Cancelar
-              </button>
-              <button type="submit" className="btn btn-primary">
-                {categoriaEditando ? 'Actualizar' : 'Crear'}
-              </button>
-            </div>
-          </form>
+      <FormModal
+        isOpen={mostrarForm}
+        titulo={categoriaEditando ? 'Editar Categoría' : 'Nueva Categoría'}
+        submitText={categoriaEditando ? 'Actualizar' : 'Crear'}
+        onClose={cancelar}
+        onSubmit={handleSubmit}
+      >
+        <div className="form-group">
+          <label htmlFor="nombre">Nombre *</label>
+          <input
+            type="text"
+            id="nombre"
+            name="nombre"
+            value={formData.nombre}
+            onChange={handleInputChange}
+            required
+            placeholder="Ej: Servicios Públicos"
+          />
         </div>
-      )}
+
+        <div className="form-group">
+          <label htmlFor="descripcion">Descripción</label>
+          <textarea
+            id="descripcion"
+            name="descripcion"
+            value={formData.descripcion}
+            onChange={handleInputChange}
+            rows="3"
+            placeholder="Descripción opcional..."
+          />
+        </div>
+
+        <div className="form-group checkbox-group">
+          <label>
+            <input
+              type="checkbox"
+              name="activa"
+              checked={formData.activa}
+              onChange={handleInputChange}
+            />
+            Categoría activa
+          </label>
+        </div>
+      </FormModal>
 
       {categorias.length === 0 ? (
         <div className="empty-state">

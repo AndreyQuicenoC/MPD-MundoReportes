@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
+import FormModal from '../components/FormModal';
 import Pagination from '../components/Pagination';
 import ModalConfirmacion from '../components/ModalConfirmacion';
 import toast from 'react-hot-toast';
@@ -162,79 +163,71 @@ const Automatico = () => {
         )}
       </div>
 
-      {mostrarForm && (
-        <div className="form-card">
-          <h2>{gastoEditando ? 'Editar' : 'Nuevo'} Gasto Automático</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="categoria">Categoría *</label>
-              <select
-                id="categoria"
-                name="categoria"
-                value={formData.categoria}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Selecciona una categoría</option>
-                {categorias.map(cat => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="descripcion">Descripción *</label>
-              <input
-                type="text"
-                id="descripcion"
-                name="descripcion"
-                value={formData.descripcion}
-                onChange={handleInputChange}
-                placeholder="Descripción del gasto"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="valor">Valor *</label>
-              <input
-                type="number"
-                id="valor"
-                name="valor"
-                value={formData.valor}
-                onChange={handleInputChange}
-                step="0.01"
-                min="0"
-                placeholder="0.00"
-                required
-              />
-            </div>
-
-            <div className="form-group checkbox-group">
-              <label>
-                <input
-                  type="checkbox"
-                  name="activo"
-                  checked={formData.activo}
-                  onChange={handleInputChange}
-                />
-                Gasto activo
-              </label>
-            </div>
-
-            <div className="form-actions">
-              <button type="button" className="btn btn-secondary" onClick={cancelar}>
-                Cancelar
-              </button>
-              <button type="submit" className="btn btn-primary">
-                {gastoEditando ? 'Actualizar' : 'Crear'}
-              </button>
-            </div>
-          </form>
+      <FormModal
+        isOpen={mostrarForm}
+        titulo={gastoEditando ? 'Editar Gasto Automático' : 'Nuevo Gasto Automático'}
+        submitText={gastoEditando ? 'Actualizar' : 'Crear'}
+        onClose={cancelar}
+        onSubmit={handleSubmit}
+      >
+        <div className="form-group">
+          <label htmlFor="categoria">Categoría *</label>
+          <select
+            id="categoria"
+            name="categoria"
+            value={formData.categoria}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="">Selecciona una categoría</option>
+            {categorias.map(cat => (
+              <option key={cat.id} value={cat.id}>
+                {cat.nombre}
+              </option>
+            ))}
+          </select>
         </div>
-      )}
+
+        <div className="form-group">
+          <label htmlFor="descripcion">Descripción *</label>
+          <input
+            type="text"
+            id="descripcion"
+            name="descripcion"
+            value={formData.descripcion}
+            onChange={handleInputChange}
+            placeholder="Descripción del gasto"
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="valor">Valor *</label>
+          <input
+            type="number"
+            id="valor"
+            name="valor"
+            value={formData.valor}
+            onChange={handleInputChange}
+            step="0.01"
+            min="0"
+            placeholder="0.00"
+            required
+          />
+        </div>
+
+        <div className="form-group checkbox-group">
+          <label>
+            <input
+              type="checkbox"
+              name="activo"
+              checked={formData.activo}
+              onChange={handleInputChange}
+            />
+            Gasto activo
+          </label>
+        </div>
+      </FormModal>
 
       {gastos.length === 0 ? (
         <div className="empty-state">

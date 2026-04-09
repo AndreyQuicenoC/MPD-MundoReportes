@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import FormModal from '../components/FormModal';
 import Pagination from '../components/Pagination';
 import ModalConfirmacion from '../components/ModalConfirmacion';
 import toast from 'react-hot-toast';
@@ -187,90 +188,73 @@ const Deducibles = () => {
         )}
       </div>
 
-      {/* Modal Overlay para crear/editar */}
-      {mostrarModal && esAdmin && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2>{deducibleEditando ? 'Editar' : 'Nuevo'} Deducible</h2>
-              <button className="modal-close" onClick={cancelar} aria-label="Cerrar">
-                ✕
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="categoria">Categoría *</label>
-                <select
-                  id="categoria"
-                  name="categoria"
-                  value={formData.categoria}
-                  onChange={handleInputChange}
-                  required
-                  disabled={deducibleEditando}
-                >
-                  <option value="">Selecciona una categoría</option>
-                  {categorias.map(cat => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.nombre}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="tipo">Tipo de Deducible *</label>
-                <select
-                  id="tipo"
-                  name="tipo"
-                  value={formData.tipo}
-                  onChange={handleInputChange}
-                  required
-                >
-                  {TIPOS.map(tipo => (
-                    <option key={tipo.value} value={tipo.value}>
-                      {tipo.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="descripcion">Descripción</label>
-                <textarea
-                  id="descripcion"
-                  name="descripcion"
-                  value={formData.descripcion}
-                  onChange={handleInputChange}
-                  placeholder="Por qué esta categoría es deducible..."
-                  rows="3"
-                />
-              </div>
-
-              <div className="form-group checkbox-group">
-                <label>
-                  <input
-                    type="checkbox"
-                    name="activo"
-                    checked={formData.activo}
-                    onChange={handleInputChange}
-                  />
-                  Deducible activo (se restará de gastos totales)
-                </label>
-              </div>
-
-              <div className="form-actions">
-                <button type="button" className="btn btn-secondary" onClick={cancelar}>
-                  Cancelar
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  {deducibleEditando ? 'Actualizar' : 'Crear'}
-                </button>
-              </div>
-            </form>
-          </div>
+      <FormModal
+        isOpen={mostrarModal && esAdmin}
+        titulo={deducibleEditando ? 'Editar Deducible' : 'Nuevo Deducible'}
+        submitText={deducibleEditando ? 'Actualizar' : 'Crear'}
+        onClose={cancelar}
+        onSubmit={handleSubmit}
+      >
+        <div className="form-group">
+          <label htmlFor="categoria">Categoría *</label>
+          <select
+            id="categoria"
+            name="categoria"
+            value={formData.categoria}
+            onChange={handleInputChange}
+            required
+            disabled={deducibleEditando}
+          >
+            <option value="">Selecciona una categoría</option>
+            {categorias.map(cat => (
+              <option key={cat.id} value={cat.id}>
+                {cat.nombre}
+              </option>
+            ))}
+          </select>
         </div>
-      )}
+
+        <div className="form-group">
+          <label htmlFor="tipo">Tipo de Deducible *</label>
+          <select
+            id="tipo"
+            name="tipo"
+            value={formData.tipo}
+            onChange={handleInputChange}
+            required
+          >
+            {TIPOS.map(tipo => (
+              <option key={tipo.value} value={tipo.value}>
+                {tipo.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="descripcion">Descripción</label>
+          <textarea
+            id="descripcion"
+            name="descripcion"
+            value={formData.descripcion}
+            onChange={handleInputChange}
+            placeholder="Por qué esta categoría es deducible..."
+            rows="3"
+          />
+        </div>
+
+        <div className="form-group checkbox-group">
+          <label>
+            <input
+              type="checkbox"
+              name="activo"
+              checked={formData.activo}
+              onChange={handleInputChange}
+            />
+            Deducible activo (se restará de gastos totales)
+          </label>
+        </div>
+      </FormModal>
 
       {deducibles.length === 0 ? (
         <div className="empty-state">
