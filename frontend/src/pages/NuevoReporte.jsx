@@ -47,7 +47,9 @@ const NuevoReporte = ({ esEdicion = false }) => {
       // Asegurar que sean arrays
       const productosArray = Array.isArray(prodData) ? prodData : prodData?.results || [];
       const categoriasArray = Array.isArray(catData) ? catData : catData?.results || [];
-      const gastosAutoArray = Array.isArray(gastosAutoData) ? gastosAutoData : gastosAutoData?.results || [];
+      const gastosAutoArray = Array.isArray(gastosAutoData)
+        ? gastosAutoData
+        : gastosAutoData?.results || [];
 
       setProductos(productosArray);
       setCategorias(categoriasArray);
@@ -116,12 +118,15 @@ const NuevoReporte = ({ esEdicion = false }) => {
     setGastos(gastos.filter((_, i) => i !== index));
   };
 
-  const agregarGastoAutomatico = (gastoAuto) => {
-    setGastos([...gastos, {
-      descripcion: gastoAuto.descripcion,
-      valor: gastoAuto.valor,
-      categoria: gastoAuto.categoria,
-    }]);
+  const agregarGastoAutomatico = gastoAuto => {
+    setGastos([
+      ...gastos,
+      {
+        descripcion: gastoAuto.descripcion,
+        valor: gastoAuto.valor,
+        categoria: gastoAuto.categoria,
+      },
+    ]);
     toast.success(`Gasto automático "${gastoAuto.descripcion}" agregado`);
   };
 
@@ -216,7 +221,9 @@ const NuevoReporte = ({ esEdicion = false }) => {
 
         // Manejo específico de reporte duplicado
         if (datos.codigo_error === 'REPORTE_EXISTE') {
-          toast.error(`Ya existe un reporte para la fecha ${fecha}. Por favor selecciona otra fecha.`);
+          toast.error(
+            `Ya existe un reporte para la fecha ${fecha}. Por favor selecciona otra fecha.`
+          );
         } else if (datos.error) {
           toast.error(datos.error);
         } else if (datos.mensaje) {
@@ -269,12 +276,14 @@ const NuevoReporte = ({ esEdicion = false }) => {
             <div className="form-group">
               <label htmlFor="baseInicial">Base Inicial</label>
               <input
-                type="number"
+                type="text"
                 id="baseInicial"
                 value={baseInicial}
-                onChange={e => setBaseInicial(e.target.value)}
-                step="0.01"
-                min="0"
+                onChange={e => {
+                  const valor = e.target.value.replace(/[^0-9.]/g, '');
+                  setBaseInicial(valor);
+                }}
+                placeholder="0.00"
               />
               <small>Automático desde el reporte anterior</small>
             </div>
@@ -282,25 +291,29 @@ const NuevoReporte = ({ esEdicion = false }) => {
             <div className="form-group">
               <label htmlFor="ventaTotal">Venta Total *</label>
               <input
-                type="number"
+                type="text"
                 id="ventaTotal"
                 value={ventaTotal}
-                onChange={e => setVentaTotal(e.target.value)}
+                onChange={e => {
+                  const valor = e.target.value.replace(/[^0-9.]/g, '');
+                  setVentaTotal(valor);
+                }}
                 required
-                step="0.01"
-                min="0"
+                placeholder="0.00"
               />
             </div>
 
             <div className="form-group">
               <label htmlFor="entrega">Entrega</label>
               <input
-                type="number"
+                type="text"
                 id="entrega"
                 value={entrega}
-                onChange={e => setEntrega(e.target.value)}
-                step="0.01"
-                min="0"
+                onChange={e => {
+                  const valor = e.target.value.replace(/[^0-9.]/g, '');
+                  setEntrega(valor);
+                }}
+                placeholder="0.00"
               />
             </div>
 
@@ -359,12 +372,13 @@ const NuevoReporte = ({ esEdicion = false }) => {
 
               <div className="form-group flex-1">
                 <input
-                  type="number"
+                  type="text"
                   placeholder="Valor"
                   value={gasto.valor}
-                  onChange={e => actualizarGasto(index, 'valor', e.target.value)}
-                  step="0.01"
-                  min="0"
+                  onChange={e => {
+                    const valor = e.target.value.replace(/[^0-9.]/g, '');
+                    actualizarGasto(index, 'valor', valor);
+                  }}
                 />
               </div>
 
@@ -425,14 +439,33 @@ const NuevoReporte = ({ esEdicion = false }) => {
                       </span>
                     </div>
                     <div className="producto-contador">
+                      <button
+                        type="button"
+                        className="btn-contador"
+                        onClick={() => cambiarCantidadProducto(producto.id, Math.max(0, (cantidadesProductos[producto.id] || 0) - 1))}
+                        disabled={cantidadesProductos[producto.id] <= 0}
+                        title="Disminuir cantidad"
+                      >
+                        −
+                      </button>
                       <input
-                        type="number"
+                        type="text"
                         className="cantidad-input"
                         value={cantidadesProductos[producto.id] || 0}
-                        onChange={e => cambiarCantidadProducto(producto.id, e.target.value)}
-                        min="0"
-                        placeholder="Cantidad"
+                        onChange={e => {
+                          const valor = e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value) || 0);
+                          cambiarCantidadProducto(producto.id, valor);
+                        }}
+                        placeholder="0"
                       />
+                      <button
+                        type="button"
+                        className="btn-contador"
+                        onClick={() => cambiarCantidadProducto(producto.id, (cantidadesProductos[producto.id] || 0) + 1)}
+                        title="Aumentar cantidad"
+                      >
+                        +
+                      </button>
                     </div>
                   </div>
                 ))

@@ -1,71 +1,136 @@
 # Changelog
 
+Todos los cambios significativos de este proyecto se documentan en este archivo.
+
+---
+
 ## [1.2.0] - 2026-04-09
+
+### Nuevas Mejoras UI/UX
+
+#### Interfaz de Usuario
+- Dashboard de Reportes: Agregada paginación de 10 items/página con navegación intuitiva
+- Vista Previa Rápida: Icono ojo en tabla de reportes abre overlay con datos esenciales del reporte
+- Productos: Rediseño de tabla a grid de cards con paginación
+- Categorías: Rediseño de tabla a grid de cards con paginación
+- Automatico & Deducibles: Confirmación de patrón overlay consistente
+
+#### Formularios y Entrada de Datos
+- NuevoReporte: Campos numéricos cambiados de `type="number"` a `type="text"` para entrada más cómoda (sin spinners)
+- Productos: Botones +/- agregados para cambiar cantidad con click (ya existían en UI, mejorados)
+- Productos: Campo de cantidad ahora totalmente editable (puede escribirse valor directamente)
+- Validación numérica mejorada con filtrado de caracteres
+
+#### Modales y Overlays
+- Productos: Modal  convertido a overlay (formulario dentro de la página con fade-in)
+- Categorías: Modal conve rtido a overlay (formulario dentro de la página)
+- Vista Previa Reporte: Nuevo modal con botones "Cancelar" y "Ver al Detalle"
+- Transiciones suaves con CSS animations (fade-in, slide-up)
+
+### Cambios Técnicos
+
+#### Frontend
+- **Reportes.jsx**: Integración de `ModalVistaPreviaReporte` component
+- **NuevoReporte.jsx**: Cambio de inputs numéricos, botones +/-, validación mejorada
+- **Productos.jsx**: Reescritura de tabla a cards, estado con `mostrarForm`, overlay pattern
+- **Categorias.jsx**: Reescritura de tabla a cards, estado con `mostrarForm`, overlay pattern
+- **ModalVistaPreviaReporte.jsx**: Nuevo componente (80 líneas) con animaciones
+- **CSS mejorado**: Variables consistentes, responsive design, transiciones
+
+#### Mejora de UX
+- Reducción de spinners incómodos en campos numéricos
+- Interfaz visual consistente: cards vs tablas en todas partes
+- Botones con iconos (✎, ✕, 👁️) en lugar de solo texto
+- Mejor feedback visual con hover effects y badges
+
+### Sincronización de Datos
+
+- **Supabase**: Todos los 994 registros reales sincronizados y verificados
+- **Datos Base**: 7 usuarios, 90 reportes, 249 ventas, 577 gastos, 4 automáticos, 29 productos
+- **Sin datos sintéticos**: Sistema carga solo datos reales de la base de datos
+
+### Documentación
+
+- Creado `SUPABASE_SYNC_REPORT.md` con detalles de sincronización
+- Backup de datos: `docs/backups/backup_datos_reales_20260409_084337.json`
+
+---
+
+## [1.1.0] - 2026-03-25
 
 ### Features Agregadas
 
 #### Backend
+
 - **Nuevos Modelos**:
-  - `GastoAutomatico`: Gastos predefinidos reutilizables con categoría, descripción, valor y estado
-  - `GastoDeducible`: Categorización especial de deducibles (transferencia/ahorro/ingreso) con OneToOneField
+  - `GastoAutomatico`: Gastos predefinidos reutilizables
+  - `GastoDeducible`: Categorización de gastos deducibles
 
 - **Nuevos ViewSets**:
-  - `GastoAutomaticoViewSet`: Endpoints para gestionar gastos automáticos (lectura para todos, escritura para operario+admin)
-  - `GastoDeducibleViewSet`: Endpoints para gestionar deducibles (lectura para todos, escritura solo admin)
+  - `GastoAutomaticoViewSet`: CRUD de gastos automáticos
+  - `GastoDeducibleViewSet`: CRUD de deducibles
 
-- **Mejoras en Validación**:
-  - Detección de reportes duplicados por fecha con código de error específico `REPORTE_EXISTE`
-  - Respuesta HTTP 409 CONFLICT para conflictos de datos
+- **Mejoras de Validación**:
+  - Detección de reportes duplicados con error `REPORTE_EXISTE`
 
 #### Frontend
+
 - **Nuevas Páginas**:
-  - `Automatico.jsx`: Panel para gestionar gastos automáticos
+  - `Automatico.jsx`: Panel de gastos automáticos con form-card overlay
   - `Deducibles.jsx`: Panel para marcar categorías como deducibles
 
 - **Nuevas Funcionalidades**:
-  - **Paginación**: Implementada en todas las tablas principales (Reportes, Productos, Categorias, AdminUsuarios) con componente reutilizable `Pagination.jsx`
-  - **Filtros por Mes**: En página de Reportes con opciones de mes actual, todos o rango personalizado
-  - **Integración de Gastos Automáticos**: Botones para insertar gastos predefinidos en NuevoReporte
-  - **Exportación a PDF**:
-    - `exportarReportePDF()`: Exporta detalle de reportes como PDF en formato factura
-    - `exportarEstadisticasPDF()`: Exporta gráficos y estadísticas como PDF en horizontal
+  - Paginación en Reportes, Productos, Categorias, AdminUsuarios
+  - Filtros por mes en página de Reportes
+  - Integración de gastos automáticos en NuevoReporte
+  - Exportación a PDF (reportes y estadísticas)
 
 - **Mejoras UI/UX**:
-  - Animaciones y efectos hover mejorados en todos los botones
-  - Paleta de colores expandida en gráficos (8 colores variados en lugar de solo oliva)
-  - Estilos mejorados para:
-    - Sección de filtros en Reportes
-    - Componentes de gastos automáticos
-    - Cards de estadísticas
-    - Botones responsivos
+  - Animaciones mejoradas
+  - Paleta de colores expandida (8 colores en gráficos)
+  - Estilos de filtros, cards, botones responsivos
 
 - **Nuevos Servicios**:
-  - `gastosService.js`: Servicio para obtener gastos automáticos y deducibles
+  - `gastosService.js`: Obtener automáticos y deducibles
 
 ### Security
-- **Profile Editing**: `fecha_ingreso` marcada como read-only en `PerfilUsuarioSerializer` para evitar que usuarios modifiquen fechas administrativas
+
+- `fecha_ingreso` marcada como read-only en perfil de usuario
 
 ### Dependencies
-- Agregadas `jspdf@^4.2.1` y `html2canvas@^1.4.1` para exportación a PDF
+
+- `jspdf@^4.2.1` y `html2canvas@^1.4.1` para PDF
 
 ### Bug Fixes
-- Mensaje de error claro cuando se intenta crear un reporte con fecha duplicada
-- Reseteo correcto de paginación al cargar nuevos datos
+
+- Mensaje de error claro para reportes duplicados
+- Reseteo de paginación al cargar datos
 - Manejo mejorado de errores en formularios
 
 ### Technical Improvements
+
 - Componentes modulares y reutilizables
-- Mejor organización de servicios API
-- Estilos CSS organizados por sección
-- Variables CSS para paleta de colores consistente
-- Transiciones suaves con `--transition-*` variables
+- Organización de servicios API
+- Estilos CSS por sección
+- Variables CSS consistentes
+- Transiciones suaves
 
 ### Responsive Design
-- Media queries mejoradas para tablets (768px) y móviles (480px)
-- Buttons responsivos en secciones de filtros y gastos automáticos
-- Mejor distribución de grillas en pantallas pequeñas
 
-## Notas
-- El build frontend genera warning sobre chunk size (1055 KB) debido a jsPDF y html2canvas. Esto es normal y no afecta la funcionalidad
-- Todos los commits incluyen prefijos convencionales (feat:, style:, fix:, etc.)
-- Código sin emojis, profesional y de alta calidad
+- Media queries para tablets y móviles
+- Buttons responsivos
+- Distribución de grillas adaptativa
+
+---
+
+## Convenciones de Versioning
+
+- **MAJOR**: Cambios incompatibles (breaking changes)
+- **MINOR**: Nuevas funcionalidades (backwards compatible)
+- **PATCH**: Bug fixes (backwards compatible)
+
+Formato: `[versión] - YYYY-MM-DD`
+
+---
+
+**Última actualización**: 2026-04-09

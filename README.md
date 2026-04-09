@@ -277,32 +277,38 @@ npm run lint
 ## ✨ Características Principales (v1.1.0+)
 
 ### Paginación Inteligente
+
 - Todas las tablas (Reportes, Productos, Categorías, Usuarios) usan paginación de 10 items
 - Navigation buttons con disabled state en límites
 - Reseteo automático al cargar nuevos datos
 
 ### Filtrado Avanzado de Reportes
+
 - **Filtro por mes actual**: Muestra solo reportes del mes actual
 - **Filtro por rango**: Selecciona fecha inicio y fin personalizado
 - **Sin filtro**: Muestra todos los reportes
 - Aplicable tanto en cliente como en servidor
 
 ### Gastos Automáticos
+
 - Panel de administración para crear gastos reutilizables
 - Botones rápidos en formulario de reporte para insertar gastos predefinidos
 - Propago automático de descripción, valor y categoría
 
 ### Exportación a PDF
+
 - **Reportes**: Exporta detalles completos del reporte en formato factura (A4 vertical)
 - **Estadísticas**: Exporta gráficos y métricas en formato horizontal (A4 landscape)
 - Soporte automático para múltiples páginas
 
 ### Mejoras en Estadísticas
+
 - Paleta de colores expandida (8 colores variados vs solo oliva)
 - Gráficos con mejor contraste y legibilidad
 - Filtros por rango de fechas
 
 ### Seguridad Mejorada
+
 - Validación preventiva de reportes duplicados con mesaje claro
 - Campos administrativos protegidos contra edición de usuarios
 - Control de acceso por rol mejorado

@@ -238,10 +238,7 @@ const Automatico = () => {
               </div>
 
               <div className="gasto-actions">
-                <button
-                  onClick={() => handleEditar(gasto)}
-                  className="btn btn-small btn-secondary"
-                >
+                <button onClick={() => handleEditar(gasto)} className="btn btn-small btn-secondary">
                   Editar
                 </button>
                 <button

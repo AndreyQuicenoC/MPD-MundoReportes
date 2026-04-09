@@ -43,7 +43,9 @@ const Deducibles = () => {
       setDeducibles(deduciblesRes.data.results || deduciblesRes.data);
 
       // Filtrar categorías que no tengan deducible asignado
-      const deduciblesToIds = new Set((deduciblesRes.data.results || deduciblesRes.data).map(d => d.categoria));
+      const deduciblesToIds = new Set(
+        (deduciblesRes.data.results || deduciblesRes.data).map(d => d.categoria)
+      );
       const categoriasDisponibles = (categoriasRes.data.results || categoriasRes.data).filter(
         c => c.activa && !deduciblesToIds.has(c.id)
       );
@@ -150,10 +152,7 @@ const Deducibles = () => {
     <div className="deducibles-container">
       <div className="page-header">
         <h1>Gastos Deducibles</h1>
-        <p>
-          Marca categorías que aunque se registran como gastos, representan
-          ingresos o ahorros
-        </p>
+        <p>Marca categorías que aunque se registran como gastos, representan ingresos o ahorros</p>
       </div>
 
       {!mostrarForm && (

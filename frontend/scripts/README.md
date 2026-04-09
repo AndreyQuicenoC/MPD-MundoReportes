@@ -20,6 +20,7 @@ npm run test:watch  # Tests en modo watch
 ## Desarrollo
 
 ### Iniciar servidor de desarrollo
+
 ```bash
 cd frontend
 npm install  # Primera vez
@@ -29,6 +30,7 @@ npm run dev
 El servidor estará en http://localhost:5173
 
 ### Compilar para producción
+
 ```bash
 npm run build
 ```
@@ -36,6 +38,7 @@ npm run build
 Los archivos compilados estarán en `build/`
 
 ### Linting y formateo
+
 ```bash
 npm run lint        # Verificar problemas
 npm run lint:fix    # Corregir automáticamente
@@ -77,6 +80,7 @@ frontend/
 El servidor de desarrollo se ejecuta en puerto **5173** por defecto.
 
 Si necesitas cambiar el puerto, edita `vite. config.js`:
+
 ```javascript
 server: {
   port: 5173,  // Cambiar aquí

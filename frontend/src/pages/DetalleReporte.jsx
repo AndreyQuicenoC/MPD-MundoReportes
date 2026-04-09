@@ -188,9 +188,9 @@ const DetalleReporte = () => {
                   <td>${Number(venta.precio_unitario_momento || 0).toLocaleString('es-CO')}</td>
                   <td>
                     $
-                    {Number(
-                      venta.cantidad * (venta.precio_unitario_momento || 0)
-                    ).toLocaleString('es-CO')}
+                    {Number(venta.cantidad * (venta.precio_unitario_momento || 0)).toLocaleString(
+                      'es-CO'
+                    )}
                   </td>
                 </tr>
               ))}

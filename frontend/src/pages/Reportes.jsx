@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { reportesService } from '../services/reportesService';
 import estadisticasService from '../services/estadisticasService';
 import Pagination from '../components/Pagination';
+import ModalVistaPreviaReporte from '../components/ModalVistaPreviaReporte';
 import toast from 'react-hot-toast';
 import './Reportes.css';
 
@@ -16,6 +17,8 @@ const Reportes = () => {
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [paginaActual, setPaginaActual] = useState(1);
+  const [reporteSeleccionado, setReporteSeleccionado] = useState(null);
+  const [mostrarModal, setMostrarModal] = useState(false);
   const itemsPorPagina = 10;
 
   // Estados para filtros
@@ -120,6 +123,11 @@ const Reportes = () => {
     navigate(`/reportes/${id}`);
   };
 
+  const handleVistaPreviaReporte = reporte => {
+    setReporteSeleccionado(reporte);
+    setMostrarModal(true);
+  };
+
   if (loading) {
     return (
       <div className="loading">
@@ -135,7 +143,9 @@ const Reportes = () => {
       <div className="reportes-header">
         <div>
           <h1>Reportes Diarios</h1>
-          {dashboard && <p className="reportes-subtitle">Resumen del mes: {dashboard.mes_actual}</p>}
+          {dashboard && (
+            <p className="reportes-subtitle">Resumen del mes: {dashboard.mes_actual}</p>
+          )}
         </div>
         <button className="btn btn-primary" onClick={() => navigate('/reportes/nuevo')}>
           + Nuevo Reporte
@@ -150,7 +160,7 @@ const Reportes = () => {
             <select
               id="filtroMes"
               value={filtroMes}
-              onChange={(e) => setFiltroMes(e.target.value)}
+              onChange={e => setFiltroMes(e.target.value)}
               className="filtro-select"
             >
               <option value="actual">Mes Actual</option>
@@ -167,7 +177,7 @@ const Reportes = () => {
                   type="date"
                   id="fechaInicio"
                   value={fechaInicio}
-                  onChange={(e) => setFechaInicio(e.target.value)}
+                  onChange={e => setFechaInicio(e.target.value)}
                   className="filtro-input"
                 />
               </div>
@@ -178,7 +188,7 @@ const Reportes = () => {
                   type="date"
                   id="fechaFin"
                   value={fechaFin}
-                  onChange={(e) => setFechaFin(e.target.value)}
+                  onChange={e => setFechaFin(e.target.value)}
                   className="filtro-input"
                 />
               </div>
@@ -262,10 +272,11 @@ const Reportes = () => {
                     <td className="acciones-cell">
                       <button
                         className="btn btn-sm btn-info"
-                        onClick={() => handleVerDetalle(reporte.id)}
-                        title="Ver detalle"
+                        onClick={() => handleVistaPreviaReporte(reporte)}
+                        title="Vista previa"
+                        aria-label="Ver vista previa"
                       >
-                        Ver
+                        👁️
                       </button>
                       <button
                         className="btn btn-sm btn-secondary"
@@ -298,9 +309,14 @@ const Reportes = () => {
           />
         )}
       </div>
+
+      <ModalVistaPreviaReporte
+        reporte={reporteSeleccionado}
+        isOpen={mostrarModal}
+        onClose={() => setMostrarModal(false)}
+      />
     </div>
   );
 };
 
 export default Reportes;
-

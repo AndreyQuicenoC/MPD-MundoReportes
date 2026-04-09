@@ -23,9 +23,9 @@
 }
 
 .pagination-btn:hover:not(:disabled) {
-  background: #6B8E23;
+  background: #6b8e23;
   color: white;
-  border-color: #6B8E23;
+  border-color: #6b8e23;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(107, 142, 35, 0.2);
 }
@@ -59,16 +59,16 @@
 }
 
 .pagination-numero:hover {
-  background: #6B8E23;
+  background: #6b8e23;
   color: white;
-  border-color: #6B8E23;
+  border-color: #6b8e23;
   transform: scale(1.05);
 }
 
 .pagination-numero.active {
-  background: #6B8E23;
+  background: #6b8e23;
   color: white;
-  border-color: #6B8E23;
+  border-color: #6b8e23;
   font-weight: bold;
 }
 

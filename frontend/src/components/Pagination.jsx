@@ -29,7 +29,7 @@ const Pagination = ({ paginaActual, totalItems, itemsPorPagina, onPaginaChange }
     }
   };
 
-  const handlePagina = (pagina) => {
+  const handlePagina = pagina => {
     onPaginaChange(pagina);
   };
 
@@ -68,7 +68,7 @@ const Pagination = ({ paginaActual, totalItems, itemsPorPagina, onPaginaChange }
       </button>
 
       <div className="pagination-numeros">
-        {getNumerosPagina().map((numero, idx) => (
+        {getNumerosPagina().map((numero, idx) =>
           numero === '...' ? (
             <span key={`dots-${idx}`} className="pagination-dots">
               ...
@@ -84,7 +84,7 @@ const Pagination = ({ paginaActual, totalItems, itemsPorPagina, onPaginaChange }
               {numero}
             </button>
           )
-        ))}
+        )}
       </div>
 
       <button
