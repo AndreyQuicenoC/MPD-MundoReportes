@@ -229,64 +229,66 @@ const NuevoReporte = ({ esEdicion = false }) => {
         <section className="form-section">
           <h2>Datos del Reporte</h2>
 
-          <div className="form-group">
-            <label htmlFor="fecha">Fecha *</label>
-            <input
-              type="date"
-              id="fecha"
-              value={fecha}
-              onChange={e => setFecha(e.target.value)}
-              required
-            />
-          </div>
+          <div className="datos-grid">
+            <div className="form-group">
+              <label htmlFor="fecha">Fecha *</label>
+              <input
+                type="date"
+                id="fecha"
+                value={fecha}
+                onChange={e => setFecha(e.target.value)}
+                required
+              />
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="baseInicial">Base Inicial</label>
-            <input
-              type="number"
-              id="baseInicial"
-              value={baseInicial}
-              onChange={e => setBaseInicial(e.target.value)}
-              step="0.01"
-              min="0"
-            />
-            <small>Automático desde el reporte anterior</small>
-          </div>
+            <div className="form-group">
+              <label htmlFor="baseInicial">Base Inicial</label>
+              <input
+                type="number"
+                id="baseInicial"
+                value={baseInicial}
+                onChange={e => setBaseInicial(e.target.value)}
+                step="0.01"
+                min="0"
+              />
+              <small>Automático desde el reporte anterior</small>
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="ventaTotal">Venta Total *</label>
-            <input
-              type="number"
-              id="ventaTotal"
-              value={ventaTotal}
-              onChange={e => setVentaTotal(e.target.value)}
-              required
-              step="0.01"
-              min="0"
-            />
-          </div>
+            <div className="form-group">
+              <label htmlFor="ventaTotal">Venta Total *</label>
+              <input
+                type="number"
+                id="ventaTotal"
+                value={ventaTotal}
+                onChange={e => setVentaTotal(e.target.value)}
+                required
+                step="0.01"
+                min="0"
+              />
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="entrega">Entrega</label>
-            <input
-              type="number"
-              id="entrega"
-              value={entrega}
-              onChange={e => setEntrega(e.target.value)}
-              step="0.01"
-              min="0"
-            />
-          </div>
+            <div className="form-group">
+              <label htmlFor="entrega">Entrega</label>
+              <input
+                type="number"
+                id="entrega"
+                value={entrega}
+                onChange={e => setEntrega(e.target.value)}
+                step="0.01"
+                min="0"
+              />
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="observacion">Observación</label>
-            <textarea
-              id="observacion"
-              value={observacion}
-              onChange={e => setObservacion(e.target.value)}
-              rows="3"
-              placeholder="Notas adicionales del día..."
-            />
+            <div className="form-group">
+              <label htmlFor="observacion">Observación</label>
+              <textarea
+                id="observacion"
+                value={observacion}
+                onChange={e => setObservacion(e.target.value)}
+                rows="3"
+                placeholder="Notas adicionales del día..."
+              />
+            </div>
           </div>
         </section>
 
@@ -294,8 +296,8 @@ const NuevoReporte = ({ esEdicion = false }) => {
         <section className="form-section">
           <div className="section-header">
             <h2>Gastos del Día</h2>
-            <button type="button" onClick={agregarGasto} className="btn btn-add">
-              ➕ Agregar Gasto
+            <button type="button" onClick={agregarGasto} className="btn btn-action">
+              Agregar Gasto
             </button>
           </div>
 
