@@ -11,7 +11,7 @@ const RankingProductos = ({ productosTop = [], productosBajo = [] }) => {
   const RankingCard = ({ titulo, productos, icono }) => (
     <div className="ranking-card">
       <div className="ranking-header">
-        <div className="ranking-icon">{icono}</div>
+        <span className="ranking-icon">{icono}</span>
         <h3>{titulo}</h3>
       </div>
 
@@ -47,14 +47,14 @@ const RankingProductos = ({ productosTop = [], productosBajo = [] }) => {
   return (
     <div className="ranking-productos-container">
       <RankingCard
-        titulo="Top Productos Más Vendidos"
+        titulo="Productos Más Vendidos"
         productos={productosTop}
-        icono="🔝"
+        icono="★"
       />
       <RankingCard
-        titulo="Top Productos Menos Vendidos"
+        titulo="Productos Menos Vendidos"
         productos={productosBajo}
-        icono="📉"
+        icono="▼"
       />
     </div>
   );

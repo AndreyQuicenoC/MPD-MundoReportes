@@ -110,31 +110,46 @@
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  min-height: 100px;
 }
 
-/* Scrollbar styling */
+/* Scrollbar styling - enhanced for visibility */
 .form-modal-content::-webkit-scrollbar {
-  width: 10px;
+  width: 12px;
+  background: transparent;
 }
 
 .form-modal-content::-webkit-scrollbar-track {
   background: #f1f5f9;
-  border-radius: 10px;
-  margin-right: 2px;
+  border-radius: 12px;
+  margin: 5px 3px;
 }
 
 .form-modal-content::-webkit-scrollbar-thumb {
   background: #9b933b;
-  border-radius: 10px;
-  border: 2px solid #f1f5f9;
+  border-radius: 12px;
+  border: 3px solid #f1f5f9;
   transition: background 0.2s ease;
+  min-height: 40px;
 }
 
 .form-modal-content::-webkit-scrollbar-thumb:hover {
   background: #8b8429;
+  border-color: #e5e7eb;
+}
+
+.form-modal-content::-webkit-scrollbar-thumb:active {
+  background: #7a7523;
+}
+
+/* Firefox scrollbar */
+.form-modal-content {
+  scrollbar-color: #9b933b #f1f5f9;
+  scrollbar-width: thin;
 }
 
 /* Form Group Styles */

@@ -184,7 +184,7 @@ class GastoDeducibleViewSet(viewsets.ModelViewSet):
     ordering = ["categoria"]
 
     def get_permissions(self):
-        """Permisos dinámicos: solo admin puede crear/modificar deducibles."""
+        """Permisos dinámicos: operarios y admin pueden crear/modificar deducibles."""
         if self.request.method in ["POST", "PUT", "PATCH", "DELETE"]:
-            return [IsAuthenticated(), EsAdministrador()]
+            return [IsAuthenticated(), EsOperarioOAdmin()]
         return [IsAuthenticated()]
