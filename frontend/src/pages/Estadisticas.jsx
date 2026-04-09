@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { estadisticasService } from '../services/estadisticasService';
 import api from '../services/api';
+import RankingProductos from '../components/RankingProductos';
+import RankingMeses from '../components/RankingMeses';
+import ProductosTodosVendidos from '../components/ProductosTodosVendidos';
 import {
   Chart as ChartJS,
   ArcElement,
@@ -42,6 +45,7 @@ const Estadisticas = () => {
   const [gastosPorCategoria, setGastosPorCategoria] = useState([]);
   const [productosMasVendidos, setProductosMasVendidos] = useState([]);
   const [productosMenosVendidos, setProductosMenosVendidos] = useState([]);
+  const [todosProductosVendidos, setTodosProductosVendidos] = useState([]);
   const [ventasPorMes, setVentasPorMes] = useState([]);
   const [deducibles, setDeducibles] = useState([]);
   const [gastosParaDeducir, setGastosParaDeducir] = useState({
@@ -67,10 +71,11 @@ const Estadisticas = () => {
       if (fechaInicio) params.fecha_inicio = fechaInicio;
       if (fechaFin) params.fecha_fin = fechaFin;
 
-      const [stats, gastos, productos, ventas, deduciblesRes] = await Promise.all([
+      const [stats, gastos, productos, productosTotal, ventas, deduciblesRes] = await Promise.all([
         estadisticasService.getEstadisticasVentas(params),
         estadisticasService.getGastosPorCategoria(params),
         estadisticasService.getProductosMasVendidos(params),
+        estadisticasService.getTodosProductosVendidos(params),
         estadisticasService.getVentasMensuales(),
         api.get('/gastos/deducibles/'),
       ]);
@@ -78,6 +83,7 @@ const Estadisticas = () => {
       setEstadisticas(stats);
       setGastosPorCategoria(gastos);
       setProductosMasVendidos(productos);
+      setTodosProductosVendidos(productosTotal);
       setVentasPorMes(ventas);
 
       // Procesar deducibles
@@ -494,6 +500,13 @@ const Estadisticas = () => {
                 )}
               </div>
             </div>
+
+            {/* Nuevos Componentes de Rankings y Productos */}
+            <RankingMeses ventasPorMes={ventasPorMes} chartOptions={chartOptions} />
+
+            <ProductosTodosVendidos productos={todosProductosVendidos} chartOptions={chartOptions} />
+
+            <RankingProductos productosTop={productosMasVendidos} productosBajo={productosMenosVendidos} />
           </div>
         </div>
       )}

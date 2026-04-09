@@ -76,6 +76,19 @@ const estadisticasService = {
   },
 
   /**
+   * Obtener TODOS los productos vendidos sin límite.
+   *
+   * @param {Object} params - Parámetros (fecha_inicio, fecha_fin)
+   * @returns {Promise} Todos los productos vendidos
+   */
+  getTodosProductosVendidos: async (params = {}) => {
+    const response = await apiClient.get('/estadisticas/productos/mas-vendidos/', {
+      params: { ...params, limite: 9999 },
+    });
+    return response.data;
+  },
+
+  /**
    * Obtener resumen completo de un periodo.
    *
    * @param {string} fechaInicio - Fecha de inicio (YYYY-MM-DD)
