@@ -12,11 +12,10 @@ import './Deducibles.css';
  * Permite marcar categorías como deducibles (ingresos, ahorros, transferencias)
  * que se restan del total de gastos en cálculos.
  *
- * Solo admins pueden crear/editar. Usuarios pueden visualizar.
+ * Accesible a todos los usuarios operarios para configurar deducibles.
  */
 const Deducibles = () => {
   const { usuario } = useAuth();
-  const esAdmin = usuario?.rol === 'admin';
 
   const [deducibles, setDeducibles] = useState([]);
   const [categorias, setCategorias] = useState([]);
@@ -181,21 +180,18 @@ const Deducibles = () => {
           <h1>Gastos Deducibles</h1>
           <p>Categorías que aunque se registran como gastos, representan ingresos o ahorros</p>
         </div>
-        {esAdmin && (
-          <button onClick={() => setMostrarModal(true)} className="btn btn-primary">
-            + Nuevo Deducible
-          </button>
-        )}
+        <button onClick={() => setMostrarModal(true)} className="btn btn-primary">
+          + Nuevo Deducible
+        </button>
       </div>
 
-      {esAdmin && (
-        <FormModal
-          isOpen={mostrarModal}
-          titulo={deducibleEditando ? 'Editar Deducible' : 'Nuevo Deducible'}
-          submitText={deducibleEditando ? 'Actualizar' : 'Crear'}
-          onClose={cancelar}
-          onSubmit={handleSubmit}
-        >
+      <FormModal
+        isOpen={mostrarModal}
+        titulo={deducibleEditando ? 'Editar Deducible' : 'Nuevo Deducible'}
+        submitText={deducibleEditando ? 'Actualizar' : 'Crear'}
+        onClose={cancelar}
+        onSubmit={handleSubmit}
+      >
         <div className="form-group">
           <label htmlFor="categoria">Categoría *</label>
           <select
@@ -257,7 +253,7 @@ const Deducibles = () => {
         </div>
       </FormModal>
 
-      {deducibles.length === 0 ? (
+      {deducibles.length === 0 ? ( 
         <div className="empty-state">
           <p>No hay deducibles configurados</p>
         </div>
@@ -277,24 +273,22 @@ const Deducibles = () => {
                   </span>
                 </div>
 
-                {esAdmin && (
-                  <div className="card-actions">
-                    <button
-                      className="btn btn-sm btn-secondary"
-                      onClick={() => handleEditar(deducible)}
-                      title="Editar"
-                    >
-                      ✎
-                    </button>
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => handleEliminar(deducible.id)}
-                      title="Eliminar"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                )}
+                <div className="card-actions">
+                  <button
+                    className="btn btn-sm btn-secondary"
+                    onClick={() => handleEditar(deducible)}
+                    title="Editar"
+                  >
+                    ✎
+                  </button>
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => handleEliminar(deducible.id)}
+                    title="Eliminar"
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
             ))}
           </div>

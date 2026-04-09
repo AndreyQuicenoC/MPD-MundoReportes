@@ -177,3 +177,64 @@
     font-size: 0.9rem;
   }
 }
+
+/* Print styles */
+@media print {
+  .detalle-reporte-container {
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  .detalle-header {
+    display: none !important;
+  }
+
+  .detalle-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    page-break-inside: avoid;
+  }
+
+  .detalle-card {
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #ddd;
+    background: white !important;
+  }
+
+  .detalle-card h2 {
+    color: #333;
+  }
+
+  .info-row {
+    background: #f9f9f9 !important;
+    page-break-inside: avoid;
+  }
+
+  .productos-tabla,
+  .productos-tabla thead,
+  .productos-tabla tbody {
+    page-break-inside: avoid;
+  }
+
+  .productos-tabla tr {
+    page-break-inside: avoid;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+
+  th {
+    background: #f0f0f0 !important;
+    font-weight: 600;
+  }
+}

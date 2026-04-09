@@ -246,3 +246,76 @@
     grid-column: 1;
   }
 }
+
+/* Print styles */
+@media print {
+  .estadisticas-container {
+    padding: 10px;
+  }
+
+  .filtros-section {
+    display: none !important;
+  }
+
+  .stats-cards {
+    gap: 10px;
+    page-break-inside: avoid;
+  }
+
+  .stat-card {
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #ddd;
+    background: white !important;
+    padding: 10px;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .charts-grid {
+    gap: 15px;
+  }
+
+  .chart-card {
+    page-break-inside: avoid;
+    page-break-after: avoid;
+    box-shadow: none;
+    border: 1px solid #ddd;
+    background: white !important;
+    padding: 10px;
+  }
+
+  .chart-card.full-width {
+    grid-column: 1;
+  }
+
+  .chart-header {
+    margin-bottom: 10px;
+  }
+
+  .chart-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .chart-controls {
+    display: none;
+  }
+
+  .chart-container {
+    height: auto;
+    page-break-inside: avoid;
+  }
+
+  .chart-card.full-width .chart-container {
+    height: 350px;
+  }
+
+  /* Hide interactive elements */
+  .btn-chart-type,
+  .loading-container,
+  .no-data {
+    display: none;
+  }
+}
