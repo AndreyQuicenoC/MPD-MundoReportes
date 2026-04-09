@@ -102,7 +102,7 @@ const Footer = () => {
               <span>Usuario: {usuario?.nombre}</span>
             </li>
             <li>
-              <span>Rol: {esAdmin ? 'Administrador' : 'Operario'}</span>
+              <span className="footer-role">Rol: {esAdmin ? 'Administrador' : 'Operario'}</span>
             </li>
             <li>
               <span>© {currentYear} Mundo Pinturas Diana</span>
@@ -113,7 +113,7 @@ const Footer = () => {
 
       <div className="footer-bottom">
         <p>
-          Desarrollado con ❤️ para <strong>Mundo Pinturas Diana</strong> | Todos los derechos
+          Desarrollado para <strong>Mundo Pinturas Diana</strong> | Todos los derechos
           reservados © {currentYear}
         </p>
       </div>

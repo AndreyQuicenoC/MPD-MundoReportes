@@ -1,10 +1,10 @@
 /* Footer Styles */
 .footer {
-  background: linear-gradient(135deg, #001520 0%, #0f4c6a 100%);
+  background: linear-gradient(135deg, #0a0f15 0%, #1a3a4a 100%);
   color: #e0e0e0;
   padding: 3rem 1rem 1rem;
   margin-top: auto;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .footer-container {
@@ -74,6 +74,11 @@
   color: #d3d3d3;
   font-size: 0.95rem;
   display: block;
+}
+
+.footer-role {
+  color: #9b933b;
+  font-weight: 500;
 }
 
 .footer-bottom {
