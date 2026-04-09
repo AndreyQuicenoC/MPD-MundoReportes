@@ -338,6 +338,14 @@ const Estadisticas = () => {
       {/* Tarjetas de resumen */}
       {estadisticas && (
         <div ref={pdfRef}>
+          {/* Sección inicial con margen */}
+          <div className="pdf-header-section">
+            <h1 className="pdf-title">Reporte de Estadísticas</h1>
+            <p className="pdf-date">
+              Generado el {new Date().toLocaleDateString('es-CO')}
+            </p>
+          </div>
+
           <div className="stats-cards">
             <div className="stat-card">
               <h3>Total Ventas</h3>
@@ -408,11 +416,14 @@ const Estadisticas = () => {
             </div>
           )}
 
-          {/* Gráficos */}
+          {/* Gráficos con descripciones */}
           <div className="charts-grid">
             {/* Fila 1: Gastos por Categoría + Todos los Productos Vendidos */}
             <div className="chart-card">
-              <h2>Gastos por Categoría</h2>
+              <div className="pdf-section-header">
+                <h2>Gastos por Categoría</h2>
+                <p className="pdf-description">Distribución de gastos acumulados por categoría. Identifica qué áreas generan mayor gasto.</p>
+              </div>
               <div className="chart-container">
                 {gastosPorCategoria.length > 0 ? (
                   <Pie data={gastosData} options={chartOptions} />
@@ -423,7 +434,10 @@ const Estadisticas = () => {
             </div>
 
             <div className="chart-card">
-              <h2>Todos los Productos Vendidos</h2>
+              <div className="pdf-section-header">
+                <h2>Todos los Productos Vendidos</h2>
+                <p className="pdf-description">Ranking completo de productos ordenados por cantidad vendida en el período.</p>
+              </div>
               <div className="chart-container-horizontal">
                 <ProductosTodosVendidos productos={todosProductosVendidos} chartOptions={chartOptions} />
               </div>
@@ -434,8 +448,11 @@ const Estadisticas = () => {
 
             {/* Fila 3: Evolución de Ventas */}
             <div className="chart-card full-width">
-              <div className="chart-header">
+              <div className="pdf-section-header">
                 <h2>Evolución de Ventas (Acumulado Mensual)</h2>
+                <p className="pdf-description">Análisis temporal de ventas por mes. Visualiza tendencias y variaciones en el rendimiento a lo largo del período.</p>
+              </div>
+              <div className="chart-header">
                 <div className="chart-controls">
                   <button
                     className={`btn-chart-type ${tipoGraficoVentas === 'bar' ? 'active' : ''}`}
@@ -472,12 +489,18 @@ const Estadisticas = () => {
 
             {/* Fila 4: % Mejora Entre Meses */}
             <div className="chart-card full-width">
-              <h2>% Mejora Entre Meses</h2>
+              <div className="pdf-section-header">
+                <h2>% Mejora Entre Meses</h2>
+                <p className="pdf-description">Comparativa de cambios porcentuales mes a mes en ventas y gastos. Positivo = mejora, Negativo = declive.</p>
+              </div>
               <div className="chart-container">
                 <RankingMeses ventasPorMes={ventasPorMes} chartOptions={chartOptions} />
               </div>
             </div>
           </div>
+
+          {/* Margen final */}
+          <div className="pdf-footer-section"></div>
         </div>
       )}
     </div>

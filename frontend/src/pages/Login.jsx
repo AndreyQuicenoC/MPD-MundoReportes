@@ -2,7 +2,7 @@
  * Página de inicio de sesión.
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
@@ -12,8 +12,33 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [tiempoEspera, setTiempoEspera] = useState(0);
+  const [tiempoAgotado, setTiempoAgotado] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+
+  // Efecto para el timer del servidor
+  useEffect(() => {
+    let contador;
+    let inicioTiempo;
+
+    if (loading) {
+      inicioTiempo = Date.now();
+      contador = setInterval(() => {
+        const tiempoTranscurrido = Math.floor((Date.now() - inicioTiempo) / 1000);
+        setTiempoEspera(tiempoTranscurrido);
+
+        if (tiempoTranscurrido >= 60) {
+          setTiempoAgotado(true);
+          clearInterval(contador);
+        }
+      }, 1000);
+    }
+
+    return () => {
+      if (contador) clearInterval(contador);
+    };
+  }, [loading]);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -25,6 +50,8 @@ const Login = () => {
 
     console.log('🔐 [LOGIN PAGE] Intentando login:', { email, password: '***' });
     setLoading(true);
+    setTiempoEspera(0);
+    setTiempoAgotado(false);
 
     try {
       console.log('🔐 [LOGIN PAGE] Llamando a login()...');
@@ -42,6 +69,8 @@ const Login = () => {
       toast.error(mensaje);
     } finally {
       setLoading(false);
+      setTiempoEspera(0);
+      setTiempoAgotado(false);
     }
   };
 
@@ -91,6 +120,30 @@ const Login = () => {
             {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </button>
         </form>
+
+        {/* Indicador de espera del servidor */}
+        {loading && tiempoEspera >= 3 && (
+          <div className="servidor-espera">
+            {!tiempoAgotado ? (
+              <>
+                <div className="espera-spinner"></div>
+                <p className="espera-mensaje">
+                  El servidor se está activando...
+                </p>
+                <p className="espera-tiempo">
+                  {tiempoEspera < 60 ? `Esperando: ${tiempoEspera}s / 60s` : 'Tiempo agotado'}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="espera-error">⚠️ Le está tomando más de lo esperado</p>
+                <p className="espera-contacto">
+                  El servidor no responde. Por favor contacta con soporte.
+                </p>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

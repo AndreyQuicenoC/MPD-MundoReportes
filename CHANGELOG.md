@@ -4,6 +4,79 @@ Todos los cambios significativos de este proyecto se documentan en este archivo.
 
 ---
 
+## [1.2.1] - 2026-04-09
+
+### Correcciones Críticas
+
+#### Backend
+- **Serializers**: Agregado campo `fecha` al `ActualizarReporteDiarioSerializer` para permitir edición de fechas en reportes
+- **Validación de Fecha**: Implementada validación que previene duplicados pero permite actualizar la fecha del mismo reporte
+- **Endpoint Deducibles**: Nuevo endpoint `/estadisticas/deducibles/` para calcular gastos deducibles correctamente
+- **Cálculo de Deducibles**: Implementado método `deducibles_por_tipo()` que suma valores reales de gastos por tipo (ingreso/ahorro/transferencia)
+
+#### Frontend
+- **Edición de Reportes**: Ahora permite cambiar la fecha al editar un reporte existente con validación mejorada
+- **Cálculo de Deducibles**: Integración de nuevo endpoint para cálculos precisos en lugar de simulación
+- **Formulario NuevoReporte**: Estandarización de tamaños de inputs en gastos (descripción, valor, categoría) - todos en flex-1 (iguales)
+
+### Nuevas Características
+
+#### Login Mejorado
+- **Indicador de Servidor**: Contador visual (0-60 segundos) que muestra tiempo de espera al cargar servidor
+- **Mensajería Amigable**: Mensaje "El servidor se está activando..." vs "Le está tomando más de lo esperado"
+- **Contacto de Soporte**: Si supera 60 segundos, se instruye al usuario contactar soporte
+- **Diseño Minimalista**: Ocupa poco espacio, claro y profesional, aparece después de 3 segundos de carga
+
+#### PDF Exportación - Extrema Calidad Visual
+- **Títulosde Secciones**: Agregado "Reporte de Estadísticas" con fecha de generación
+- **Descripciones de Gráficos**: Cada gráfico tiene una breve descripción explicando su propósito:
+  - "Distribución de gastos acumulados por categoría"
+  - "Ranking completo de productos ordenados por cantidad vendida"
+  - "Análisis temporal de ventas por mes"
+  - "Comparativa de cambios porcentuales mes a mes"
+- **Márgenes Profesionales**: Sección superior (pdf-header-section) e inferior (pdf-footer-section) para distribución visual
+- **Tarjetas de Métricas**: Diseño mejorado con bordes izquierdos (border-left) para mayor claridad
+- **Gráficos Optimizados**: Ajuste de alturas máximas, distribución uniforme, mejor utilización de espacio
+- **Tabla Visual Clara**: Diseño de 2 columnas para stat-cards, ideal para página vertical A4
+- **Orientación**: PDF en orientación portrait (vertical) para mejor encaje en hoja estándar
+
+### Cambios Técnicos
+
+#### Backend
+- **estadisticas/services.py**: Agregado import de `GastoDeducible`
+- **estadisticas/views.py**: Nueva clase `DeduciblesView` con endpoint GET
+- **estadisticas/urls.py**: Nuevo path para deducibles endpoint
+- **reportes/serializers.py**: Campo `fecha` opcional con validación personalizada en `ActualizarReporteDiarioSerializer`
+- **reportes/views.py**: Contexto pasado a serializer con reporte_id para validación de duplicados
+
+#### Frontend
+- **Login.jsx**: Implementado contador de tiempo con useEffect, manejo de timeout (60s)
+- **Login.css**: Nuevos estilos: @keyframes spin, .servidor-espera, .espera-spinner, .espera-mensaje
+- **Estadisticas.jsx**: Agregadas secciones pdf-header-section y pdf-footer-section para márgenes
+- **Estadisticas.jsx**: Nuevos componentes pdf-section-header y pdf-description en cada gráfico
+- **Estadisticas.css**: @media print completo rediseñado para tabla visual, descripciones, márgenes
+- **NuevoReporte.jsx**: Cambio de flex-2 a flex-1 en primer input de gastos
+- **pdf.js**: Cambio orientación exportación estadísticas de landscape a portrait
+- **estadisticasService.js**: Método `getDeducibles(params)` para consultar endpoint deducibles
+
+#### Estructura de Proyecto
+- **Organización**: Movido `verificar-despliegue.ps1` a carpeta `scripts/` para mejor organización
+
+### Mejoras UX/UI
+
+- **Inputs estandarizados**: Forma uniforme y consistente en formularios
+- **Login profesional**: Pantalla de carga con información clara y amigable
+- **PDF de Calidad Premium**: Reporte visualmente atractivo y bien estructurado, ideal para presentaciones
+
+### Testing
+
+- Validación de edición de reportes con cambio de fecha
+- Verificación de cálculo correcto de deducibles en período personalizado
+- Confirmación de PDF export en portrait con márgenes adecuados
+- Prueba de descuento correcto de gastos deducibles en "Gasto Ajustado"
+
+---
+
 ## [1.2.0] - 2026-04-09
 
 ### Nuevas Mejoras UI/UX

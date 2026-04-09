@@ -192,6 +192,7 @@ class ActualizarReporteDiarioSerializer(serializers.Serializer):
     Permite actualizar datos del reporte, gastos y ventas.
     """
 
+    fecha = serializers.DateField(required=False)
     base_inicial = serializers.DecimalField(
         max_digits=12, decimal_places=2, min_value=Decimal("0"), required=False
     )
@@ -205,3 +206,31 @@ class ActualizarReporteDiarioSerializer(serializers.Serializer):
 
     gastos = GastoInputSerializer(many=True, required=False)
     ventas_productos = VentaProductoInputSerializer(many=True, required=False)
+
+    def validate_fecha(self, value):
+        """
+        Validar que no exista otro reporte con la misma fecha.
+        Excluye el reporte actual que se está actualizando.
+
+        Args:
+            value: Fecha a validar
+
+        Returns:
+            date: Fecha validada
+
+        Raises:
+            serializers.ValidationError: Si ya existe otro reporte con esa fecha
+        """
+        # Se asume que el ID del reporte se pasa en el contexto
+        reporte_id = self.context.get('reporte_id')
+
+        if reporte_id:
+            # Excluir el reporte actual
+            if ReporteDiario.objects.filter(fecha=value).exclude(id=reporte_id).exists():
+                raise serializers.ValidationError(f"Ya existe otro reporte para la fecha {value}")
+        else:
+            # Si no hay ID, validar que no exista ninguno
+            if ReporteDiario.objects.filter(fecha=value).exists():
+                raise serializers.ValidationError(f"Ya existe un reporte para la fecha {value}")
+
+        return value
