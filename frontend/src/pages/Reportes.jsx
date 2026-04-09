@@ -32,7 +32,7 @@ const Reportes = () => {
   const itemsPorPagina = 10;
 
   // Estados para filtros
-  const [filtroMes, setFiltroMes] = useState('actual'); // 'actual' o 'todos'
+  const [filtroMes, setFiltroMes] = useState('todos'); // 'actual' o 'todos' - DEFAULT: todos
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
   const [filtroActivo, setFiltroActivo] = useState(false);
@@ -157,28 +157,19 @@ const Reportes = () => {
 
   const limpiarFiltros = () => {
     console.log('Limpiando filtros');
-    setFiltroMes('actual');
+    setFiltroMes('todos');
     setFechaInicio('');
     setFechaFin('');
     setFiltroActivo(false);
     // Pasar valores limpios directamente
-    cargarDatos('actual', false, '', '');
+    cargarDatos('todos', false, '', '');
     toast.success('Filtros limpiados');
   };
 
-  // useEffect para detectar cambios en el select de filtroMes - recarga automáticamente
-  useEffect(() => {
-    console.log('filtroMes cambió a:', filtroMes);
-    if (filtroMes === 'todos') {
-      console.log('Usuario seleccionó TODOS - cargando automáticamente');
-      cargarDatos(filtroMes, false, '', '');
-    }
-  }, [filtroMes]);
-
   // useEffect inicial - solo cargar una vez
   useEffect(() => {
-    console.log('Componente montado - cargando datos iniciales con filtroMes=actual');
-    cargarDatos('actual', false, '', '');
+    console.log('Componente montado - cargando todos los reportes por defecto');
+    cargarDatos('todos', false, '', '');
   }, []);
 
   // Calcular índices para la paginación

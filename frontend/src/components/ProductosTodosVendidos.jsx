@@ -5,13 +5,23 @@ import '../styles/ProductosTodosVendidos.css';
 /**
  * Componente de Gráfico de Todos los Productos Vendidos.
  * Muestra barras horizontales de todos los productos ordenados por cantidad vendida.
+ * Diseño preciso basado en imagen de referencia.
  */
 const ProductosTodosVendidos = ({ productos = [], chartOptions = {} }) => {
-  // Paleta de colores mejorada
+  // Paleta de colores en degradado oliva/amarillo (similar a la imagen)
   const paletaColores = [
-    '#9b933b', '#2563eb', '#dc2626', '#16a34a', '#f59e0b',
-    '#8b5cf6', '#06b6d4', '#ec4899', '#6366f1', '#14b8a6',
-    '#ca8a04', '#7c3aed', '#059669', '#e11d48', '#7c2d12',
+    '#9B933B', // Oliva oscuro (principal)
+    '#A9A347', // Oliva
+    '#B7B353', // Oliva claro
+    '#C5C35F', // Amarillo oliva
+    '#D3D36B', // Amarillo oliva claro
+    '#BFBA4F', // Oliva medio
+    '#A89E43', // Oliva oscuro
+    '#918237', // Marrón oliva
+    '#7A662B', // Marrón oscuro
+    '#C4BF59', // Amarillo
+    '#D4CE6D', // Amarillo claro
+    '#AA9F39', // Oliva
   ];
 
   const dataGrafico = {
@@ -21,19 +31,34 @@ const ProductosTodosVendidos = ({ productos = [], chartOptions = {} }) => {
         label: 'Cantidad Vendida',
         data: productos.map((p) => p.cantidad_total),
         backgroundColor: productos.map((_, idx) => paletaColores[idx % paletaColores.length]),
-        borderRadius: 4,
+        borderRadius: 3,
         borderSkipped: false,
       },
     ],
   };
 
   const opciones = {
-    ...chartOptions,
-    indexAxis: 'y',
+    indexAxis: 'y', // Barras horizontales
+    responsive: true,
+    maintainAspectRatio: true,
     plugins: {
-      ...chartOptions.plugins,
       legend: {
-        display: false,
+        display: true,
+        position: 'bottom',
+        labels: {
+          font: {
+            size: 12,
+          },
+          color: '#666',
+          padding: 15,
+        },
+      },
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            return `${context.dataset.label}: ${context.parsed.x}`;
+          },
+        },
       },
     },
     scales: {
@@ -41,6 +66,14 @@ const ProductosTodosVendidos = ({ productos = [], chartOptions = {} }) => {
         beginAtZero: true,
         ticks: {
           stepSize: Math.ceil((Math.max(...productos.map((p) => p.cantidad_total)) || 1) / 5),
+        },
+        grid: {
+          drawBorder: true,
+        },
+      },
+      y: {
+        grid: {
+          display: false,
         },
       },
     },
