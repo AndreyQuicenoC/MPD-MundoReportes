@@ -52,12 +52,13 @@ const Deducibles = () => {
         api.get('/gastos/categorias/'),
       ]);
 
-      setDeducibles(deduciblesRes.data.results || deduciblesRes.data);
+      let deduciblesData = deduciblesRes.data.results || deduciblesRes.data;
+      // Filtrar solo deducibles activos (soft delete: marcar como inactivo)
+      deduciblesData = deduciblesData.filter(d => d.activo === true);
+      setDeducibles(deduciblesData);
 
       // Filtrar categorías que no tengan deducible asignado
-      const deduciblesToIds = new Set(
-        (deduciblesRes.data.results || deduciblesRes.data).map(d => d.categoria)
-      );
+      const deduciblesToIds = new Set(deduciblesData.map(d => d.categoria));
       const categoriasDisponibles = (categoriasRes.data.results || categoriasRes.data).filter(
         c => c.activa && !deduciblesToIds.has(c.id)
       );

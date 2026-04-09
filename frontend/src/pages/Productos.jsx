@@ -34,7 +34,10 @@ const Productos = () => {
     try {
       setLoading(true);
       const data = await productosService.obtenerProductos();
-      setProductos(Array.isArray(data) ? data : data?.results || []);
+      let productosData = Array.isArray(data) ? data : data?.results || [];
+      // Filtrar solo productos activos (soft delete: marcar como inactivo)
+      productosData = productosData.filter(p => p.activo === true);
+      setProductos(productosData);
       setPaginaActual(1);
     } catch (error) {
       toast.error('Error al cargar productos');

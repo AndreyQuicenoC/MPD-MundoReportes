@@ -34,7 +34,10 @@ const Categorias = () => {
     try {
       setLoading(true);
       const data = await categoriasService.obtenerCategorias();
-      setCategorias(Array.isArray(data) ? data : data?.results || []);
+      let categoriasData = Array.isArray(data) ? data : data?.results || [];
+      // Filtrar solo categorías activas (soft delete: marcar como inactiva)
+      categoriasData = categoriasData.filter(c => c.activa === true);
+      setCategorias(categoriasData);
       setPaginaActual(1);
     } catch (error) {
       toast.error('Error al cargar categorías');

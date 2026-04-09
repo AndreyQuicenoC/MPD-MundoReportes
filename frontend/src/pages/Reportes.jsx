@@ -63,13 +63,14 @@ const Reportes = () => {
         ? reportesData
         : reportesData?.results || [];
 
-      // Filtrar según el mes seleccionado
+      // Filtrar según el mes seleccionado - SOLO si filtroMes es 'actual' Y no hay filtro activo personalizado
       if (filtroMes === 'actual' && !filtroActivo) {
         const ahora = new Date();
         const mesActual = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}`;
         reportesProcessados = reportesProcessados.filter(r => r.fecha.startsWith(mesActual));
       }
-      // Si filtroMes es 'todos', no filtra, muestra todos
+      // Si filtroMes es 'todos', muestra TODOS sin filtrar
+      // Si filtroActivo es true (rango personalizado), ya está filtrado por fechas arriba
 
       // Procesar deducibles
       const deduciblesArr = deduciblesRes.data.results || deduciblesRes.data;

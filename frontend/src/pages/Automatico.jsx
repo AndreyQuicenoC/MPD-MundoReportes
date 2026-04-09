@@ -40,7 +40,10 @@ const Automatico = () => {
         api.get('/gastos/categorias/activas/'),
       ]);
 
-      setGastos(gastosRes.data.results || gastosRes.data);
+      let gastosData = gastosRes.data.results || gastosRes.data;
+      // Filtrar solo gastos automáticos activos (soft delete: marcar como inactivo)
+      gastosData = gastosData.filter(g => g.activo === true);
+      setGastos(gastosData);
       setCategorias(categoriasRes.data.results || categoriasRes.data);
       setPaginaActual(1);
     } catch (error) {

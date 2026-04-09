@@ -5,16 +5,24 @@ import '../styles/FormModal.css';
  * Componente Modal Profesional Reutilizable.
  * Overlay que cubre toda la pantalla con backdrop y modal centered.
  */
-const FormModal = ({ isOpen, titulo, onClose, onSubmit, children, submitText = 'Crear', isLoading = false }) => {
+const FormModal = ({
+  isOpen,
+  titulo,
+  onClose,
+  onSubmit,
+  children,
+  submitText = 'Crear',
+  isLoading = false,
+}) => {
   if (!isOpen) return null;
 
-  const handleBackdropClick = (e) => {
+  const handleBackdropClick = e => {
     if (e.target === e.currentTarget) {
       onClose();
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
     if (onSubmit) {
       onSubmit(e);
@@ -38,9 +46,7 @@ const FormModal = ({ isOpen, titulo, onClose, onSubmit, children, submitText = '
         </div>
 
         <form onSubmit={handleSubmit} className="form-modal-form">
-          <div className="form-modal-content">
-            {children}
-          </div>
+          <div className="form-modal-content">{children}</div>
 
           <div className="form-modal-actions">
             <button
@@ -51,11 +57,7 @@ const FormModal = ({ isOpen, titulo, onClose, onSubmit, children, submitText = '
             >
               Cancelar
             </button>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={isLoading}
-            >
+            <button type="submit" className="btn btn-primary" disabled={isLoading}>
               {isLoading ? 'Guardando...' : submitText}
             </button>
           </div>
