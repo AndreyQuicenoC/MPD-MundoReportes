@@ -19,6 +19,7 @@ const Deducibles = () => {
 
   const [deducibles, setDeducibles] = useState([]);
   const [categorias, setCategorias] = useState([]);
+  const [categoriasDisponibles, setCategoriasDisponibles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [deducibleEditando, setDeducibleEditando] = useState(null);
@@ -57,12 +58,14 @@ const Deducibles = () => {
       deduciblesData = deduciblesData.filter(d => d.activo === true);
       setDeducibles(deduciblesData);
 
-      // Filtrar categorías que no tengan deducible asignado
+      // Cargar TODAS las categorías para mostrar nombres
+      const todasCategorias = (categoriasRes.data.results || categoriasRes.data).filter(c => c.activa);
+      setCategorias(todasCategorias);
+
+      // Filtrar categorías disponibles (sin deducible asignado)
       const deduciblesToIds = new Set(deduciblesData.map(d => d.categoria));
-      const categoriasDisponibles = (categoriasRes.data.results || categoriasRes.data).filter(
-        c => c.activa && !deduciblesToIds.has(c.id)
-      );
-      setCategorias(categoriasDisponibles);
+      const categoriasDisp = todasCategorias.filter(c => !deduciblesToIds.has(c.id));
+      setCategoriasDisponibles(categoriasDisp);
       setPaginaActual(1);
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -204,7 +207,7 @@ const Deducibles = () => {
             disabled={deducibleEditando}
           >
             <option value="">Selecciona una categoría</option>
-            {categorias.map(cat => (
+            {categoriasDisponibles.map(cat => (
               <option key={cat.id} value={cat.id}>
                 {cat.nombre}
               </option>

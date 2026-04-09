@@ -38,7 +38,7 @@ const ProductosTodosVendidos = ({ productos = [], chartOptions = {} }) => {
   };
 
   const opciones = {
-    indexAxis: 'y', // Barras horizontales
+    indexAxis: 'x', // Barras verticales (eje X: productos, eje Y: cantidad)
     responsive: true,
     maintainAspectRatio: true,
     plugins: {
@@ -56,13 +56,13 @@ const ProductosTodosVendidos = ({ productos = [], chartOptions = {} }) => {
       tooltip: {
         callbacks: {
           label: (context) => {
-            return `${context.dataset.label}: ${context.parsed.x}`;
+            return `${context.dataset.label}: ${context.parsed.y}`;
           },
         },
       },
     },
     scales: {
-      x: {
+      y: {
         beginAtZero: true,
         ticks: {
           stepSize: Math.ceil((Math.max(...productos.map((p) => p.cantidad_total)) || 1) / 5),
@@ -71,7 +71,7 @@ const ProductosTodosVendidos = ({ productos = [], chartOptions = {} }) => {
           drawBorder: true,
         },
       },
-      y: {
+      x: {
         grid: {
           display: false,
         },
