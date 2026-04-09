@@ -182,7 +182,7 @@ const NuevoReporte = ({ esEdicion = false }) => {
     try {
       setLoading(true);
 
-      // Filtrar gastos válidos
+      // Filtrar gastos válidos (solo los que tienen valor > 0)
       const gastosValidos = gastos.filter(g => parseFloat(g.valor) > 0 && g.descripcion.trim());
 
       // Convertir cantidades de productos a array
@@ -199,23 +199,42 @@ const NuevoReporte = ({ esEdicion = false }) => {
         venta_total: parseFloat(ventaTotal || 0),
         entrega: parseFloat(entrega || 0),
         observacion: observacion.trim(),
-        gastos: gastosValidos.map(g => ({
-          descripcion: g.descripcion,
-          valor: parseFloat(g.valor),
-          categoria: g.categoria || null,
-        })),
+        gastos: gastosValidos.map(g => {
+          const categoria = g.categoria ? parseInt(g.categoria) : null;
+          // Validar que categoria sea un número válido
+          const categoriaValida = Number.isInteger(categoria) ? categoria : null;
+          return {
+            descripcion: g.descripcion.trim(),
+            valor: parseFloat(g.valor),
+            categoria: categoriaValida,
+          };
+        }),
         ventas_productos: ventasValidas,
       };
 
+      console.log('=== DATOS SIENDO ENVIADOS ===');
+      console.log('Modo:', esEdicion ? 'EDICIÓN' : 'CREACIÓN');
+      console.log('ID Reporte:', id);
+      console.log('Datos:', datos);
+      console.log('Gastos válidos:', gastosValidos.length);
+      console.log('Ventas válidas:', ventasValidas.length);
+
       if (esEdicion && id) {
+        console.log(`Actualizando reporte ${id}...`);
         await reportesService.updateReporte(id, datos);
         toast.success('Reporte actualizado exitosamente');
       } else {
+        console.log('Creando nuevo reporte...');
         await reportesService.crearReporte(datos);
         toast.success('Reporte creado exitosamente');
       }
       navigate('/reportes');
     } catch (error) {
+      console.error('=== ERROR AL GUARDAR REPORTE ===');
+      console.error('Error completo:', error);
+      console.error('Response data:', error.response?.data);
+      console.error('Status:', error.response?.status);
+
       if (error.response?.data) {
         const datos = error.response.data;
 
@@ -237,8 +256,6 @@ const NuevoReporte = ({ esEdicion = false }) => {
       } else {
         toast.error(esEdicion ? 'Error al actualizar el reporte' : 'Error al crear el reporte');
       }
-      // eslint-disable-next-line no-console
-      console.error(error);
     } finally {
       setLoading(false);
     }
