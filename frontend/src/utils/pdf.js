@@ -68,14 +68,14 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
     });
 
     const pdf = new jsPDF({
-      orientation: 'landscape',
+      orientation: 'portrait',
       unit: 'mm',
       format: 'a4',
     });
 
-    const imgWidth = 295; // A4 landscape width in mm
+    const imgWidth = 210; // A4 portrait width in mm
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    const pdf_pageHeight = 210; // A4 landscape height in mm (with margins)
+    const pdf_pageHeight = 295; // A4 portrait height in mm (with margins)
     let heightLeft = imgHeight;
     let position = 0;
 

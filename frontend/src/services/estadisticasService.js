@@ -101,6 +101,17 @@ const estadisticasService = {
     });
     return response.data;
   },
+
+  /**
+   * Obtener gastos deducibles por tipo en un periodo.
+   *
+   * @param {Object} params - Parámetros (fecha_inicio, fecha_fin)
+   * @returns {Promise} Totales de deducibles por tipo
+   */
+  getDeducibles: async (params = {}) => {
+    const response = await apiClient.get('/estadisticas/deducibles/', { params });
+    return response.data;
+  },
 };
 
 export default estadisticasService;

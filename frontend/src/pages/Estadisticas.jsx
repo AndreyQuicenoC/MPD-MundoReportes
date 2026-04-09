@@ -71,13 +71,14 @@ const Estadisticas = () => {
       if (fechaInicio) params.fecha_inicio = fechaInicio;
       if (fechaFin) params.fecha_fin = fechaFin;
 
-      const [stats, gastos, productos, productosTotal, ventas, deduciblesRes] = await Promise.all([
+      const [stats, gastos, productos, productosTotal, ventas, deduciblesRes, deduciblesCalc] = await Promise.all([
         estadisticasService.getEstadisticasVentas(params),
         estadisticasService.getGastosPorCategoria(params),
         estadisticasService.getProductosMasVendidos(params),
         estadisticasService.getTodosProductosVendidos(params),
         estadisticasService.getVentasMensuales(),
         api.get('/gastos/deducibles/'),
+        estadisticasService.getDeducibles(params),
       ]);
 
       setEstadisticas(stats);
@@ -86,15 +87,15 @@ const Estadisticas = () => {
       setTodosProductosVendidos(productosTotal);
       setVentasPorMes(ventas);
 
-      // Procesar deducibles
+      // Procesar deducibles (configuración)
       const deduciblesArr = deduciblesRes.data.results || deduciblesRes.data;
       setDeducibles(deduciblesArr);
 
-      // Calcular total de deducibles (simulado para ahora)
+      // Usar los deducibles calculados del backend
       setGastosParaDeducir({
-        ingreso: deduciblesArr.filter(d => d.tipo === 'ingreso').reduce((sum, d) => sum + (d.valor || 0), 0),
-        ahorro: deduciblesArr.filter(d => d.tipo === 'ahorro').reduce((sum, d) => sum + (d.valor || 0), 0),
-        transferencia: deduciblesArr.filter(d => d.tipo === 'transferencia').reduce((sum, d) => sum + (d.valor || 0), 0),
+        ingreso: deduciblesCalc.ingreso || 0,
+        ahorro: deduciblesCalc.ahorro || 0,
+        transferencia: deduciblesCalc.transferencia || 0,
       });
 
       // Calcular productos menos vendidos (inverso de más vendidos)

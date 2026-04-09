@@ -13,6 +13,7 @@ from .views import (
     ProductosMasVendidosView,
     ResumenPeriodoView,
     DashboardView,
+    DeduciblesView,
 )
 
 app_name = "estadisticas"
@@ -33,4 +34,5 @@ urlpatterns = [
     ),
     path("resumen/", ResumenPeriodoView.as_view(), name="resumen_periodo"),
     path("dashboard/", DashboardView.as_view(), name="dashboard"),
+    path("deducibles/", DeduciblesView.as_view(), name="deducibles"),
 ]
