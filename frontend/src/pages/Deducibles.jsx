@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../services/api';
+import Pagination from '../components/Pagination';
+import ModalConfirmacion from '../components/ModalConfirmacion';
 import toast from 'react-hot-toast';
 import './Deducibles.css';
 
@@ -13,7 +15,11 @@ const Deducibles = () => {
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mostrarForm, setMostrarForm] = useState(false);
-  const [editando, setEditando] = useState(null);
+  const [deducibleEditando, setDeducibleEditando] = useState(null);
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [idAEliminar, setIdAEliminar] = useState(null);
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+  const itemsPorPagina = 10;
 
   const [formData, setFormData] = useState({
     categoria: '',
@@ -50,14 +56,20 @@ const Deducibles = () => {
         c => c.activa && !deduciblesToIds.has(c.id)
       );
       setCategorias(categoriasDisponibles);
+      setPaginaActual(1);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error al cargar datos:', error);
       toast.error('Error al cargar deducibles');
+      setDeducibles([]);
     } finally {
       setLoading(false);
     }
   };
+
+  const indiceInicio = (paginaActual - 1) * itemsPorPagina;
+  const indiceFin = indiceInicio + itemsPorPagina;
+  const deduciblesPaginados = deducibles.slice(indiceInicio, indiceFin);
 
   const handleInputChange = e => {
     const { name, value, type, checked } = e.target;
@@ -83,8 +95,8 @@ const Deducibles = () => {
         activo: formData.activo,
       };
 
-      if (editando) {
-        await api.patch(`/gastos/deducibles/${editando}/`, datos);
+      if (deducibleEditando) {
+        await api.patch(`/gastos/deducibles/${deducibleEditando.id}/`, datos);
         toast.success('Deducible actualizado');
       } else {
         await api.post('/gastos/deducibles/', datos);
@@ -92,7 +104,7 @@ const Deducibles = () => {
       }
 
       setFormData({ categoria: '', tipo: 'ingreso', descripcion: '', activo: true });
-      setEditando(null);
+      setDeducibleEditando(null);
       setMostrarForm(false);
       cargarDatos();
     } catch (error) {
@@ -103,7 +115,7 @@ const Deducibles = () => {
   };
 
   const handleEditar = deducible => {
-    setEditando(deducible.id);
+    setDeducibleEditando(deducible);
     setFormData({
       categoria: deducible.categoria,
       tipo: deducible.tipo,
@@ -113,30 +125,33 @@ const Deducibles = () => {
     setMostrarForm(true);
   };
 
-  const handleEliminar = async id => {
-    if (!window.confirm('¿Estás seguro de que deseas eliminar este deducible?')) return;
+  const handleEliminar = id => {
+    setIdAEliminar(id);
+    setMostrarConfirmacion(true);
+  };
 
+  const handleConfirmarEliminar = async () => {
     try {
-      await api.delete(`/gastos/deducibles/${id}/`);
+      await api.delete(`/gastos/deducibles/${idAEliminar}/`);
       toast.success('Deducible eliminado');
+      setMostrarConfirmacion(false);
+      setIdAEliminar(null);
       cargarDatos();
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error:', error);
       toast.error('Error al eliminar');
+      setMostrarConfirmacion(false);
     }
   };
 
   const cancelar = () => {
     setMostrarForm(false);
-    setEditando(null);
+    setDeducibleEditando(null);
     setFormData({ categoria: '', tipo: 'ingreso', descripcion: '', activo: true });
   };
 
   const getNombreCategoria = id => {
-    // Buscar primero en deducibles, luego en categorías
-    const deducible = deducibles.find(d => d.categoria === id);
-    if (deducible) return deducible.categoria_nombre;
     return categorias.find(c => c.id === id)?.nombre || 'Sin categoría';
   };
 
@@ -145,25 +160,30 @@ const Deducibles = () => {
   };
 
   if (loading) {
-    return <div className="loading-container">Cargando...</div>;
+    return (
+      <div className="loading-container">
+        <p>Cargando...</p>
+      </div>
+    );
   }
 
   return (
     <div className="deducibles-container">
-      <div className="page-header">
-        <h1>Gastos Deducibles</h1>
-        <p>Marca categorías que aunque se registran como gastos, representan ingresos o ahorros</p>
+      <div className="page-header-flex">
+        <div className="header-content">
+          <h1>Gastos Deducibles</h1>
+          <p>Marca categorías que aunque se registran como gastos, representan ingresos o ahorros</p>
+        </div>
+        {!mostrarForm && (
+          <button onClick={() => setMostrarForm(true)} className="btn btn-primary">
+            + Nuevo Deducible
+          </button>
+        )}
       </div>
-
-      {!mostrarForm && (
-        <button onClick={() => setMostrarForm(true)} className="btn btn-primary">
-          Marcar Categoría como Deducible
-        </button>
-      )}
 
       {mostrarForm && (
         <div className="form-card">
-          <h2>{editando ? 'Editar' : 'Nuevo'} Deducible</h2>
+          <h2>{deducibleEditando ? 'Editar' : 'Nuevo'} Deducible</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="categoria">Categoría *</label>
@@ -173,10 +193,10 @@ const Deducibles = () => {
                 value={formData.categoria}
                 onChange={handleInputChange}
                 required
-                disabled={editando}
+                disabled={deducibleEditando}
               >
                 <option value="">Selecciona una categoría</option>
-                {(editando ? categorias : categorias).map(cat => (
+                {categorias.map(cat => (
                   <option key={cat.id} value={cat.id}>
                     {cat.nombre}
                   </option>
@@ -213,23 +233,24 @@ const Deducibles = () => {
               />
             </div>
 
-            <div className="form-group checkbox">
-              <input
-                type="checkbox"
-                id="activo"
-                name="activo"
-                checked={formData.activo}
-                onChange={handleInputChange}
-              />
-              <label htmlFor="activo">Activo (se restará de gastos totales)</label>
+            <div className="form-group checkbox-group">
+              <label>
+                <input
+                  type="checkbox"
+                  name="activo"
+                  checked={formData.activo}
+                  onChange={handleInputChange}
+                />
+                Deducible activo (se restará de gastos totales)
+              </label>
             </div>
 
             <div className="form-actions">
-              <button type="button" onClick={cancelar} className="btn btn-secondary">
+              <button type="button" className="btn btn-secondary" onClick={cancelar}>
                 Cancelar
               </button>
               <button type="submit" className="btn btn-primary">
-                {editando ? 'Actualizar' : 'Crear'}
+                {deducibleEditando ? 'Actualizar' : 'Crear'}
               </button>
             </div>
           </form>
@@ -238,51 +259,68 @@ const Deducibles = () => {
 
       {deducibles.length === 0 ? (
         <div className="empty-state">
-          <p>No hay deducibles configurados</p>
+          <p>No hay deducibles. Crea uno para comenzar.</p>
         </div>
       ) : (
-        <div className="deducibles-grid">
-          {deducibles.map(deducible => (
-            <div key={deducible.id} className="deducible-card">
-              <div className="deducible-header">
-                <h3>{deducible.categoria_nombre}</h3>
-                <span className={`badge badge-${deducible.tipo}`}>
-                  {getTipoLabel(deducible.tipo)}
-                </span>
-              </div>
-
-              <div className="deducible-info">
-                <p>
-                  <strong>Estado:</strong>{' '}
-                  <span className={deducible.activo ? 'text-success' : 'text-muted'}>
+        <>
+          <div className="deducibles-grid">
+            {deduciblesPaginados.map(deducible => (
+              <div key={deducible.id} className="deducible-card">
+                <div className="card-content">
+                  <h3>{deducible.categoria_nombre || getNombreCategoria(deducible.categoria)}</h3>
+                  <p className="tipo">{getTipoLabel(deducible.tipo)}</p>
+                  {deducible.descripcion && (
+                    <p className="descripcion">{deducible.descripcion}</p>
+                  )}
+                  <span className={`badge badge-${deducible.tipo}`}>
                     {deducible.activo ? 'Activo' : 'Inactivo'}
                   </span>
-                </p>
-                {deducible.descripcion && (
-                  <p>
-                    <strong>Descripción:</strong> {deducible.descripcion}
-                  </p>
-                )}
-              </div>
+                </div>
 
-              <div className="deducible-actions">
-                <button
-                  onClick={() => handleEditar(deducible)}
-                  className="btn btn-small btn-secondary"
-                >
-                  Editar
-                </button>
-                <button
-                  onClick={() => handleEliminar(deducible.id)}
-                  className="btn btn-small btn-danger"
-                >
-                  Eliminar
-                </button>
+                <div className="card-actions">
+                  <button
+                    className="btn btn-sm btn-secondary"
+                    onClick={() => handleEditar(deducible)}
+                    title="Editar"
+                  >
+                    ✎
+                  </button>
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => handleEliminar(deducible.id)}
+                    title="Eliminar"
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+
+          {deducibles.length > 0 && (
+            <Pagination
+              paginaActual={paginaActual}
+              totalItems={deducibles.length}
+              itemsPorPagina={itemsPorPagina}
+              onPaginaChange={setPaginaActual}
+            />
+          )}
+        </>
       )}
+
+      <ModalConfirmacion
+        isOpen={mostrarConfirmacion}
+        titulo="Eliminar Deducible"
+        mensaje="¿Estás seguro de que deseas eliminar este deducible? Esta acción no se puede deshacer."
+        confirmText="Sí, Eliminar"
+        cancelText="Cancelar"
+        isDanger={true}
+        onConfirm={handleConfirmarEliminar}
+        onCancel={() => {
+          setMostrarConfirmacion(false);
+          setIdAEliminar(null);
+        }}
+      />
     </div>
   );
 };
