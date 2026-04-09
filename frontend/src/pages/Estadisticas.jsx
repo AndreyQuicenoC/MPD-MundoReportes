@@ -218,6 +218,36 @@ const Estadisticas = () => {
     ],
   };
 
+  // Calcular incremento/decremento mes a mes
+  const calcularCambios = (datos) => {
+    if (!datos || datos.length < 2) return [];
+
+    return datos
+      .slice(1)
+      .map((actual, idx) => {
+        const anterior = datos[idx];
+        const cambio = ((actual - anterior) / anterior) * 100;
+        return {
+          mes: `${datos[idx + 1]?.mes || actual}/${datos[idx + 1]?.anio || actual}`,
+          cambio: cambio,
+        };
+      });
+  };
+
+  const cambiosVentas = calcularCambios(ventasPorMes.map(v => v.total_ventas));
+  const cambiosGastos = calcularCambios(gastosPorCategoria.map(g => g.total));
+
+  const cambiosVentasData = {
+    labels: cambiosVentas.map(c => c.mes),
+    datasets: [
+      {
+        label: 'Cambio %',
+        data: cambiosVentas.map(c => c.cambio),
+        backgroundColor: cambiosVentas.map(c => c.cambio >= 0 ? '#16a34a' : '#dc2626'),
+      },
+    ],
+  };
+
   if (loading) {
     return (
       <div className="loading-container">
@@ -408,6 +438,17 @@ const Estadisticas = () => {
                   )
                 ) : (
                   <p className="no-data">No hay datos de ventas mensuales</p>
+                )}
+              </div>
+            </div>
+
+            <div className="chart-card full-width">
+              <h2>Cambio Porcentual Mes a Mes (Ventas)</h2>
+              <div className="chart-container">
+                {cambiosVentas.length > 0 ? (
+                  <Bar data={cambiosVentasData} options={chartOptions} />
+                ) : (
+                  <p className="no-data">Insuficientes datos</p>
                 )}
               </div>
             </div>
