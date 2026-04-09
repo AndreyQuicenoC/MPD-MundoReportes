@@ -22,6 +22,30 @@
   font-size: 0.95rem;
 }
 
+.page-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.header-content {
+  flex: 1;
+}
+
+.header-content h1 {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: 2rem;
+  color: var(--color-text);
+}
+
+.header-content p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+}
+
 /* Form Card Overlay */
 .form-card {
   background: white;

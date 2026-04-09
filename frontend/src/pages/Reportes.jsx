@@ -4,6 +4,7 @@ import { reportesService } from '../services/reportesService';
 import estadisticasService from '../services/estadisticasService';
 import Pagination from '../components/Pagination';
 import ModalVistaPreviaReporte from '../components/ModalVistaPreviaReporte';
+import ModalConfirmacion from '../components/ModalConfirmacion';
 import toast from 'react-hot-toast';
 import './Reportes.css';
 
@@ -19,6 +20,8 @@ const Reportes = () => {
   const [paginaActual, setPaginaActual] = useState(1);
   const [reporteSeleccionado, setReporteSeleccionado] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [idAEliminar, setIdAEliminar] = useState(null);
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const itemsPorPagina = 10;
 
   // Estados para filtros
@@ -99,19 +102,22 @@ const Reportes = () => {
   const indiceFin = indiceInicio + itemsPorPagina;
   const reportesPaginados = reportes.slice(indiceInicio, indiceFin);
 
-  const handleEliminar = async id => {
-    if (!window.confirm('¿Estás seguro de eliminar este reporte?')) {
-      return;
-    }
+  const handleEliminar = id => {
+    setIdAEliminar(id);
+    setMostrarConfirmacion(true);
+  };
 
+  const handleConfirmarEliminar = async () => {
     try {
-      await reportesService.deleteReporte(id);
-      toast.success('Reporte eliminado exitosamente');
+      await reportesService.deleteReporte(idAEliminar);
+      toast.success('Reporte eliminado');
+      setMostrarConfirmacion(false);
+      setIdAEliminar(null);
       cargarDatos();
     } catch (error) {
       toast.error('Error al eliminar reporte');
-      // eslint-disable-next-line no-console
       console.error(error);
+      setMostrarConfirmacion(false);
     }
   };
 
@@ -273,22 +279,24 @@ const Reportes = () => {
                       <button
                         className="btn btn-sm btn-info"
                         onClick={() => handleVistaPreviaReporte(reporte)}
-                        title="Vista previa"
+                        title="Ver vista previa del reporte"
                         aria-label="Ver vista previa"
                       >
-                        👁️
+                        <svg className="icon-eye" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        </svg>
                       </button>
                       <button
                         className="btn btn-sm btn-secondary"
                         onClick={() => handleEditar(reporte.id)}
-                        title="Editar"
+                        title="Editar este reporte"
                       >
                         Editar
                       </button>
                       <button
                         className="btn btn-sm btn-danger"
                         onClick={() => handleEliminar(reporte.id)}
-                        title="Eliminar"
+                        title="Eliminar este reporte"
                       >
                         Eliminar
                       </button>
@@ -314,6 +322,20 @@ const Reportes = () => {
         reporte={reporteSeleccionado}
         isOpen={mostrarModal}
         onClose={() => setMostrarModal(false)}
+      />
+
+      <ModalConfirmacion
+        isOpen={mostrarConfirmacion}
+        titulo="Eliminar Reporte"
+        mensaje="¿Estás seguro de que deseas eliminar este reporte? Esta acción no se puede deshacer."
+        confirmText="Sí, Eliminar"
+        cancelText="Cancelar"
+        isDanger={true}
+        onConfirm={handleConfirmarEliminar}
+        onCancel={() => {
+          setMostrarConfirmacion(false);
+          setIdAEliminar(null);
+        }}
       />
     </div>
   );

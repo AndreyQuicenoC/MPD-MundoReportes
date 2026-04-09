@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { categoriasService } from '../services/categoriasService';
 import Pagination from '../components/Pagination';
+import ModalConfirmacion from '../components/ModalConfirmacion';
 import toast from 'react-hot-toast';
 import './Productos.css';
 
@@ -14,6 +15,8 @@ const Categorias = () => {
   const [mostrarForm, setMostrarForm] = useState(false);
   const [categoriaEditando, setCategoriaEditando] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
+  const [idAEliminar, setIdAEliminar] = useState(null);
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const itemsPorPagina = 10;
 
   const [formData, setFormData] = useState({
@@ -90,16 +93,22 @@ const Categorias = () => {
     setMostrarForm(true);
   };
 
-  const handleEliminar = async id => {
-    if (!window.confirm('¿Estás seguro de eliminar esta categoría?')) return;
+  const handleEliminar = id => {
+    setIdAEliminar(id);
+    setMostrarConfirmacion(true);
+  };
 
+  const handleConfirmarEliminar = async () => {
     try {
-      await categoriasService.eliminarCategoria(id);
+      await categoriasService.eliminarCategoria(idAEliminar);
       toast.success('Categoría eliminada');
+      setMostrarConfirmacion(false);
+      setIdAEliminar(null);
       cargarCategorias();
     } catch (error) {
       toast.error('Error al eliminar');
       console.error(error);
+      setMostrarConfirmacion(false);
     }
   };
 
@@ -119,16 +128,17 @@ const Categorias = () => {
 
   return (
     <div className="productos-container">
-      <div className="page-header">
-        <h1>Categorías de Gastos</h1>
-        <p>Gestiona las categorías disponibles para clasificar gastos</p>
+      <div className="page-header-flex">
+        <div className="header-content">
+          <h1>Categorías de Gastos</h1>
+          <p>Gestiona las categorías disponibles para clasificar gastos</p>
+        </div>
+        {!mostrarForm && (
+          <button onClick={() => setMostrarForm(true)} className="btn btn-primary">
+            + Nueva Categoría
+          </button>
+        )}
       </div>
-
-      {!mostrarForm && (
-        <button onClick={() => setMostrarForm(true)} className="btn btn-primary">
-          + Nueva Categoría
-        </button>
-      )}
 
       {mostrarForm && (
         <div className="form-card">

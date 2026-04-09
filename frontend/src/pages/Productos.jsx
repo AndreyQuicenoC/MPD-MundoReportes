@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { productosService } from '../services/productosService';
 import Pagination from '../components/Pagination';
+import ModalConfirmacion from '../components/ModalConfirmacion';
 import toast from 'react-hot-toast';
 import './Productos.css';
 
@@ -14,6 +15,8 @@ const Productos = () => {
   const [mostrarForm, setMostrarForm] = useState(false);
   const [productoEditando, setProductoEditando] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
+  const [idAEliminar, setIdAEliminar] = useState(null);
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const itemsPorPagina = 10;
 
   const [formData, setFormData] = useState({
@@ -95,16 +98,22 @@ const Productos = () => {
     setMostrarForm(true);
   };
 
-  const handleEliminar = async id => {
-    if (!window.confirm('¿Estás seguro de eliminar este producto?')) return;
+  const handleEliminar = id => {
+    setIdAEliminar(id);
+    setMostrarConfirmacion(true);
+  };
 
+  const handleConfirmarEliminar = async () => {
     try {
-      await productosService.eliminarProducto(id);
+      await productosService.eliminarProducto(idAEliminar);
       toast.success('Producto eliminado');
+      setMostrarConfirmacion(false);
+      setIdAEliminar(null);
       cargarProductos();
     } catch (error) {
       toast.error('Error al eliminar');
       console.error(error);
+      setMostrarConfirmacion(false);
     }
   };
 
@@ -124,16 +133,17 @@ const Productos = () => {
 
   return (
     <div className="productos-container">
-      <div className="page-header">
-        <h1>Productos</h1>
-        <p>Gestiona el catálogo de productos disponibles</p>
+      <div className="page-header-flex">
+        <div className="header-content">
+          <h1>Productos</h1>
+          <p>Gestiona el catálogo de productos disponibles</p>
+        </div>
+        {!mostrarForm && (
+          <button onClick={() => setMostrarForm(true)} className="btn btn-primary">
+            + Nuevo Producto
+          </button>
+        )}
       </div>
-
-      {!mostrarForm && (
-        <button onClick={() => setMostrarForm(true)} className="btn btn-primary">
-          + Nuevo Producto
-        </button>
-      )}
 
       {mostrarForm && (
         <div className="form-card">
@@ -239,6 +249,20 @@ const Productos = () => {
           )}
         </>
       )}
+
+      <ModalConfirmacion
+        isOpen={mostrarConfirmacion}
+        titulo="Eliminar Producto"
+        mensaje="¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer."
+        confirmText="Sí, Eliminar"
+        cancelText="Cancelar"
+        isDanger={true}
+        onConfirm={handleConfirmarEliminar}
+        onCancel={() => {
+          setMostrarConfirmacion(false);
+          setIdAEliminar(null);
+        }}
+      />
     </div>
   );
 };

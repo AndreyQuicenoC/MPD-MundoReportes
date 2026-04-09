@@ -135,16 +135,31 @@
 
 .acciones-cell {
   white-space: nowrap;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .acciones-cell .btn {
-  margin-right: 0.5rem;
-  margin-bottom: 0.25rem;
+  margin: 0;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+.icon-eye {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
 }
 
 .btn-info {
   background: #17a2b8;
   color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
 }
 
 .btn-info:hover {
@@ -178,6 +193,57 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* Tabla de Reportes - Estilos Mejorados */
+.productos-tabla-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+}
+
+.productos-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.productos-tabla thead {
+  background: var(--color-primary);
+  color: white;
+  font-weight: 600;
+}
+
+.productos-tabla th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.productos-tabla td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+}
+
+.productos-tabla tbody tr {
+  transition: background-color 0.2s;
+}
+
+.productos-tabla tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.productos-tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.text-center {
+  text-align: center;
 }
 
 /* Responsive */
@@ -246,3 +312,4 @@
     margin-bottom: 0.5rem;
   }
 }
+
