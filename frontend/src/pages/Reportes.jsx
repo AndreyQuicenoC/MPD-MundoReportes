@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { reportesService } from '../services/reportesService';
 import estadisticasService from '../services/estadisticasService';
+import api from '../services/api';
 import Pagination from '../components/Pagination';
 import ModalVistaPreviaReporte from '../components/ModalVistaPreviaReporte';
 import ModalConfirmacion from '../components/ModalConfirmacion';
@@ -16,6 +17,12 @@ const Reportes = () => {
   const navigate = useNavigate();
   const [reportes, setReportes] = useState([]);
   const [dashboard, setDashboard] = useState(null);
+  const [deducibles, setDeducibles] = useState([]);
+  const [gastosParaDeducir, setGastosParaDeducir] = useState({
+    ingreso: 0,
+    ahorro: 0,
+    transferencia: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [paginaActual, setPaginaActual] = useState(1);
   const [reporteSeleccionado, setReporteSeleccionado] = useState(null);
@@ -46,9 +53,10 @@ const Reportes = () => {
         reportesPromise = reportesService.getReportes();
       }
 
-      const [reportesData, dashboardData] = await Promise.all([
+      const [reportesData, dashboardData, deduciblesRes] = await Promise.all([
         reportesPromise,
         estadisticasService.getDashboard(),
+        api.get('/gastos/deducibles/'),
       ]);
 
       let reportesProcessados = Array.isArray(reportesData)
@@ -63,8 +71,35 @@ const Reportes = () => {
       }
       // Si filtroMes es 'todos', no filtra, muestra todos
 
+      // Procesar deducibles
+      const deduciblesArr = deduciblesRes.data.results || deduciblesRes.data;
+      setDeducibles(deduciblesArr);
+
+      // Calcular totales de gastos deducibles
+      const deduciblesIds = new Set(deduciblesArr.filter(d => d.activo).map(d => d.categoria));
+      const totalesDeducibles = {
+        ingreso: 0,
+        ahorro: 0,
+        transferencia: 0,
+      };
+
+      reportesProcessados.forEach(reporte => {
+        if (reporte.gastos && Array.isArray(reporte.gastos)) {
+          reporte.gastos.forEach(gasto => {
+            if (deduciblesIds.has(gasto.categoria)) {
+              const deducible = deduciblesArr.find(d => d.categoria === gasto.categoria);
+              if (deducible && deducible.activo) {
+                const tipo = deducible.tipo;
+                totalesDeducibles[tipo] += Number(gasto.valor) || 0;
+              }
+            }
+          });
+        }
+      });
+
       setReportes(reportesProcessados);
       setDashboard(dashboardData);
+      setGastosParaDeducir(totalesDeducibles);
       setPaginaActual(1);
     } catch (error) {
       toast.error('Error al cargar datos');
@@ -217,33 +252,60 @@ const Reportes = () => {
 
       {/* Dashboard - Métricas principales */}
       {dashboard && (
-        <div className="dashboard-grid">
-          <div className="dashboard-card">
-            <h3>Ventas del Mes</h3>
-            <p className="dashboard-value">
-              ${Number(dashboard.total_ventas_mes).toLocaleString('es-CO')}
-            </p>
+        <>
+          <div className="dashboard-grid">
+            <div className="dashboard-card">
+              <h3>Ventas del Mes</h3>
+              <p className="dashboard-value">
+                ${Number(dashboard.total_ventas_mes).toLocaleString('es-CO')}
+              </p>
+            </div>
+
+            <div className="dashboard-card">
+              <h3>Gastos del Mes</h3>
+              <p className="dashboard-value">
+                ${Number(dashboard.total_gastos_mes).toLocaleString('es-CO')}
+              </p>
+            </div>
+
+            <div className="dashboard-card">
+              <h3>Promedio Diario</h3>
+              <p className="dashboard-value">
+                ${Math.round(Number(dashboard.promedio_ventas_diarias)).toLocaleString('es-CO')}
+              </p>
+            </div>
+
+            <div className="dashboard-card">
+              <h3>Reportes Registrados</h3>
+              <p className="dashboard-value">{dashboard.cantidad_reportes}</p>
+            </div>
           </div>
 
-          <div className="dashboard-card">
-            <h3>Gastos del Mes</h3>
-            <p className="dashboard-value">
-              ${Number(dashboard.total_gastos_mes).toLocaleString('es-CO')}
-            </p>
+          {/* Deducibles Summary */}
+          <div className="deducibles-summary">
+            <h3>Análisis de Gastos Deducibles</h3>
+            <div className="deducibles-grid">
+              <div className="deducible-stat ingreso">
+                <p className="stat-label">Ingresos (No Gastos)</p>
+                <p className="stat-value">${Number(gastosParaDeducir.ingreso).toLocaleString('es-CO')}</p>
+              </div>
+              <div className="deducible-stat ahorro">
+                <p className="stat-label">Ahorros (No Gastos)</p>
+                <p className="stat-value">${Number(gastosParaDeducir.ahorro).toLocaleString('es-CO')}</p>
+              </div>
+              <div className="deducible-stat transferencia">
+                <p className="stat-label">Transferencias (No Gastos)</p>
+                <p className="stat-value">${Number(gastosParaDeducir.transferencia).toLocaleString('es-CO')}</p>
+              </div>
+              <div className="deducible-stat ajustado">
+                <p className="stat-label">Gasto Ajustado</p>
+                <p className="stat-value">
+                  ${(Number(dashboard.total_gastos_mes) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia)).toLocaleString('es-CO')}
+                </p>
+              </div>
+            </div>
           </div>
-
-          <div className="dashboard-card">
-            <h3>Promedio Diario</h3>
-            <p className="dashboard-value">
-              ${Math.round(Number(dashboard.promedio_ventas_diarias)).toLocaleString('es-CO')}
-            </p>
-          </div>
-
-          <div className="dashboard-card">
-            <h3>Reportes Registrados</h3>
-            <p className="dashboard-value">{dashboard.cantidad_reportes}</p>
-          </div>
-        </div>
+        </>
       )}
 
       {/* Tabla de reportes */}

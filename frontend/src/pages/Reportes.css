@@ -63,6 +63,73 @@
   color: var(--color-primary);
 }
 
+/* Deducibles Summary */
+.deducibles-summary {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.deducibles-summary h3 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.deducibles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.deducible-stat {
+  padding: 1.2rem;
+  border-radius: 8px;
+  border-left: 4px solid;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.deducible-stat.ingreso {
+  background: #dbeafe;
+  border-left-color: #0c4a6e;
+}
+
+.deducible-stat.ahorro {
+  background: #dcfce7;
+  border-left-color: #166534;
+}
+
+.deducible-stat.transferencia {
+  background: #fce7f3;
+  border-left-color: #831843;
+}
+
+.deducible-stat.ajustado {
+  background: #f0fdf4;
+  border-left-color: #9B933B;
+}
+
+.stat-label {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #555;
+}
+
+.stat-value {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
 /* Filtros Section */
 .filtros-section {
   background: white;
@@ -291,6 +358,10 @@
 
   .dashboard-value {
     font-size: 1.75rem;
+  }
+
+  .deducibles-grid {
+    grid-template-columns: 1fr;
   }
 
   .reportes-tabla-section {

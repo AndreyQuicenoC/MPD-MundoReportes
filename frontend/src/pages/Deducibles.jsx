@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import Pagination from '../components/Pagination';
 import ModalConfirmacion from '../components/ModalConfirmacion';
@@ -9,12 +10,17 @@ import './Deducibles.css';
  * Página de gestión de gastos deducibles.
  * Permite marcar categorías como deducibles (ingresos, ahorros, transferencias)
  * que se restan del total de gastos en cálculos.
+ *
+ * Solo admins pueden crear/editar. Usuarios pueden visualizar.
  */
 const Deducibles = () => {
+  const { usuario } = useAuth();
+  const esAdmin = usuario?.rol === 'admin';
+
   const [deducibles, setDeducibles] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [mostrarForm, setMostrarForm] = useState(false);
+  const [mostrarModal, setMostrarModal] = useState(false);
   const [deducibleEditando, setDeducibleEditando] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
   const [idAEliminar, setIdAEliminar] = useState(null);
@@ -105,7 +111,7 @@ const Deducibles = () => {
 
       setFormData({ categoria: '', tipo: 'ingreso', descripcion: '', activo: true });
       setDeducibleEditando(null);
-      setMostrarForm(false);
+      setMostrarModal(false);
       cargarDatos();
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -122,7 +128,7 @@ const Deducibles = () => {
       descripcion: deducible.descripcion,
       activo: deducible.activo,
     });
-    setMostrarForm(true);
+    setMostrarModal(true);
   };
 
   const handleEliminar = id => {
@@ -146,7 +152,7 @@ const Deducibles = () => {
   };
 
   const cancelar = () => {
-    setMostrarForm(false);
+    setMostrarModal(false);
     setDeducibleEditando(null);
     setFormData({ categoria: '', tipo: 'ingreso', descripcion: '', activo: true });
   };
@@ -172,94 +178,103 @@ const Deducibles = () => {
       <div className="page-header-flex">
         <div className="header-content">
           <h1>Gastos Deducibles</h1>
-          <p>Marca categorías que aunque se registran como gastos, representan ingresos o ahorros</p>
+          <p>Categorías que aunque se registran como gastos, representan ingresos o ahorros</p>
         </div>
-        {!mostrarForm && (
-          <button onClick={() => setMostrarForm(true)} className="btn btn-primary">
+        {esAdmin && (
+          <button onClick={() => setMostrarModal(true)} className="btn btn-primary">
             + Nuevo Deducible
           </button>
         )}
       </div>
 
-      {mostrarForm && (
-        <div className="form-card">
-          <h2>{deducibleEditando ? 'Editar' : 'Nuevo'} Deducible</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="categoria">Categoría *</label>
-              <select
-                id="categoria"
-                name="categoria"
-                value={formData.categoria}
-                onChange={handleInputChange}
-                required
-                disabled={deducibleEditando}
-              >
-                <option value="">Selecciona una categoría</option>
-                {categorias.map(cat => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.nombre}
-                  </option>
-                ))}
-              </select>
+      {/* Modal Overlay para crear/editar */}
+      {mostrarModal && esAdmin && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>{deducibleEditando ? 'Editar' : 'Nuevo'} Deducible</h2>
+              <button className="modal-close" onClick={cancelar} aria-label="Cerrar">
+                ✕
+              </button>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="tipo">Tipo de Deducible *</label>
-              <select
-                id="tipo"
-                name="tipo"
-                value={formData.tipo}
-                onChange={handleInputChange}
-                required
-              >
-                {TIPOS.map(tipo => (
-                  <option key={tipo.value} value={tipo.value}>
-                    {tipo.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="descripcion">Descripción</label>
-              <textarea
-                id="descripcion"
-                name="descripcion"
-                value={formData.descripcion}
-                onChange={handleInputChange}
-                placeholder="Por qué esta categoría es deducible..."
-                rows="3"
-              />
-            </div>
-
-            <div className="form-group checkbox-group">
-              <label>
-                <input
-                  type="checkbox"
-                  name="activo"
-                  checked={formData.activo}
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="categoria">Categoría *</label>
+                <select
+                  id="categoria"
+                  name="categoria"
+                  value={formData.categoria}
                   onChange={handleInputChange}
-                />
-                Deducible activo (se restará de gastos totales)
-              </label>
-            </div>
+                  required
+                  disabled={deducibleEditando}
+                >
+                  <option value="">Selecciona una categoría</option>
+                  {categorias.map(cat => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div className="form-actions">
-              <button type="button" className="btn btn-secondary" onClick={cancelar}>
-                Cancelar
-              </button>
-              <button type="submit" className="btn btn-primary">
-                {deducibleEditando ? 'Actualizar' : 'Crear'}
-              </button>
-            </div>
-          </form>
+              <div className="form-group">
+                <label htmlFor="tipo">Tipo de Deducible *</label>
+                <select
+                  id="tipo"
+                  name="tipo"
+                  value={formData.tipo}
+                  onChange={handleInputChange}
+                  required
+                >
+                  {TIPOS.map(tipo => (
+                    <option key={tipo.value} value={tipo.value}>
+                      {tipo.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="descripcion">Descripción</label>
+                <textarea
+                  id="descripcion"
+                  name="descripcion"
+                  value={formData.descripcion}
+                  onChange={handleInputChange}
+                  placeholder="Por qué esta categoría es deducible..."
+                  rows="3"
+                />
+              </div>
+
+              <div className="form-group checkbox-group">
+                <label>
+                  <input
+                    type="checkbox"
+                    name="activo"
+                    checked={formData.activo}
+                    onChange={handleInputChange}
+                  />
+                  Deducible activo (se restará de gastos totales)
+                </label>
+              </div>
+
+              <div className="form-actions">
+                <button type="button" className="btn btn-secondary" onClick={cancelar}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  {deducibleEditando ? 'Actualizar' : 'Crear'}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
       {deducibles.length === 0 ? (
         <div className="empty-state">
-          <p>No hay deducibles. Crea uno para comenzar.</p>
+          <p>No hay deducibles configurados</p>
         </div>
       ) : (
         <>
@@ -277,22 +292,24 @@ const Deducibles = () => {
                   </span>
                 </div>
 
-                <div className="card-actions">
-                  <button
-                    className="btn btn-sm btn-secondary"
-                    onClick={() => handleEditar(deducible)}
-                    title="Editar"
-                  >
-                    ✎
-                  </button>
-                  <button
-                    className="btn btn-sm btn-danger"
-                    onClick={() => handleEliminar(deducible.id)}
-                    title="Eliminar"
-                  >
-                    ✕
-                  </button>
-                </div>
+                {esAdmin && (
+                  <div className="card-actions">
+                    <button
+                      className="btn btn-sm btn-secondary"
+                      onClick={() => handleEditar(deducible)}
+                      title="Editar"
+                    >
+                      ✎
+                    </button>
+                    <button
+                      className="btn btn-sm btn-danger"
+                      onClick={() => handleEliminar(deducible.id)}
+                      title="Eliminar"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
