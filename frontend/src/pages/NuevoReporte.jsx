@@ -51,11 +51,6 @@ const NuevoReporte = ({ esEdicion = false }) => {
         ? gastosAutoData
         : gastosAutoData?.results || [];
 
-      console.log('=== DATOS CARGADOS ===');
-      console.log('Categorías cargadas:', categoriasArray.length, categoriasArray);
-      console.log('Productos cargados:', productosArray.length);
-      console.log('Gastos automáticos:', gastosAutoArray.length);
-
       setProductos(productosArray);
       setCategorias(categoriasArray);
       setGastosAutomaticos(gastosAutoArray);
@@ -69,8 +64,6 @@ const NuevoReporte = ({ esEdicion = false }) => {
       if (esEdicion && id) {
         // Cargar datos del reporte existente
         const reporteData = await reportesService.getReporte(id);
-        console.log('=== REPORTE CARGADO PARA EDICIÓN ===');
-        console.log('Gastos del reporte:', reporteData.gastos);
 
         // Cargar datos básicos
         setFecha(reporteData.fecha);
@@ -86,7 +79,6 @@ const NuevoReporte = ({ esEdicion = false }) => {
             valor: g.valor,
             categoria: g.categoria ? String(g.categoria) : '', // Guardar como string, el select lo requiere
           }));
-          console.log('Gastos parseados:', gastosFormato);
           setGastos(gastosFormato);
         }
 
@@ -110,7 +102,6 @@ const NuevoReporte = ({ esEdicion = false }) => {
       }
     } catch (error) {
       toast.error('Error al cargar datos iniciales');
-      console.error('Error cargando datos:', error);
     } finally {
       setLoading(false);
     }
@@ -226,28 +217,15 @@ const NuevoReporte = ({ esEdicion = false }) => {
         ventas_productos: ventasValidas,
       };
 
-      console.log('=== DATOS SIENDO ENVIADOS ===');
-      console.log('Modo:', esEdicion ? 'EDICIÓN' : 'CREACIÓN');
-      console.log('ID Reporte:', id);
-      console.log('Datos:', datos);
-      console.log('Gastos válidos:', gastosValidos.length);
-      console.log('Ventas válidas:', ventasValidas.length);
-
       if (esEdicion && id) {
-        console.log(`Actualizando reporte ${id}...`);
         await reportesService.updateReporte(id, datos);
         toast.success('Reporte actualizado exitosamente');
       } else {
-        console.log('Creando nuevo reporte...');
         await reportesService.crearReporte(datos);
         toast.success('Reporte creado exitosamente');
       }
       navigate('/reportes');
     } catch (error) {
-      console.error('=== ERROR AL GUARDAR REPORTE ===');
-      console.error('Error completo:', error);
-      console.error('Response data:', error.response?.data);
-      console.error('Status:', error.response?.status);
 
       if (error.response?.data) {
         const datos = error.response.data;

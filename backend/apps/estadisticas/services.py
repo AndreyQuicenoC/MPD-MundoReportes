@@ -283,8 +283,6 @@ class ServicioEstadisticas:
         Returns:
             dict: Diccionario con totales por tipo de deducible
         """
-        import sys
-
         # Obtener todos los gastos en el rango de fechas
         gastos = Gasto.objects.all()
 
@@ -294,20 +292,9 @@ class ServicioEstadisticas:
             gastos = gastos.filter(reporte__fecha__lte=fecha_fin)
 
         # Obtener todas las categorías marcadas como deducibles
-        deducibles_activos = GastoDeducible.objects.filter(activo=True)
         deducibles_map = {}
-        for deducible in deducibles_activos:
+        for deducible in GastoDeducible.objects.filter(activo=True):
             deducibles_map[deducible.categoria_id] = deducible.tipo
-
-        # Debug logging
-        print(f"\n=== DEDUCIBLES DEBUG ===", file=sys.stderr)
-        print(f"Fecha inicio: {fecha_inicio}", file=sys.stderr)
-        print(f"Fecha fin: {fecha_fin}", file=sys.stderr)
-        print(f"Total gastos en rango: {gastos.count()}", file=sys.stderr)
-        print(f"Total deducibles activos: {deducibles_activos.count()}", file=sys.stderr)
-        print(f"Deducibles map: {deducibles_map}", file=sys.stderr)
-        for cat_id, tipo in deducibles_map.items():
-            print(f"  Categoria ID {cat_id} -> Tipo {tipo}", file=sys.stderr)
 
         # Inicializar diccionario de totales
         totales = {
@@ -318,18 +305,11 @@ class ServicioEstadisticas:
         }
 
         # Sumar los gastos que son deducibles
-        gastos_deducibles_encontrados = 0
         for gasto in gastos:
             if gasto.categoria_id in deducibles_map:
                 tipo = deducibles_map[gasto.categoria_id]
                 valor = float(gasto.valor or Decimal('0.00'))
                 totales[tipo] += valor
                 totales['total_deducible'] += valor
-                gastos_deducibles_encontrados += 1
-                print(f"Gasto deducible encontrado: {gasto.descripcion} ({tipo}) - ${valor}", file=sys.stderr)
-
-        print(f"Gastos deducibles encontrados: {gastos_deducibles_encontrados}", file=sys.stderr)
-        print(f"Totales: {totales}", file=sys.stderr)
-        print(f"=== FIN DEDUCIBLES DEBUG ===\n", file=sys.stderr)
 
         return totales

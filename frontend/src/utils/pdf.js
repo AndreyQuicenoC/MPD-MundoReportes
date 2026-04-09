@@ -9,8 +9,6 @@ import { formatearMoneda } from './reportes';
  */
 export const exportarReportePDF = async (reporte, element) => {
   try {
-    console.log('🔄 Generando PDF de reporte...');
-
     // Preparar elemento para captura
     const clone = element.cloneNode(true);
     clone.style.background = 'white';
@@ -39,8 +37,8 @@ export const exportarReportePDF = async (reporte, element) => {
       format: 'a4',
     });
 
-    // Márgenes (30mm según el archivo modificado)
-    const margin = 30;
+    // Márgenes 10mm (1cm) por lado
+    const margin = 10;
     const pageWidth = 210;
     const pageHeight = 297;
     const availableWidth = pageWidth - margin * 2;
@@ -69,9 +67,7 @@ export const exportarReportePDF = async (reporte, element) => {
 
     const fecha = new Date(reporte.fecha + 'T00:00:00').toLocaleDateString('es-CO');
     pdf.save(`Reporte-${fecha}-${reporte.id}.pdf`);
-    console.log(`✅ PDF de reporte generado (${pageNumber} páginas)`);
   } catch (error) {
-    console.error('❌ Error al generar PDF:', error);
     throw new Error('Error al generar el PDF: ' + error.message);
   }
 };
@@ -83,8 +79,6 @@ export const exportarReportePDF = async (reporte, element) => {
  */
 export const exportarEstadisticasPDF = async (estadisticas, element) => {
   try {
-    console.log('🔄 Generando PDF de estadísticas...');
-
     // Forzar que todo sea visible
     const allElements = element.querySelectorAll('*');
     const originalStyles = new Map();
@@ -96,23 +90,22 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
         visibility: el.style.visibility,
       });
 
-      el.style.opacity = '1';
-      el.style.display = 'block';
-      el.style.visibility = 'visible';
-      el.style.filter = 'none';
+      // Usar setProperty con !important para sobreescribir cualquier CSS
+      el.style.setProperty('opacity', '1', 'important');
+      el.style.setProperty('display', 'block', 'important');
+      el.style.setProperty('visibility', 'visible', 'important');
+      el.style.setProperty('filter', 'none', 'important');
     });
 
     // Esperar a que canvas de gráficos se completen
-    console.log('⏳ Esperando renderizado de gráficos...');
     await new Promise(resolve => setTimeout(resolve, 2000));
 
     // Capturar con máxima calidad
-    console.log('📸 Capturando contenido...');
     const canvas = await html2canvas(element, {
-      scale: 3, // Máxima resolución
+      scale: 3,
       useCORS: true,
       allowTaint: true,
-      logging: true,
+      logging: false,
       backgroundColor: '#ffffff',
       windowHeight: element.offsetHeight,
       windowWidth: element.offsetWidth,
@@ -128,15 +121,14 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
       }
     });
 
-    console.log('📄 Creando PDF...');
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4',
     });
 
-    // Márgenes (30mm según el archivo modificado)
-    const margin = 30;
+    // Márgenes 10mm (1cm) por lado
+    const margin = 10;
     const pageWidth = 210;
     const pageHeight = 297;
     const availableWidth = pageWidth - margin * 2;
@@ -149,8 +141,6 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
     // Usar máxima calidad - PNG sin compresión
     const imgData = canvas.toDataURL('image/png', 1.0);
 
-    console.log(`📊 Imagen: ${canvas.width}x${canvas.height}px -> ${availableWidth}x${imgHeight}mm`);
-
     // Primera página
     pdf.addImage(imgData, 'PNG', margin, margin, availableWidth, imgHeight);
 
@@ -160,7 +150,6 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
 
     while (heightLeft > 0) {
       currentY = heightLeft - imgHeight;
-      console.log(`📄 Agregando página ${pageNumber + 1}...`);
       pdf.addPage();
       pdf.addImage(imgData, 'PNG', margin, margin + currentY, availableWidth, imgHeight);
       heightLeft -= pageHeightAvailable;
@@ -169,9 +158,7 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
 
     const fechaActual = new Date().toLocaleDateString('es-CO');
     pdf.save(`Estadisticas-${fechaActual}.pdf`);
-    console.log(`✅ PDF generado exitosamente (${pageNumber} páginas, ${availableWidth}mm ancho, márgenes: ${margin}mm)`);
   } catch (error) {
-    console.error('❌ Error al generar PDF:', error);
     throw new Error('Error al generar el PDF de estadísticas: ' + error.message);
   }
 };

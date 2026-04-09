@@ -67,9 +67,27 @@ const Estadisticas = () => {
     try {
       setLoading(true);
 
-      const params = {};
-      if (fechaInicio) params.fecha_inicio = fechaInicio;
-      if (fechaFin) params.fecha_fin = fechaFin;
+      // Usar el mes actual como rango por defecto si no hay filtros
+      // Esto asegura que los deducibles se calculen para el mes actual, no todo el período
+      let params = {};
+
+      if (fechaInicio) {
+        params.fecha_inicio = fechaInicio;
+      } else {
+        // Primer día del mes actual
+        const hoy = new Date();
+        const primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+        params.fecha_inicio = primerDia.toISOString().split('T')[0];
+      }
+
+      if (fechaFin) {
+        params.fecha_fin = fechaFin;
+      } else {
+        // Último día del mes actual
+        const hoy = new Date();
+        const ultimoDia = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+        params.fecha_fin = ultimoDia.toISOString().split('T')[0];
+      }
 
       const [stats, gastos, productos, productosTotal, ventas, deduciblesRes, deduciblesCalc] = await Promise.all([
         estadisticasService.getEstadisticasVentas(params),
@@ -92,12 +110,6 @@ const Estadisticas = () => {
       setDeducibles(deduciblesArr);
 
       // Usar los deducibles calculados del backend
-      console.log('=== DEDUCIBLES CALCULADOS ===');
-      console.log('deduciblesCalc:', deduciblesCalc);
-      console.log('Ingreso:', deduciblesCalc.ingreso);
-      console.log('Ahorro:', deduciblesCalc.ahorro);
-      console.log('Transferencia:', deduciblesCalc.transferencia);
-
       setGastosParaDeducir({
         ingreso: deduciblesCalc.ingreso || 0,
         ahorro: deduciblesCalc.ahorro || 0,
@@ -111,8 +123,6 @@ const Estadisticas = () => {
       }
     } catch (error) {
       toast.error('Error al cargar estadísticas');
-      // eslint-disable-next-line no-console
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -121,18 +131,6 @@ const Estadisticas = () => {
   useEffect(() => {
     cargarEstadisticas();
   }, [cargarEstadisticas]);
-
-  useEffect(() => {
-    console.log('=== ESTADÍSTICAS CARGADAS ===');
-    console.log('Estadísticas:', estadisticas);
-    console.log('Gastos por categoría:', gastosPorCategoria);
-    console.log('Productos más vendidos:', productosMasVendidos);
-    console.log('Productos menos vendidos:', productosMenosVendidos);
-    console.log('Todos los productos:', todosProductosVendidos);
-    console.log('Ventas por mes:', ventasPorMes);
-    console.log('Deducibles:', deducibles);
-    console.log('Gastos para deducir:', gastosParaDeducir);
-  }, [estadisticas, gastosPorCategoria, productosMasVendidos, productosMenosVendidos, todosProductosVendidos, ventasPorMes]);
 
   const handleFiltrar = e => {
     e.preventDefault();
