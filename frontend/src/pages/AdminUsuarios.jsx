@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
+import Pagination from '../components/Pagination';
 import './AdminUsuarios.css';
 
 /**
@@ -13,6 +14,8 @@ const AdminUsuarios = () => {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [usuarioEditando, setUsuarioEditando] = useState(null);
   const [estadisticas, setEstadisticas] = useState(null);
+  const [paginaActual, setPaginaActual] = useState(1);
+  const itemsPorPagina = 10;
 
   const [formData, setFormData] = useState({
     email: '',
@@ -42,6 +45,7 @@ const AdminUsuarios = () => {
       const usuariosData = usuariosRes.data.results || usuariosRes.data;
       setUsuarios(Array.isArray(usuariosData) ? usuariosData : []);
       setEstadisticas(statsRes.data);
+      setPaginaActual(1); // Resetear a primera página
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error al cargar datos:', error);
@@ -199,6 +203,11 @@ const AdminUsuarios = () => {
     }
   };
 
+  // Calcular índices para la paginación
+  const indiceInicio = (paginaActual - 1) * itemsPorPagina;
+  const indiceFin = indiceInicio + itemsPorPagina;
+  const usuariosPaginados = usuarios.slice(indiceInicio, indiceFin);
+
   if (loading) {
     return <div className="loading-container">Cargando...</div>;
   }
@@ -250,7 +259,7 @@ const AdminUsuarios = () => {
               </tr>
             </thead>
             <tbody>
-              {usuarios.map(usuario => (
+              {usuariosPaginados.map(usuario => (
                 <tr key={usuario.id}>
                   <td>{usuario.email}</td>
                   <td>{usuario.nombre}</td>
@@ -308,6 +317,15 @@ const AdminUsuarios = () => {
           </table>
         </div>
       </div>
+
+      {usuarios.length > 0 && (
+        <Pagination
+          paginaActual={paginaActual}
+          totalItems={usuarios.length}
+          itemsPorPagina={itemsPorPagina}
+          onPaginaChange={setPaginaActual}
+        />
+      )}
 
       {mostrarModal && (
         <div className="modal-overlay" onClick={() => setMostrarModal(false)}>
