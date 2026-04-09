@@ -3,28 +3,35 @@ import html2canvas from 'html2canvas';
 import { formatearMoneda } from './reportes';
 
 /**
- * Opciones optimizadas para captura de html2canvas
- * Asegura colores vibrantes y buen rendering
- */
-const getCanvas2Options = () => ({
-  scale: 2,
-  useCORS: true,
-  allowTaint: true,
-  logging: false,
-  backgroundColor: '#ffffff',
-  // NO usar foreignObjectRendering ni onclone con gráficos
-});
-
-/**
  * Exporta el detalle del reporte como PDF con márgenes de 1cm
  * @param {Object} reporte - Datos del reporte
  * @param {HTMLElement} element - Elemento a convertir a PDF
  */
 export const exportarReportePDF = async (reporte, element) => {
   try {
-    console.log('Generando PDF de reporte...');
+    console.log('🔄 Generando PDF de reporte...');
 
-    const canvas = await html2canvas(element, getCanvas2Options());
+    // Preparar elemento para captura
+    const clone = element.cloneNode(true);
+    clone.style.background = 'white';
+    clone.style.display = 'block';
+    clone.style.position = 'absolute';
+    clone.style.top = '-9999px';
+    clone.style.left = '-9999px';
+    document.body.appendChild(clone);
+
+    // Esperar a que se renderice
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    const canvas = await html2canvas(clone, {
+      scale: 3,
+      useCORS: true,
+      allowTaint: true,
+      logging: false,
+      backgroundColor: '#ffffff',
+    });
+
+    document.body.removeChild(clone);
 
     const pdf = new jsPDF({
       orientation: 'portrait',
@@ -32,159 +39,139 @@ export const exportarReportePDF = async (reporte, element) => {
       format: 'a4',
     });
 
-    // Márgenes de 1cm (10mm por lado)
-    const marginLeft = 10;
-    const marginTop = 10;
-    const marginRight = 10;
-    const marginBottom = 10;
+    // Márgenes (30mm según el archivo modificado)
+    const margin = 30;
+    const pageWidth = 210;
+    const pageHeight = 297;
+    const availableWidth = pageWidth - margin * 2;
 
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-
-    // Ancho disponible después de márgenes
-    const availableWidth = pageWidth - marginLeft - marginRight;
-
-    // Calcular altura de la imagen manteniendo proporción
+    // Calcular altura proporcionalmente
     const imgHeight = (canvas.height * availableWidth) / canvas.width;
-    const pageHeightAvailable = pageHeight - marginTop - marginBottom;
+    const pageHeightAvailable = pageHeight - margin * 2;
 
-    let heightLeft = imgHeight;
-    let position = 0;
-
-    const imgData = canvas.toDataURL('image/png', 1.0);
+    let currentY = 0;
+    const imgData = canvas.toDataURL('image/png');
 
     // Primera página
-    pdf.addImage(
-      imgData,
-      'PNG',
-      marginLeft,
-      marginTop + position,
-      availableWidth,
-      imgHeight
-    );
-    heightLeft -= pageHeightAvailable;
+    pdf.addImage(imgData, 'PNG', margin, margin, availableWidth, imgHeight);
 
     // Páginas adicionales si es necesario
+    let heightLeft = imgHeight - pageHeightAvailable;
+    let pageNumber = 1;
+
     while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
+      currentY = heightLeft - imgHeight;
       pdf.addPage();
-      pdf.addImage(
-        imgData,
-        'PNG',
-        marginLeft,
-        marginTop + position,
-        availableWidth,
-        imgHeight
-      );
+      pdf.addImage(imgData, 'PNG', margin, margin + currentY, availableWidth, imgHeight);
       heightLeft -= pageHeightAvailable;
+      pageNumber++;
     }
 
     const fecha = new Date(reporte.fecha + 'T00:00:00').toLocaleDateString('es-CO');
     pdf.save(`Reporte-${fecha}-${reporte.id}.pdf`);
-    console.log('PDF generado exitosamente');
+    console.log(`✅ PDF de reporte generado (${pageNumber} páginas)`);
   } catch (error) {
-    console.error('Error al generar PDF:', error);
-    throw new Error('Error al generar el PDF');
+    console.error('❌ Error al generar PDF:', error);
+    throw new Error('Error al generar el PDF: ' + error.message);
   }
 };
 
 /**
- * Exporta las estadísticas como PDF con márgenes de 1cm
- * Diseñada para capturar gráficos de Chart.js correctamente
+ * Exporta estadísticas como PDF con máxima calidad y colores vibrantes
  * @param {Object} estadisticas - Datos de estadísticas
  * @param {HTMLElement} element - Elemento a convertir a PDF
  */
 export const exportarEstadisticasPDF = async (estadisticas, element) => {
   try {
-    console.log('Generando PDF de estadísticas...');
-    console.log('Elemento a capturar:', element);
+    console.log('🔄 Generando PDF de estadísticas...');
 
-    // Esperar a que los gráficos se rendericen completamente
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Forzar que todo sea visible
+    const allElements = element.querySelectorAll('*');
+    const originalStyles = new Map();
 
-    // Opciones simplificadas para html2canvas
-    // Evitar problemas con canvas clonado
-    const options = {
-      scale: 2,
+    allElements.forEach(el => {
+      originalStyles.set(el, {
+        opacity: el.style.opacity,
+        display: el.style.display,
+        visibility: el.style.visibility,
+      });
+
+      el.style.opacity = '1';
+      el.style.display = 'block';
+      el.style.visibility = 'visible';
+      el.style.filter = 'none';
+    });
+
+    // Esperar a que canvas de gráficos se completen
+    console.log('⏳ Esperando renderizado de gráficos...');
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // Capturar con máxima calidad
+    console.log('📸 Capturando contenido...');
+    const canvas = await html2canvas(element, {
+      scale: 3, // Máxima resolución
       useCORS: true,
       allowTaint: true,
       logging: true,
       backgroundColor: '#ffffff',
-      width: element.offsetWidth,
-      height: element.offsetHeight,
-      // NO usar onclone ni foreignObjectRendering con gráficos Chart.js
-    };
+      windowHeight: element.offsetHeight,
+      windowWidth: element.offsetWidth,
+    });
 
-    console.log('Capturando canvas con opciones:', options);
-    const canvas = await html2canvas(element, options);
-    console.log('Canvas capturado exitosamente');
+    // Restaurar estilos
+    allElements.forEach(el => {
+      const original = originalStyles.get(el);
+      if (original) {
+        el.style.opacity = original.opacity || '';
+        el.style.display = original.display || '';
+        el.style.visibility = original.visibility || '';
+      }
+    });
 
+    console.log('📄 Creando PDF...');
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4',
     });
 
-    // Márgenes de 1cm (10mm por lado)
-    const marginLeft = 10;
-    const marginTop = 10;
-    const marginRight = 10;
-    const marginBottom = 10;
+    // Márgenes (30mm según el archivo modificado)
+    const margin = 30;
+    const pageWidth = 210;
+    const pageHeight = 297;
+    const availableWidth = pageWidth - margin * 2;
 
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-
-    // Ancho disponible después de márgenes
-    const availableWidth = pageWidth - marginLeft - marginRight;
-
-    // Calcular altura de la imagen manteniendo proporción
+    // Calcular altura proporcionalmente
     const imgHeight = (canvas.height * availableWidth) / canvas.width;
-    const pageHeightAvailable = pageHeight - marginTop - marginBottom;
+    const pageHeightAvailable = pageHeight - margin * 2;
 
-    let heightLeft = imgHeight;
-    let position = 0;
-
-    // Usar calidad máxima para la imagen
+    let currentY = 0;
+    // Usar máxima calidad - PNG sin compresión
     const imgData = canvas.toDataURL('image/png', 1.0);
 
-    console.log('Agregando imagen a PDF...');
-    console.log(`Altura total imagen: ${imgHeight}mm, Altura página: ${pageHeightAvailable}mm`);
+    console.log(`📊 Imagen: ${canvas.width}x${canvas.height}px -> ${availableWidth}x${imgHeight}mm`);
 
     // Primera página
-    pdf.addImage(
-      imgData,
-      'PNG',
-      marginLeft,
-      marginTop,
-      availableWidth,
-      imgHeight
-    );
-    heightLeft -= pageHeightAvailable;
+    pdf.addImage(imgData, 'PNG', margin, margin, availableWidth, imgHeight);
 
     // Páginas adicionales si es necesario
-    let pageCount = 1;
+    let heightLeft = imgHeight - pageHeightAvailable;
+    let pageNumber = 1;
+
     while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-      console.log(`Agregando página ${pageCount + 1}...`);
+      currentY = heightLeft - imgHeight;
+      console.log(`📄 Agregando página ${pageNumber + 1}...`);
       pdf.addPage();
-      pdf.addImage(
-        imgData,
-        'PNG',
-        marginLeft,
-        marginTop + position,
-        availableWidth,
-        imgHeight
-      );
+      pdf.addImage(imgData, 'PNG', margin, margin + currentY, availableWidth, imgHeight);
       heightLeft -= pageHeightAvailable;
-      pageCount++;
+      pageNumber++;
     }
 
     const fechaActual = new Date().toLocaleDateString('es-CO');
     pdf.save(`Estadisticas-${fechaActual}.pdf`);
-    console.log(`PDF de estadísticas generado exitosamente (${pageCount} páginas)`);
+    console.log(`✅ PDF generado exitosamente (${pageNumber} páginas, ${availableWidth}mm ancho, márgenes: ${margin}mm)`);
   } catch (error) {
-    console.error('Error al generar PDF de estadísticas:', error);
-    console.error('Stack:', error.stack);
+    console.error('❌ Error al generar PDF:', error);
     throw new Error('Error al generar el PDF de estadísticas: ' + error.message);
   }
 };

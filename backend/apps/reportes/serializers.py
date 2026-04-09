@@ -87,15 +87,21 @@ class GastoInputSerializer(serializers.Serializer):
         return value
 
     def validate_categoria(self, value):
-        """Validar que la categoría exista si se especifica."""
+        """Validar que la categoría exista si se especifica.
+
+        En actualización, permitir categorías inactivas para no perder datos históricos.
+        En creación, permitir tanto activas como inactivas.
+        """
         from apps.gastos.models import CategoriaGasto
 
         if value is not None:
             try:
-                cat = CategoriaGasto.objects.get(pk=value, activa=True)
+                # Permitir categorías tanto activas como inactivas
+                # Esto es importante para poder editar reportes con categorías inactivas
+                cat = CategoriaGasto.objects.get(pk=value)
             except CategoriaGasto.DoesNotExist:
                 raise serializers.ValidationError(
-                    f"La categoría con ID {value} no existe o está inactiva"
+                    f"La categoría con ID {value} no existe"
                 )
         return value
 

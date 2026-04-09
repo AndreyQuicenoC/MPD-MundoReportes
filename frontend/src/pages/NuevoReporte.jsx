@@ -51,6 +51,11 @@ const NuevoReporte = ({ esEdicion = false }) => {
         ? gastosAutoData
         : gastosAutoData?.results || [];
 
+      console.log('=== DATOS CARGADOS ===');
+      console.log('Categorías cargadas:', categoriasArray.length, categoriasArray);
+      console.log('Productos cargados:', productosArray.length);
+      console.log('Gastos automáticos:', gastosAutoArray.length);
+
       setProductos(productosArray);
       setCategorias(categoriasArray);
       setGastosAutomaticos(gastosAutoArray);
@@ -64,6 +69,8 @@ const NuevoReporte = ({ esEdicion = false }) => {
       if (esEdicion && id) {
         // Cargar datos del reporte existente
         const reporteData = await reportesService.getReporte(id);
+        console.log('=== REPORTE CARGADO PARA EDICIÓN ===');
+        console.log('Gastos del reporte:', reporteData.gastos);
 
         // Cargar datos básicos
         setFecha(reporteData.fecha);
@@ -74,13 +81,13 @@ const NuevoReporte = ({ esEdicion = false }) => {
 
         // Cargar gastos
         if (reporteData.gastos && reporteData.gastos.length > 0) {
-          setGastos(
-            reporteData.gastos.map(g => ({
-              descripcion: g.descripcion,
-              valor: g.valor,
-              categoria: g.categoria || '',
-            }))
-          );
+          const gastosFormato = reporteData.gastos.map(g => ({
+            descripcion: g.descripcion,
+            valor: g.valor,
+            categoria: g.categoria ? String(g.categoria) : '', // Guardar como string, el select lo requiere
+          }));
+          console.log('Gastos parseados:', gastosFormato);
+          setGastos(gastosFormato);
         }
 
         // Cargar ventas de productos
@@ -103,8 +110,7 @@ const NuevoReporte = ({ esEdicion = false }) => {
       }
     } catch (error) {
       toast.error('Error al cargar datos iniciales');
-      // eslint-disable-next-line no-console
-      console.error(error);
+      console.error('Error cargando datos:', error);
     } finally {
       setLoading(false);
     }
@@ -199,14 +205,22 @@ const NuevoReporte = ({ esEdicion = false }) => {
         venta_total: parseFloat(ventaTotal || 0),
         entrega: parseFloat(entrega || 0),
         observacion: observacion.trim(),
-        gastos: gastosValidos.map(g => {
-          const categoria = g.categoria ? parseInt(g.categoria) : null;
-          // Validar que categoria sea un número válido
-          const categoriaValida = Number.isInteger(categoria) ? categoria : null;
+        gastos: gastosValidos.map((g, idx) => {
+          // Convertir categoría a número
+          let categoriaFinal = null;
+          if (g.categoria && g.categoria !== '') {
+            const categoriaNum = parseInt(g.categoria, 10);
+            if (!isNaN(categoriaNum) && categoriaNum > 0) {
+              categoriaFinal = categoriaNum;
+            }
+          }
+
+          console.log(`Gasto ${idx + 1}: descripcion="${g.descripcion}", valor=${g.valor}, categoria="${g.categoria}" -> ${categoriaFinal}`);
+
           return {
             descripcion: g.descripcion.trim(),
             valor: parseFloat(g.valor),
-            categoria: categoriaValida,
+            categoria: categoriaFinal,
           };
         }),
         ventas_productos: ventasValidas,
