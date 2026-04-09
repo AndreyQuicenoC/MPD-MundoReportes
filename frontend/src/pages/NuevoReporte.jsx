@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { reportesService } from '../services/reportesService';
 import { productosService } from '../services/productosService';
 import { categoriasService } from '../services/categoriasService';
+import { gastosService } from '../services/gastosService';
 import toast from 'react-hot-toast';
 import { calcularBaseSiguiente, formatearMoneda } from '../utils/reportes';
 import './NuevoReporte.css';
@@ -17,6 +18,7 @@ const NuevoReporte = ({ esEdicion = false }) => {
   const [loading, setLoading] = useState(true);
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
+  const [gastosAutomaticos, setGastosAutomaticos] = useState([]);
 
   // Datos del reporte
   const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
@@ -36,17 +38,20 @@ const NuevoReporte = ({ esEdicion = false }) => {
 
   const cargarDatos = async () => {
     try {
-      const [prodData, catData] = await Promise.all([
+      const [prodData, catData, gastosAutoData] = await Promise.all([
         productosService.obtenerProductos(),
         categoriasService.obtenerCategorias(),
+        gastosService.obtenerAutomaticos(),
       ]);
 
       // Asegurar que sean arrays
       const productosArray = Array.isArray(prodData) ? prodData : prodData?.results || [];
       const categoriasArray = Array.isArray(catData) ? catData : catData?.results || [];
+      const gastosAutoArray = Array.isArray(gastosAutoData) ? gastosAutoData : gastosAutoData?.results || [];
 
       setProductos(productosArray);
       setCategorias(categoriasArray);
+      setGastosAutomaticos(gastosAutoArray);
 
       // Inicializar cantidades en 0 para todos los productos
       const cantidadesIniciales = {};
@@ -57,7 +62,7 @@ const NuevoReporte = ({ esEdicion = false }) => {
       if (esEdicion && id) {
         // Cargar datos del reporte existente
         const reporteData = await reportesService.getReporte(id);
-        
+
         // Cargar datos básicos
         setFecha(reporteData.fecha);
         setBaseInicial(reporteData.base_inicial || 0);
@@ -109,6 +114,15 @@ const NuevoReporte = ({ esEdicion = false }) => {
 
   const eliminarGasto = index => {
     setGastos(gastos.filter((_, i) => i !== index));
+  };
+
+  const agregarGastoAutomatico = (gastoAuto) => {
+    setGastos([...gastos, {
+      descripcion: gastoAuto.descripcion,
+      valor: gastoAuto.valor,
+      categoria: gastoAuto.categoria,
+    }]);
+    toast.success(`Gasto automático "${gastoAuto.descripcion}" agregado`);
   };
 
   const actualizarGasto = (index, campo, valor) => {
@@ -311,6 +325,26 @@ const NuevoReporte = ({ esEdicion = false }) => {
               Agregar Gasto
             </button>
           </div>
+
+          {/* Gastos Automáticos disponibles */}
+          {gastosAutomaticos.length > 0 && (
+            <div className="gastos-automaticos">
+              <p className="gastos-automaticos-label">Gastos automáticos disponibles:</p>
+              <div className="gastos-automaticos-list">
+                {gastosAutomaticos.map(gastoAuto => (
+                  <button
+                    key={gastoAuto.id}
+                    type="button"
+                    onClick={() => agregarGastoAutomatico(gastoAuto)}
+                    className="btn btn-sm btn-gasto-auto"
+                    title={`${gastoAuto.descripcion} - ${formatearMoneda(gastoAuto.valor)}`}
+                  >
+                    + {gastoAuto.descripcion}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {gastos.map((gasto, index) => (
             <div key={index} className="item-row">
