@@ -377,7 +377,7 @@ const Estadisticas = () => {
             <div className="stat-card">
               <h3>Margen de Ganancia</h3>
               <p className="stat-value success">
-                {((((estadisticas.total_ventas - estadisticas.total_gastos) / estadisticas.total_ventas) * 100) || 0).toFixed(1)}%
+                {(((estadisticas.total_ventas - (Number(estadisticas.total_gastos) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia))) / estadisticas.total_ventas) * 100) || 0).toFixed(1)}%
               </p>
               <small>Beneficio/Ventas</small>
             </div>
@@ -385,7 +385,7 @@ const Estadisticas = () => {
             <div className="stat-card">
               <h3>Ratio Gastos</h3>
               <p className="stat-value">
-                {((estadisticas.total_gastos / estadisticas.total_ventas * 100) || 0).toFixed(1)}%
+                {(((Number(estadisticas.total_gastos) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia)) / estadisticas.total_ventas * 100) || 0).toFixed(1)}%
               </p>
               <small>Gastos vs Ventas</small>
             </div>
