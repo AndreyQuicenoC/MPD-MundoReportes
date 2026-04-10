@@ -60,22 +60,14 @@ const Reportes = () => {
         reportesPromise = reportesService.getReportes();
       }
 
-      // Preparar parámetros para deducibles
-      let deduciblesParams = {};
-
-      if (mes === 'actual' && !activo) {
-        // Usar mes actual
-        const ahora = new Date();
-        const primerDia = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
-        const ultimoDia = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0);
-        deduciblesParams.fecha_inicio = primerDia.toISOString().split('T')[0];
-        deduciblesParams.fecha_fin = ultimoDia.toISOString().split('T')[0];
-      } else if (activo && (inicio || fin)) {
-        // Usar filtro de fechas personalizado
-        if (inicio) deduciblesParams.fecha_inicio = inicio;
-        if (fin) deduciblesParams.fecha_fin = fin;
-      }
-      // Si es 'todos', no se pasan fechas (trae todos los deducibles)
+      // DEDUCIBLES SIEMPRE DEL MES ACTUAL (para los cards)
+      const ahora = new Date();
+      const primerDia = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+      const ultimoDia = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0);
+      const deduciblesParams = {
+        fecha_inicio: primerDia.toISOString().split('T')[0],
+        fecha_fin: ultimoDia.toISOString().split('T')[0],
+      };
 
       const [reportesData, dashboardData, deduciblesCalc] = await Promise.all([
         reportesPromise,

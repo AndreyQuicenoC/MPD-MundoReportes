@@ -73,8 +73,8 @@ export const exportarReportePDF = async (reporte, element) => {
 };
 
 /**
- * Exporta estadísticas como PDF con máxima calidad y colores vibrantes
- * NO modifica la página - captura el estado actual exactamente como se ve
+ * Exporta estadísticas como PDF manteniendo EXACTAMENTE el diseño de la página web
+ * NO modifica la página - captura el estado actual sin alteraciones
  * @param {Object} estadisticas - Datos de estadísticas
  * @param {HTMLElement} element - Elemento a convertir a PDF
  */
@@ -82,14 +82,27 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
   try {
     // Clonar el elemento para no afectar la página original
     const clone = element.cloneNode(true);
+
+    // Posicionar fuera de pantalla manteniendo las MISMAS dimensiones
     clone.style.position = 'absolute';
     clone.style.left = '-9999px';
-    clone.style.top = '-9999px';
+    clone.style.top = '0px';
     clone.style.width = element.offsetWidth + 'px';
+    clone.style.height = 'auto';
+    clone.style.margin = '0';
+    clone.style.padding = element.style.padding || '0';
+    clone.style.background = 'white';
+
+    // Copiar estilos críticos de ancho
+    const computedStyle = window.getComputedStyle(element);
+    clone.style.maxWidth = computedStyle.maxWidth;
+
     document.body.appendChild(clone);
 
+    // Esperar a que el DOM se aplique
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     // Ocultar solo los elementos que no deben verse en PDF
-    // Usar selectores específicos en el clon
     const filtrosSection = clone.querySelector('.filtros-section');
     const exportBtn = clone.querySelector('[data-export-btn]');
 
@@ -100,33 +113,20 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
       exportBtn.classList.add('pdf-hide');
     }
 
-    // Forzar que todo sea visible (excepto lo que ocultamos)
+    // Forzar opacidad completa en todos los elementos (excepto ocultos)
     const allElements = clone.querySelectorAll('*');
-    const originalStyles = new Map();
-
     allElements.forEach(el => {
-      originalStyles.set(el, {
-        opacity: el.style.opacity,
-        display: el.style.display,
-        visibility: el.style.visibility,
-      });
-
-      // Usar setProperty con !important para sobreescribir cualquier CSS
-      el.style.setProperty('opacity', '1', 'important');
-      el.style.setProperty('display', 'block', 'important');
-      el.style.setProperty('visibility', 'visible', 'important');
-      el.style.setProperty('filter', 'none', 'important');
-    });
-
-    // Restaurar display: none para elementos marcados con pdf-hide
-    clone.querySelectorAll('.pdf-hide').forEach(el => {
-      el.style.setProperty('display', 'none', 'important');
+      // Si ya está oculto con pdf-hide, respetarlo
+      if (!el.classList.contains('pdf-hide')) {
+        el.style.setProperty('opacity', '1', 'important');
+        el.style.setProperty('filter', 'none', 'important');
+      }
     });
 
     // Esperar a que canvas de gráficos se completen
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // Capturar con máxima calidad - HTML2Canvas respetará el DOM clonado
+    // Capturar con máxima calidad - MANTENER EL ANCHO DEL CONTENEDOR
     const canvas = await html2canvas(clone, {
       scale: 3,
       useCORS: true,
@@ -134,7 +134,7 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
       logging: false,
       backgroundColor: '#ffffff',
       windowHeight: clone.offsetHeight,
-      windowWidth: clone.offsetWidth,
+      windowWidth: clone.offsetWidth, // Usar el ancho EXACTO del elemento original
     });
 
     // Remover el clon
@@ -156,7 +156,6 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
     const imgHeight = (canvas.height * availableWidth) / canvas.width;
     const pageHeightAvailable = pageHeight - margin * 2;
 
-    let currentY = 0;
     // Usar máxima calidad - PNG sin compresión
     const imgData = canvas.toDataURL('image/png', 1.0);
 
@@ -167,9 +166,8 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
     let heightLeft = imgHeight - pageHeightAvailable;
 
     while (heightLeft > 0) {
-      currentY = heightLeft - imgHeight;
       pdf.addPage();
-      pdf.addImage(imgData, 'PNG', margin, margin + currentY, availableWidth, imgHeight);
+      pdf.addImage(imgData, 'PNG', margin, margin + (imgHeight - heightLeft), availableWidth, imgHeight);
       heightLeft -= pageHeightAvailable;
     }
 

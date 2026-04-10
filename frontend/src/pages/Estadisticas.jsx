@@ -63,31 +63,15 @@ const Estadisticas = () => {
 
   const pdfRef = useRef(null);
 
-  const cargarEstadisticas = useCallback(async () => {
+  const cargarEstadisticas = useCallback(async (inicio = null, fin = null) => {
     try {
       setLoading(true);
 
-      // Usar el mes actual como rango por defecto si no hay filtros
-      // Esto asegura que los deducibles se calculen para el mes actual, no todo el período
+      // Solo usar fechas si se especifican explícitamente
       let params = {};
-
-      if (fechaInicio) {
-        params.fecha_inicio = fechaInicio;
-      } else {
-        // Primer día del mes actual
-        const hoy = new Date();
-        const primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-        params.fecha_inicio = primerDia.toISOString().split('T')[0];
-      }
-
-      if (fechaFin) {
-        params.fecha_fin = fechaFin;
-      } else {
-        // Último día del mes actual
-        const hoy = new Date();
-        const ultimoDia = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
-        params.fecha_fin = ultimoDia.toISOString().split('T')[0];
-      }
+      if (inicio) params.fecha_inicio = inicio;
+      if (fin) params.fecha_fin = fin;
+      // Si no hay fechas, se envía {} y trae TODO el período
 
       const [stats, gastos, productos, productosTotal, ventas, deduciblesRes, deduciblesCalc] = await Promise.all([
         estadisticasService.getEstadisticasVentas(params),
@@ -126,15 +110,17 @@ const Estadisticas = () => {
     } finally {
       setLoading(false);
     }
-  }, [fechaInicio, fechaFin]);
+  }, []);
 
   useEffect(() => {
+    // Carga inicial - TODO el período sin filtros
     cargarEstadisticas();
   }, [cargarEstadisticas]);
 
   const handleFiltrar = e => {
     e.preventDefault();
-    cargarEstadisticas();
+    // Solo llamar cuando se presiona el botón, con las fechas especificadas
+    cargarEstadisticas(fechaInicio || null, fechaFin || null);
     toast.success('Filtro aplicado correctamente');
   };
 
@@ -142,6 +128,7 @@ const Estadisticas = () => {
     setFechaInicio('');
     setFechaFin('');
     setAnoFiltro(new Date().getFullYear());
+    // Volver a cargar sin filtros (TODO el período)
     cargarEstadisticas();
     toast.success('Filtros limpiados');
   };
