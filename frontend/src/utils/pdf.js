@@ -64,15 +64,16 @@ export const exportarReportePDF = async (reporte, element) => {
 
       // Páginas adicionales si es necesario
       let heightLeft = imgHeight - pageHeightAvailable;
+      let currentPageOffsetY = 0;
 
       while (heightLeft > 0) {
+        currentPageOffsetY -= pageHeightAvailable;
         pdf.addPage();
-        const offsetY = imgHeight - heightLeft;
         pdf.addImage(
           imgData,
           'PNG',
           margin,
-          margin,
+          margin + currentPageOffsetY, // Offset Y negativo para mostrar siguiente porción
           availableWidth,
           imgHeight
         );
@@ -179,15 +180,16 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
       // Páginas adicionales si es necesario (sin saltos forzados)
       // El contenido fluye naturalmente en múltiples páginas
       let heightLeft = imgHeight - pageHeightAvailable;
+      let currentPageOffsetY = 0;
 
       while (heightLeft > 0) {
+        currentPageOffsetY -= pageHeightAvailable;
         pdf.addPage();
-        const offsetY = imgHeight - heightLeft;
         pdf.addImage(
           imgData,
           'PNG',
           margin,
-          margin,
+          margin + currentPageOffsetY, // Offset Y negativo para mostrar siguiente porción
           availableWidth,
           imgHeight
         );
