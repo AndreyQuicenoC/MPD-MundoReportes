@@ -21,7 +21,6 @@ export const exportarReportePDF = async (reporte, element) => {
 
     try {
       // Preparar elemento para captura
-      // Usar position absolute fuera de pantalla en TOP (no left/right)
       element.style.display = 'block';
       element.style.visibility = 'visible';
       element.style.position = 'absolute';
@@ -98,112 +97,122 @@ export const exportarReportePDF = async (reporte, element) => {
 };
 
 /**
- * Exporta estadísticas como PDF capturando directamente del DOM
- * Cada sección obtiene su propia página
+ * Exporta estadísticas como PDF capturando TODO junto
+ * SIN dividir en secciones - preserva el diseño exacto de la página
  * @param {Object} estadisticas - Datos de estadísticas
- * @param {HTMLElement} element - Elemento a convertir a PDF
+ * @param {HTMLElement} element - Elemento pdfRef (contiene todo)
  */
 export const exportarEstadisticasPDF = async (estadisticas, element) => {
   try {
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4',
-    });
-
-    const margin = 10;
-    const pageWidth = 210;
-    const availableWidth = pageWidth - margin * 2;
-
-    let isFirstPage = true;
-
-    // Función para capturar y agregar sección al PDF
-    const capturarYAgregarSeccion = async (section) => {
-      if (!section) return;
-
-      // Guardar estilos originales
-      const originalStyles = {
-        display: section.style.display,
-        visibility: section.style.visibility,
-        position: section.style.position,
-        top: section.style.top,
-        left: section.style.left,
-        width: section.style.width,
-        zIndex: section.style.zIndex,
-      };
-
-      try {
-        // Preparar para captura
-        section.style.display = 'block';
-        section.style.visibility = 'visible';
-        section.style.position = 'absolute';
-        section.style.top = '-10000px';
-        section.style.left = '0';
-        section.style.width = window.innerWidth + 'px';
-        section.style.zIndex = 'auto';
-
-        // ESPERAR a que Chart.js renderice (4 segundos)
-        await new Promise(resolve => setTimeout(resolve, 4000));
-
-        // Capturar directamente del DOM
-        const canvas = await html2canvas(section, {
-          scale: 3,
-          useCORS: true,
-          allowTaint: true,
-          logging: false,
-          backgroundColor: '#ffffff',
-          windowHeight: section.scrollHeight,
-          windowWidth: window.innerWidth,
-          imageTimeout: 0,
-        });
-
-        // Convertir canvas a imagen
-        const imgHeight = (canvas.height * availableWidth) / canvas.width;
-        const imgData = canvas.toDataURL('image/png', 1.0);
-
-        // Agregar al PDF
-        if (isFirstPage) {
-          // Primera sección en página 1
-          pdf.addImage(imgData, 'PNG', margin, margin, availableWidth, imgHeight);
-          isFirstPage = false;
-        } else {
-          // Secciones siguientes en nuevas páginas
-          pdf.addPage();
-          pdf.addImage(imgData, 'PNG', margin, margin, availableWidth, imgHeight);
-        }
-      } finally {
-        // GARANTIZAR restauración de estilos (CRÍTICO)
-        section.style.display = originalStyles.display;
-        section.style.visibility = originalStyles.visibility;
-        section.style.position = originalStyles.position;
-        section.style.top = originalStyles.top;
-        section.style.left = originalStyles.left;
-        section.style.width = originalStyles.width;
-        section.style.zIndex = originalStyles.zIndex;
-      }
+    // Guardar estado original
+    const originalStyles = {
+      display: element.style.display,
+      visibility: element.style.visibility,
+      position: element.style.position,
+      top: element.style.top,
+      left: element.style.left,
+      width: element.style.width,
+      background: element.style.background,
     };
 
-    // Capturar secciones en orden
-    const statsCards = element.querySelector('.stats-cards');
-    const chartsGrid = element.querySelector('.charts-grid');
+    // Guardar opacidad original de TODOS los elementos
+    const allElements = element.querySelectorAll('*');
+    const originalOpacities = new Map();
+    allElements.forEach(el => {
+      originalOpacities.set(el, el.style.opacity);
+    });
 
-    // 1. Tarjetas de estadísticas (primera página)
-    if (statsCards) {
-      await capturarYAgregarSeccion(statsCards);
-    }
+    try {
+      // Preparar para captura
+      element.style.display = 'block';
+      element.style.visibility = 'visible';
+      element.style.position = 'absolute';
+      element.style.top = '-10000px';
+      element.style.left = '0';
+      element.style.width = window.innerWidth + 'px';
+      element.style.background = 'white';
 
-    // 2. Cada gráfico por separado (en nuevas páginas)
-    if (chartsGrid) {
-      const chartCards = chartsGrid.querySelectorAll('.chart-card');
+      // FORZAR opacidad 1 !important en TODOS los elementos
+      // Esto arregla el problema de elementos borrosos/opacos
+      allElements.forEach(el => {
+        el.style.setProperty('opacity', '1', 'important');
+        el.style.setProperty('filter', 'none', 'important');
+      });
 
-      for (let i = 0; i < chartCards.length; i++) {
-        await capturarYAgregarSeccion(chartCards[i]);
+      // ESPERAR a que Chart.js y otros gráficos se renderizen
+      // 5 segundos es suficiente para todos los gráficos (Pie, Bar, Line, custom)
+      await new Promise(resolve => setTimeout(resolve, 5000));
+
+      // Capturar TODO el contenido de una sola vez
+      // NO dividir en secciones
+      const canvas = await html2canvas(element, {
+        scale: 3, // Máxima calidad
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        windowHeight: element.scrollHeight, // Altura REAL del contenido
+        windowWidth: window.innerWidth, // Ancho de ventana
+        imageTimeout: 0, // Sin timeout
+      });
+
+      // Crear PDF
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+
+      const margin = 10;
+      const pageWidth = 210;
+      const pageHeight = 297;
+      const availableWidth = pageWidth - margin * 2;
+      const pageHeightAvailable = pageHeight - margin * 2;
+
+      // Calcular altura preservando proporciones
+      const imgHeight = (canvas.height * availableWidth) / canvas.width;
+      const imgData = canvas.toDataURL('image/png', 1.0);
+
+      // Primera página
+      pdf.addImage(imgData, 'PNG', margin, margin, availableWidth, imgHeight);
+
+      // Páginas adicionales si es necesario (sin saltos forzados)
+      // El contenido fluye naturalmente en múltiples páginas
+      let heightLeft = imgHeight - pageHeightAvailable;
+
+      while (heightLeft > 0) {
+        pdf.addPage();
+        const offsetY = imgHeight - heightLeft;
+        pdf.addImage(
+          imgData,
+          'PNG',
+          margin,
+          margin,
+          availableWidth,
+          imgHeight
+        );
+        heightLeft -= pageHeightAvailable;
       }
-    }
 
-    // Descargar PDF
-    const fechaActual = new Date().toLocaleDateString('es-CO');
-    pdf.save(`Estadisticas-${fechaActual}.pdf`);
+      // Descargar
+      const fechaActual = new Date().toLocaleDateString('es-CO');
+      pdf.save(`Estadisticas-${fechaActual}.pdf`);
+    } finally {
+      // GARANTIZAR restauración de estilos (CRÍTICO)
+      element.style.display = originalStyles.display;
+      element.style.visibility = originalStyles.visibility;
+      element.style.position = originalStyles.position;
+      element.style.top = originalStyles.top;
+      element.style.left = originalStyles.left;
+      element.style.width = originalStyles.width;
+      element.style.background = originalStyles.background;
+
+      // Restaurar opacidad original de todos los elementos
+      allElements.forEach(el => {
+        const original = originalOpacities.get(el);
+        el.style.opacity = original || '';
+      });
+    }
   } catch (error) {
     throw new Error('Error al generar el PDF de estadísticas: ' + error.message);
   }
