@@ -344,7 +344,7 @@ const Estadisticas = () => {
             <button type="button" onClick={handleLimpiar} className="btn-secondary">
               Limpiar
             </button>
-            <button type="button" onClick={handleExportPDF} className="btn-action">
+            <button type="button" onClick={handleExportPDF} className="btn-action" data-export-btn>
               PDF
             </button>
           </div>

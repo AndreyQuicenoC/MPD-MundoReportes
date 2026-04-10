@@ -74,13 +74,34 @@ export const exportarReportePDF = async (reporte, element) => {
 
 /**
  * Exporta estadísticas como PDF con máxima calidad y colores vibrantes
+ * NO modifica la página - captura el estado actual exactamente como se ve
  * @param {Object} estadisticas - Datos de estadísticas
  * @param {HTMLElement} element - Elemento a convertir a PDF
  */
 export const exportarEstadisticasPDF = async (estadisticas, element) => {
   try {
-    // Forzar que todo sea visible
-    const allElements = element.querySelectorAll('*');
+    // Clonar el elemento para no afectar la página original
+    const clone = element.cloneNode(true);
+    clone.style.position = 'absolute';
+    clone.style.left = '-9999px';
+    clone.style.top = '-9999px';
+    clone.style.width = element.offsetWidth + 'px';
+    document.body.appendChild(clone);
+
+    // Ocultar solo los elementos que no deben verse en PDF
+    // Usar selectores específicos en el clon
+    const filtrosSection = clone.querySelector('.filtros-section');
+    const exportBtn = clone.querySelector('[data-export-btn]');
+
+    if (filtrosSection) {
+      filtrosSection.classList.add('pdf-hide');
+    }
+    if (exportBtn) {
+      exportBtn.classList.add('pdf-hide');
+    }
+
+    // Forzar que todo sea visible (excepto lo que ocultamos)
+    const allElements = clone.querySelectorAll('*');
     const originalStyles = new Map();
 
     allElements.forEach(el => {
@@ -97,29 +118,27 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
       el.style.setProperty('filter', 'none', 'important');
     });
 
+    // Restaurar display: none para elementos marcados con pdf-hide
+    clone.querySelectorAll('.pdf-hide').forEach(el => {
+      el.style.setProperty('display', 'none', 'important');
+    });
+
     // Esperar a que canvas de gráficos se completen
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // Capturar con máxima calidad
-    const canvas = await html2canvas(element, {
+    // Capturar con máxima calidad - HTML2Canvas respetará el DOM clonado
+    const canvas = await html2canvas(clone, {
       scale: 3,
       useCORS: true,
       allowTaint: true,
       logging: false,
       backgroundColor: '#ffffff',
-      windowHeight: element.offsetHeight,
-      windowWidth: element.offsetWidth,
+      windowHeight: clone.offsetHeight,
+      windowWidth: clone.offsetWidth,
     });
 
-    // Restaurar estilos
-    allElements.forEach(el => {
-      const original = originalStyles.get(el);
-      if (original) {
-        el.style.opacity = original.opacity || '';
-        el.style.display = original.display || '';
-        el.style.visibility = original.visibility || '';
-      }
-    });
+    // Remover el clon
+    document.body.removeChild(clone);
 
     const pdf = new jsPDF({
       orientation: 'portrait',
@@ -146,14 +165,12 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
 
     // Páginas adicionales si es necesario
     let heightLeft = imgHeight - pageHeightAvailable;
-    let pageNumber = 1;
 
     while (heightLeft > 0) {
       currentY = heightLeft - imgHeight;
       pdf.addPage();
       pdf.addImage(imgData, 'PNG', margin, margin + currentY, availableWidth, imgHeight);
       heightLeft -= pageHeightAvailable;
-      pageNumber++;
     }
 
     const fechaActual = new Date().toLocaleDateString('es-CO');

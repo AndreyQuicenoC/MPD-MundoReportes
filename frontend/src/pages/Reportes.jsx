@@ -47,88 +47,63 @@ const Reportes = () => {
       const inicio = fechaInicioParam !== null ? fechaInicioParam : fechaInicio;
       const fin = fechaFinParam !== null ? fechaFinParam : fechaFin;
 
-      console.log('cargarDatos() - Parámetros:', { mes, activo, inicio, fin });
-
       let reportesPromise;
 
       // Si hay filtro de fechas personalizado
       if (activo && (inicio || fin)) {
-        console.log('Cargando con filtro de fechas:', { inicio, fin });
         reportesPromise = reportesService.getReportes({
           fecha_inicio: inicio,
           fecha_fin: fin,
         });
       } else {
         // Cargar todos sin filtro de backend
-        console.log('Cargando todos los reportes sin filtro backend');
         reportesPromise = reportesService.getReportes();
       }
 
-      const [reportesData, dashboardData, deduciblesRes] = await Promise.all([
+      // Preparar parámetros para deducibles
+      let deduciblesParams = {};
+
+      if (mes === 'actual' && !activo) {
+        // Usar mes actual
+        const ahora = new Date();
+        const primerDia = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+        const ultimoDia = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0);
+        deduciblesParams.fecha_inicio = primerDia.toISOString().split('T')[0];
+        deduciblesParams.fecha_fin = ultimoDia.toISOString().split('T')[0];
+      } else if (activo && (inicio || fin)) {
+        // Usar filtro de fechas personalizado
+        if (inicio) deduciblesParams.fecha_inicio = inicio;
+        if (fin) deduciblesParams.fecha_fin = fin;
+      }
+      // Si es 'todos', no se pasan fechas (trae todos los deducibles)
+
+      const [reportesData, dashboardData, deduciblesCalc] = await Promise.all([
         reportesPromise,
         estadisticasService.getDashboard(),
-        api.get('/gastos/deducibles/'),
+        estadisticasService.getDeducibles(deduciblesParams),
       ]);
 
       let reportesProcessados = Array.isArray(reportesData)
         ? reportesData
         : reportesData?.results || [];
 
-      console.log('Reportes recibidos del backend:', reportesProcessados.length);
-
       // Filtrar según el mes seleccionado - SOLO si mes es 'actual' Y no hay filtro activo personalizado
       if (mes === 'actual' && !activo) {
-        console.log('Aplicando filtro de mes actual');
         const ahora = new Date();
         const mesActual = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}`;
-        console.log('Mes actual:', mesActual);
-        const antes = reportesProcessados.length;
         reportesProcessados = reportesProcessados.filter(r => r.fecha.startsWith(mesActual));
-        console.log(`Filtrados de ${antes} a ${reportesProcessados.length} por mes`);
-      } else if (mes === 'todos') {
-        console.log('Sin filtro de mes - mostrando todos');
       }
-
-      console.log('Reportes finales a mostrar:', reportesProcessados.length);
-
-      // Procesar deducibles
-      const deduciblesArr = deduciblesRes.data.results || deduciblesRes.data;
-      setDeducibles(deduciblesArr);
-
-      // Crear map de deducibles por categoria ID
-      const deduciblesMap = {};
-      deduciblesArr.forEach(d => {
-        if (d.activo) {
-          deduciblesMap[d.categoria] = d.tipo;
-        }
-      });
-
-      const totalesDeducibles = {
-        ingreso: 0,
-        ahorro: 0,
-        transferencia: 0,
-      };
-
-      // Calcular totales iterando reportes
-      reportesProcessados.forEach(reporte => {
-        if (reporte.gastos && Array.isArray(reporte.gastos)) {
-          reporte.gastos.forEach(gasto => {
-            // gasto.categoria puede ser ID o nombre, intentar ambos
-            const tipo = deduciblesMap[gasto.categoria] || deduciblesMap[gasto.categoria_nombre];
-            if (tipo) {
-              totalesDeducibles[tipo] += Number(gasto.valor) || 0;
-            }
-          });
-        }
-      });
 
       setReportes(reportesProcessados);
       setDashboard(dashboardData);
-      setGastosParaDeducir(totalesDeducibles);
+      setGastosParaDeducir({
+        ingreso: deduciblesCalc.ingreso || 0,
+        ahorro: deduciblesCalc.ahorro || 0,
+        transferencia: deduciblesCalc.transferencia || 0,
+      });
       setPaginaActual(1);
     } catch (error) {
       toast.error('Error al cargar datos');
-      console.error('Error:', error);
       setReportes([]);
     } finally {
       setLoading(false);
@@ -137,7 +112,6 @@ const Reportes = () => {
 
   // Aplicar filtros
   const aplicarFiltros = () => {
-    console.log('aplicarFiltros() llamado con filtroMes:', filtroMes);
     let nuevoFiltroActivo = filtroActivo;
 
     if (filtroMes === 'actual') {
@@ -148,15 +122,12 @@ const Reportes = () => {
       nuevoFiltroActivo = false;
     }
 
-    console.log('Nuevo filtroActivo:', nuevoFiltroActivo);
-
     // Pasar los valores directamente a cargarDatos para evitar timing issues
     cargarDatos(filtroMes, nuevoFiltroActivo, fechaInicio, fechaFin);
     toast.success('Filtro aplicado correctamente');
   };
 
   const limpiarFiltros = () => {
-    console.log('Limpiando filtros');
     setFiltroMes('todos');
     setFechaInicio('');
     setFechaFin('');
@@ -168,7 +139,6 @@ const Reportes = () => {
 
   // useEffect inicial - solo cargar una vez
   useEffect(() => {
-    console.log('Componente montado - cargando todos los reportes por defecto');
     cargarDatos('todos', false, '', '');
   }, []);
 
@@ -192,7 +162,6 @@ const Reportes = () => {
       cargarDatos(filtroMes, filtroActivo, fechaInicio, fechaFin);
     } catch (error) {
       toast.error('Error al eliminar reporte');
-      console.error(error);
       setMostrarConfirmacion(false);
     }
   };
