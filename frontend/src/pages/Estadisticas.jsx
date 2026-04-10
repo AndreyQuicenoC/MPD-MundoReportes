@@ -374,21 +374,7 @@ const Estadisticas = () => {
               <small>Acumulado</small>
             </div>
 
-            <div className="stat-card">
-              <h3>Margen de Ganancia</h3>
-              <p className="stat-value success">
-                {((((estadisticas.total_ventas - (Number(estadisticas.total_gastos) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia))) / estadisticas.total_ventas) * 100) || 0).toFixed(1)}%
-              </p>
-              <small>Beneficio/Ventas</small>
-            </div>
-
-            <div className="stat-card">
-              <h3>Ratio Gastos</h3>
-              <p className="stat-value">
-                {((((Number(estadisticas.total_gastos) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia)) / estadisticas.total_ventas) * 100) || 0).toFixed(1)}%
-              </p>
-              <small>Gastos vs Ventas</small>
-            </div>
+            
           </div>
 
           {/* Tarjetas de Deducibles */}
@@ -416,6 +402,21 @@ const Estadisticas = () => {
                 </p>
                 <small>Gastos reales</small>
               </div>
+              <div className="stat-card">
+              <h3>Margen de Ganancia</h3>
+              <p className="stat-value success">
+                {((((estadisticas.total_ventas - (Number(estadisticas.total_gastos) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia))) / estadisticas.total_ventas) * 100) || 0).toFixed(1)}%
+              </p>
+              <small>Beneficio/Ventas</small>
+            </div>
+
+            <div className="stat-card">
+              <h3>Ratio Gastos</h3>
+              <p className="stat-value">
+                {((((Number(estadisticas.total_gastos) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia)) / estadisticas.total_ventas) * 100) || 0).toFixed(1)}%
+              </p>
+              <small>Gastos vs Ventas</small>
+            </div>
             </div>
           )}
 
