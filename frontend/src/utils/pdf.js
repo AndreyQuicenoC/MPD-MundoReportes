@@ -2,14 +2,14 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 /**
- * Exporta el detalle del reporte como PDF con márgenes de 1cm
- * Captura directamente del DOM visible sin clonar
- * @param {Object} reporte - Datos del reporte
- * @param {HTMLElement} element - Elemento a convertir a PDF
+ * Export report details as PDF with 1cm margins
+ * Captures directly from the visible DOM without cloning
+ * @param {Object} reporte - Report data
+ * @param {HTMLElement} element - Element to convert to PDF
  */
 export const exportarReportePDF = async (reporte, element) => {
   try {
-    // Guardar estado original
+    // Save original state
     const originalStyles = {
       display: element.style.display,
       visibility: element.style.visibility,
@@ -20,7 +20,7 @@ export const exportarReportePDF = async (reporte, element) => {
     };
 
     try {
-      // Preparar elemento para captura
+      // Prepare element for capture
       element.style.display = 'block';
       element.style.visibility = 'visible';
       element.style.position = 'absolute';
@@ -28,10 +28,10 @@ export const exportarReportePDF = async (reporte, element) => {
       element.style.left = '0';
       element.style.width = window.innerWidth + 'px';
 
-      // Esperar a que todo se renderice
+      // Wait for everything to render
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // html2canvas: capturar directamente del DOM
+      // html2canvas: capture directly from DOM
       const canvas = await html2canvas(element, {
         scale: 3,
         useCORS: true,
@@ -42,7 +42,7 @@ export const exportarReportePDF = async (reporte, element) => {
         windowWidth: window.innerWidth,
       });
 
-      // Crear PDF
+      // Create PDF
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
@@ -55,14 +55,14 @@ export const exportarReportePDF = async (reporte, element) => {
       const availableWidth = pageWidth - margin * 2;
       const pageHeightAvailable = pageHeight - margin * 2;
 
-      // Calcular altura preservando proporciones
+      // Calculate height preserving proportions
       const imgHeight = (canvas.height * availableWidth) / canvas.width;
       const imgData = canvas.toDataURL('image/png', 1.0);
 
-      // Primera página
+      // First page
       pdf.addImage(imgData, 'PNG', margin, margin, availableWidth, imgHeight);
 
-      // Páginas adicionales si es necesario
+      // Additional pages if necessary
       let heightLeft = imgHeight - pageHeightAvailable;
       let currentPageOffsetY = 0;
 
@@ -73,18 +73,18 @@ export const exportarReportePDF = async (reporte, element) => {
           imgData,
           'PNG',
           margin,
-          margin + currentPageOffsetY, // Offset Y negativo para mostrar siguiente porción
+          margin + currentPageOffsetY, // Negative Y offset to show next portion
           availableWidth,
           imgHeight
         );
         heightLeft -= pageHeightAvailable;
       }
 
-      // Descargar
+      // Download
       const fecha = new Date(reporte.fecha + 'T00:00:00').toLocaleDateString('es-CO');
       pdf.save(`Reporte-${fecha}-${reporte.id}.pdf`);
     } finally {
-      // GARANTIZAR restauración (CRÍTICO)
+      // GUARANTEE restoration (CRITICAL)
       element.style.display = originalStyles.display;
       element.style.visibility = originalStyles.visibility;
       element.style.position = originalStyles.position;
@@ -93,19 +93,18 @@ export const exportarReportePDF = async (reporte, element) => {
       element.style.width = originalStyles.width;
     }
   } catch (error) {
-    throw new Error('Error al generar el PDF: ' + error.message);
+    throw new Error('Error generating PDF: ' + error.message);
   }
 };
 
 /**
- * Exporta estadísticas como PDF capturando TODO junto
- * SIN dividir en secciones - preserva el diseño exacto de la página
- * @param {Object} estadisticas - Datos de estadísticas
- * @param {HTMLElement} element - Elemento pdfRef (contiene todo)
+ * Export statistics as PDF capturing everything together
+ * WITHOUT dividing into sections - preserves exact page design
+ * @param {HTMLElement} element - Element pdfRef (contains everything)
  */
-export const exportarEstadisticasPDF = async (estadisticas, element) => {
+export const exportarEstadisticasPDF = async (element) => {
   try {
-    // Guardar estado original
+    // Save original state
     const originalStyles = {
       display: element.style.display,
       visibility: element.style.visibility,
@@ -116,7 +115,7 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
       background: element.style.background,
     };
 
-    // Guardar opacidad original de TODOS los elementos
+    // Save original opacity of ALL elements
     const allElements = element.querySelectorAll('*');
     const originalOpacities = new Map();
     allElements.forEach(el => {
@@ -124,7 +123,7 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
     });
 
     try {
-      // Preparar para captura
+      // Prepare for capture
       element.style.display = 'block';
       element.style.visibility = 'visible';
       element.style.position = 'absolute';
@@ -133,31 +132,31 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
       element.style.width = window.innerWidth + 'px';
       element.style.background = 'white';
 
-      // FORZAR opacidad 1 !important en TODOS los elementos
-      // Esto arregla el problema de elementos borrosos/opacos
+      // FORCE opacity 1 !important on ALL elements
+      // This fixes the problem of blurry/opaque elements
       allElements.forEach(el => {
         el.style.setProperty('opacity', '1', 'important');
         el.style.setProperty('filter', 'none', 'important');
       });
 
-      // ESPERAR a que Chart.js y otros gráficos se renderizen
-      // 5 segundos es suficiente para todos los gráficos (Pie, Bar, Line, custom)
+      // WAIT for Chart.js and other charts to render
+      // 5 seconds is enough for all charts (Pie, Bar, Line, custom)
       await new Promise(resolve => setTimeout(resolve, 5000));
 
-      // Capturar TODO el contenido de una sola vez
-      // NO dividir en secciones
+      // CAPTURE ALL content at once
+      // NO dividing into sections
       const canvas = await html2canvas(element, {
-        scale: 3, // Máxima calidad
+        scale: 3, // Maximum quality
         useCORS: true,
         allowTaint: true,
         logging: false,
         backgroundColor: '#ffffff',
-        windowHeight: element.scrollHeight, // Altura REAL del contenido
-        windowWidth: window.innerWidth, // Ancho de ventana
-        imageTimeout: 0, // Sin timeout
+        windowHeight: element.scrollHeight, // REAL content height
+        windowWidth: window.innerWidth, // Window width
+        imageTimeout: 0, // No timeout
       });
 
-      // Crear PDF
+      // Create PDF
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
@@ -170,15 +169,15 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
       const availableWidth = pageWidth - margin * 2;
       const pageHeightAvailable = pageHeight - margin * 2;
 
-      // Calcular altura preservando proporciones
+      // Calculate height preserving proportions
       const imgHeight = (canvas.height * availableWidth) / canvas.width;
       const imgData = canvas.toDataURL('image/png', 1.0);
 
-      // Primera página
+      // First page
       pdf.addImage(imgData, 'PNG', margin, margin, availableWidth, imgHeight);
 
-      // Páginas adicionales si es necesario (sin saltos forzados)
-      // El contenido fluye naturalmente en múltiples páginas
+      // Additional pages if necessary (no forced breaks)
+      // Content flows naturally across multiple pages
       let heightLeft = imgHeight - pageHeightAvailable;
       let currentPageOffsetY = 0;
 
@@ -189,14 +188,14 @@ export const exportarEstadisticasPDF = async (estadisticas, element) => {
           imgData,
           'PNG',
           margin,
-          margin + currentPageOffsetY, // Offset Y negativo para mostrar siguiente porción
+          margin + currentPageOffsetY, // Negative Y offset to show next portion
           availableWidth,
           imgHeight
         );
         heightLeft -= pageHeightAvailable;
       }
 
-      // Descargar
+      // Download
       const fechaActual = new Date().toLocaleDateString('es-CO');
       pdf.save(`Estadisticas-${fechaActual}.pdf`);
     } finally {

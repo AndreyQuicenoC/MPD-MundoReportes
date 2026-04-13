@@ -14,6 +14,6 @@ export default defineConfig({
     sourcemap: false,
   },
   preview: {
-    port: 5173,
+    port: 4173,
   },
 });
