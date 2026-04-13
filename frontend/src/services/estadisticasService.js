@@ -76,6 +76,19 @@ const estadisticasService = {
   },
 
   /**
+   * Obtener TODOS los productos vendidos sin límite.
+   *
+   * @param {Object} params - Parámetros (fecha_inicio, fecha_fin)
+   * @returns {Promise} Todos los productos vendidos
+   */
+  getTodosProductosVendidos: async (params = {}) => {
+    const response = await apiClient.get('/estadisticas/productos/mas-vendidos/', {
+      params: { ...params, limite: 9999 },
+    });
+    return response.data;
+  },
+
+  /**
    * Obtener resumen completo de un periodo.
    *
    * @param {string} fechaInicio - Fecha de inicio (YYYY-MM-DD)
@@ -86,6 +99,17 @@ const estadisticasService = {
     const response = await apiClient.get('/estadisticas/resumen/', {
       params: { fecha_inicio: fechaInicio, fecha_fin: fechaFin },
     });
+    return response.data;
+  },
+
+  /**
+   * Obtener gastos deducibles por tipo en un periodo.
+   *
+   * @param {Object} params - Parámetros (fecha_inicio, fecha_fin)
+   * @returns {Promise} Totales de deducibles por tipo
+   */
+  getDeducibles: async (params = {}) => {
+    const response = await apiClient.get('/estadisticas/deducibles/', { params });
     return response.data;
   },
 };

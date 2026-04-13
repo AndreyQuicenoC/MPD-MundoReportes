@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { reportesService } from '../services/reportesService';
 import estadisticasService from '../services/estadisticasService';
+import api from '../services/api';
 import Pagination from '../components/Pagination';
 import ModalVistaPreviaReporte from '../components/ModalVistaPreviaReporte';
 import ModalConfirmacion from '../components/ModalConfirmacion';
@@ -16,6 +17,12 @@ const Reportes = () => {
   const navigate = useNavigate();
   const [reportes, setReportes] = useState([]);
   const [dashboard, setDashboard] = useState(null);
+  const [deducibles, setDeducibles] = useState([]);
+  const [gastosParaDeducir, setGastosParaDeducir] = useState({
+    ingreso: 0,
+    ahorro: 0,
+    transferencia: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [paginaActual, setPaginaActual] = useState(1);
   const [reporteSeleccionado, setReporteSeleccionado] = useState(null);
@@ -25,51 +32,103 @@ const Reportes = () => {
   const itemsPorPagina = 10;
 
   // Estados para filtros
-  const [filtroMes, setFiltroMes] = useState('actual'); // 'actual' o 'todos'
+  const [filtroMes, setFiltroMes] = useState('todos'); // 'actual' o 'todos' - DEFAULT: todos
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
   const [filtroActivo, setFiltroActivo] = useState(false);
 
-  const cargarDatos = async () => {
+  const cargarDatos = async (filtroMesParam = null, filtroActivoParam = null, fechaInicioParam = null, fechaFinParam = null) => {
     try {
       setLoading(true);
+
+      // Usar parámetros si se proporcionan, sino usar estado
+      const mes = filtroMesParam !== null ? filtroMesParam : filtroMes;
+      const activo = filtroActivoParam !== null ? filtroActivoParam : filtroActivo;
+      const inicio = fechaInicioParam !== null ? fechaInicioParam : fechaInicio;
+      const fin = fechaFinParam !== null ? fechaFinParam : fechaFin;
+
+      console.log('cargarDatos() - Parámetros:', { mes, activo, inicio, fin });
+
       let reportesPromise;
 
       // Si hay filtro de fechas personalizado
-      if (filtroActivo && (fechaInicio || fechaFin)) {
+      if (activo && (inicio || fin)) {
+        console.log('Cargando con filtro de fechas:', { inicio, fin });
         reportesPromise = reportesService.getReportes({
-          fecha_inicio: fechaInicio,
-          fecha_fin: fechaFin,
+          fecha_inicio: inicio,
+          fecha_fin: fin,
         });
       } else {
-        // Cargar todos sin filtro
+        // Cargar todos sin filtro de backend
+        console.log('Cargando todos los reportes sin filtro backend');
         reportesPromise = reportesService.getReportes();
       }
 
-      const [reportesData, dashboardData] = await Promise.all([
+      const [reportesData, dashboardData, deduciblesRes] = await Promise.all([
         reportesPromise,
         estadisticasService.getDashboard(),
+        api.get('/gastos/deducibles/'),
       ]);
 
       let reportesProcessados = Array.isArray(reportesData)
         ? reportesData
         : reportesData?.results || [];
 
-      // Filtrar según el mes seleccionado
-      if (filtroMes === 'actual' && !filtroActivo) {
+      console.log('Reportes recibidos del backend:', reportesProcessados.length);
+
+      // Filtrar según el mes seleccionado - SOLO si mes es 'actual' Y no hay filtro activo personalizado
+      if (mes === 'actual' && !activo) {
+        console.log('Aplicando filtro de mes actual');
         const ahora = new Date();
         const mesActual = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}`;
+        console.log('Mes actual:', mesActual);
+        const antes = reportesProcessados.length;
         reportesProcessados = reportesProcessados.filter(r => r.fecha.startsWith(mesActual));
+        console.log(`Filtrados de ${antes} a ${reportesProcessados.length} por mes`);
+      } else if (mes === 'todos') {
+        console.log('Sin filtro de mes - mostrando todos');
       }
-      // Si filtroMes es 'todos', no filtra, muestra todos
+
+      console.log('Reportes finales a mostrar:', reportesProcessados.length);
+
+      // Procesar deducibles
+      const deduciblesArr = deduciblesRes.data.results || deduciblesRes.data;
+      setDeducibles(deduciblesArr);
+
+      // Crear map de deducibles por categoria ID
+      const deduciblesMap = {};
+      deduciblesArr.forEach(d => {
+        if (d.activo) {
+          deduciblesMap[d.categoria] = d.tipo;
+        }
+      });
+
+      const totalesDeducibles = {
+        ingreso: 0,
+        ahorro: 0,
+        transferencia: 0,
+      };
+
+      // Calcular totales iterando reportes
+      reportesProcessados.forEach(reporte => {
+        if (reporte.gastos && Array.isArray(reporte.gastos)) {
+          reporte.gastos.forEach(gasto => {
+            // gasto.categoria puede ser ID o nombre, intentar ambos
+            const tipo = deduciblesMap[gasto.categoria] || deduciblesMap[gasto.categoria_nombre];
+            if (tipo) {
+              totalesDeducibles[tipo] += Number(gasto.valor) || 0;
+            }
+          });
+        }
+      });
 
       setReportes(reportesProcessados);
       setDashboard(dashboardData);
+      setGastosParaDeducir(totalesDeducibles);
       setPaginaActual(1);
     } catch (error) {
       toast.error('Error al cargar datos');
-      // eslint-disable-next-line no-console
-      console.error(error);
+      console.error('Error:', error);
       setReportes([]);
     } finally {
       setLoading(false);
@@ -78,10 +137,15 @@ const Reportes = () => {
 
   // Aplicar filtros
   const aplicarFiltros = () => {
+    console.log('aplicarFiltros() llamado con filtroMes:', filtroMes);
+    let nuevoFiltroActivo = filtroActivo;
+
     if (filtroMes === 'actual') {
-      setFiltroActivo(false);
-    } else if (fechaInicio || fechaFin) {
-      setFiltroActivo(true);
+      nuevoFiltroActivo = false;
+    } else if (filtroMes === 'personalizado' && (fechaInicio || fechaFin)) {
+      nuevoFiltroActivo = true;
+    } else if (filtroMes === 'todos') {
+      nuevoFiltroActivo = false;
     }
     cargarDatos();
   };
@@ -103,6 +167,35 @@ const Reportes = () => {
   const indiceFin = indiceInicio + itemsPorPagina;
   const reportesPaginados = reportes.slice(indiceInicio, indiceFin);
 
+    console.log('Nuevo filtroActivo:', nuevoFiltroActivo);
+
+    // Pasar los valores directamente a cargarDatos para evitar timing issues
+    cargarDatos(filtroMes, nuevoFiltroActivo, fechaInicio, fechaFin);
+    toast.success('Filtro aplicado correctamente');
+  };
+
+  const limpiarFiltros = () => {
+    console.log('Limpiando filtros');
+    setFiltroMes('todos');
+    setFechaInicio('');
+    setFechaFin('');
+    setFiltroActivo(false);
+    // Pasar valores limpios directamente
+    cargarDatos('todos', false, '', '');
+    toast.success('Filtros limpiados');
+  };
+
+  // useEffect inicial - solo cargar una vez
+  useEffect(() => {
+    console.log('Componente montado - cargando todos los reportes por defecto');
+    cargarDatos('todos', false, '', '');
+  }, []);
+
+  // Calcular índices para la paginación
+  const indiceInicio = (paginaActual - 1) * itemsPorPagina;
+  const indiceFin = indiceInicio + itemsPorPagina;
+  const reportesPaginados = reportes.slice(indiceInicio, indiceFin);
+
   const handleEliminar = id => {
     setIdAEliminar(id);
     setMostrarConfirmacion(true);
@@ -114,7 +207,8 @@ const Reportes = () => {
       toast.success('Reporte eliminado');
       setMostrarConfirmacion(false);
       setIdAEliminar(null);
-      cargarDatos();
+      // Recargar con los filtros actuales
+      cargarDatos(filtroMes, filtroActivo, fechaInicio, fechaFin);
     } catch (error) {
       toast.error('Error al eliminar reporte');
       console.error(error);
@@ -217,33 +311,63 @@ const Reportes = () => {
 
       {/* Dashboard - Métricas principales */}
       {dashboard && (
-        <div className="dashboard-grid">
-          <div className="dashboard-card">
-            <h3>Ventas del Mes</h3>
-            <p className="dashboard-value">
-              ${Number(dashboard.total_ventas_mes).toLocaleString('es-CO')}
-            </p>
+        <>
+          <div className="dashboard-grid">
+            <div className="dashboard-card">
+              <h3>Ventas del Mes</h3>
+              <p className="dashboard-value">
+                ${Number(dashboard.total_ventas_mes).toLocaleString('es-CO')}
+              </p>
+            </div>
+
+            <div className="dashboard-card">
+              <h3>Gastos del Mes</h3>
+              <p className="dashboard-value">
+                ${Number(dashboard.total_gastos_mes).toLocaleString('es-CO')}
+              </p>
+            </div>
+
+            <div className="dashboard-card">
+              <h3>Promedio Diario</h3>
+              <p className="dashboard-value">
+                ${Math.round(Number(dashboard.promedio_ventas_diarias)).toLocaleString('es-CO')}
+              </p>
+            </div>
+
+            <div className="dashboard-card">
+              <h3>Reportes Registrados</h3>
+              <p className="dashboard-value">{dashboard.cantidad_reportes}</p>
+            </div>
           </div>
 
-          <div className="dashboard-card">
-            <h3>Gastos del Mes</h3>
-            <p className="dashboard-value">
-              ${Number(dashboard.total_gastos_mes).toLocaleString('es-CO')}
-            </p>
+          {/* Deducibles Summary */}
+          <div className="dashboard-grid">
+            <div className="dashboard-card">
+              <h3>Ingresos (No Gastos)</h3>
+              <p className="dashboard-value">
+                ${Number(gastosParaDeducir.ingreso).toLocaleString('es-CO')}
+              </p>
+            </div>
+            <div className="dashboard-card">
+              <h3>Ahorros (No Gastos)</h3>
+              <p className="dashboard-value">
+                ${Number(gastosParaDeducir.ahorro).toLocaleString('es-CO')}
+              </p>
+            </div>
+            <div className="dashboard-card">
+              <h3>Transferencias (No Gastos)</h3>
+              <p className="dashboard-value">
+                ${Number(gastosParaDeducir.transferencia).toLocaleString('es-CO')}
+              </p>
+            </div>
+            <div className="dashboard-card">
+              <h3>Gasto Ajustado</h3>
+              <p className="dashboard-value">
+                ${(Number(dashboard.total_gastos_mes) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia)).toLocaleString('es-CO')}
+              </p>
+            </div>
           </div>
-
-          <div className="dashboard-card">
-            <h3>Promedio Diario</h3>
-            <p className="dashboard-value">
-              ${Math.round(Number(dashboard.promedio_ventas_diarias)).toLocaleString('es-CO')}
-            </p>
-          </div>
-
-          <div className="dashboard-card">
-            <h3>Reportes Registrados</h3>
-            <p className="dashboard-value">{dashboard.cantidad_reportes}</p>
-          </div>
-        </div>
+        </>
       )}
 
       {/* Tabla de reportes */}

@@ -1,19 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../services/api';
+import FormModal from '../components/FormModal';
+import Pagination from '../components/Pagination';
+import ModalConfirmacion from '../components/ModalConfirmacion';
 import toast from 'react-hot-toast';
 import './Automatico.css';
 
 /**
  * Página de gestión de gastos automáticos predefinidos.
- * Permite crear, editar y eliminar gastos que se pueden insertar
- * automáticamente en nuevos reportes.
+ * Permite crear, editar y eliminar gastos que se pueden insertar automáticamente en reportes.
  */
 const Automatico = () => {
   const [gastos, setGastos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mostrarForm, setMostrarForm] = useState(false);
-  const [editando, setEditando] = useState(null);
+  const [gastoEditando, setGastoEditando] = useState(null);
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [idAEliminar, setIdAEliminar] = useState(null);
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+  const itemsPorPagina = 10;
 
   const [formData, setFormData] = useState({
     categoria: '',
@@ -34,16 +40,25 @@ const Automatico = () => {
         api.get('/gastos/categorias/activas/'),
       ]);
 
-      setGastos(gastosRes.data.results || gastosRes.data);
+      let gastosData = gastosRes.data.results || gastosRes.data;
+      // Filtrar solo gastos automáticos activos (soft delete: marcar como inactivo)
+      gastosData = gastosData.filter(g => g.activo === true);
+      setGastos(gastosData);
       setCategorias(categoriasRes.data.results || categoriasRes.data);
+      setPaginaActual(1);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error al cargar datos:', error);
       toast.error('Error al cargar gastos automáticos');
+      setGastos([]);
     } finally {
       setLoading(false);
     }
   };
+
+  const indiceInicio = (paginaActual - 1) * itemsPorPagina;
+  const indiceFin = indiceInicio + itemsPorPagina;
+  const gastosPaginados = gastos.slice(indiceInicio, indiceFin);
 
   const handleInputChange = e => {
     const { name, value, type, checked } = e.target;
@@ -69,8 +84,8 @@ const Automatico = () => {
         activo: formData.activo,
       };
 
-      if (editando) {
-        await api.patch(`/gastos/automaticos/${editando}/`, datos);
+      if (gastoEditando) {
+        await api.patch(`/gastos/automaticos/${gastoEditando.id}/`, datos);
         toast.success('Gasto automático actualizado');
       } else {
         await api.post('/gastos/automaticos/', datos);
@@ -78,7 +93,7 @@ const Automatico = () => {
       }
 
       setFormData({ categoria: '', descripcion: '', valor: '', activo: true });
-      setEditando(null);
+      setGastoEditando(null);
       setMostrarForm(false);
       cargarDatos();
     } catch (error) {
@@ -89,7 +104,7 @@ const Automatico = () => {
   };
 
   const handleEditar = gasto => {
-    setEditando(gasto.id);
+    setGastoEditando(gasto);
     setFormData({
       categoria: gasto.categoria,
       descripcion: gasto.descripcion,
@@ -99,23 +114,29 @@ const Automatico = () => {
     setMostrarForm(true);
   };
 
-  const handleEliminar = async id => {
-    if (!window.confirm('¿Estás seguro de que deseas eliminar este gasto?')) return;
+  const handleEliminar = id => {
+    setIdAEliminar(id);
+    setMostrarConfirmacion(true);
+  };
 
+  const handleConfirmarEliminar = async () => {
     try {
-      await api.delete(`/gastos/automaticos/${id}/`);
+      await api.delete(`/gastos/automaticos/${idAEliminar}/`);
       toast.success('Gasto automático eliminado');
+      setMostrarConfirmacion(false);
+      setIdAEliminar(null);
       cargarDatos();
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error:', error);
       toast.error('Error al eliminar');
+      setMostrarConfirmacion(false);
     }
   };
 
   const cancelar = () => {
     setMostrarForm(false);
-    setEditando(null);
+    setGastoEditando(null);
     setFormData({ categoria: '', descripcion: '', valor: '', activo: true });
   };
 
@@ -124,142 +145,155 @@ const Automatico = () => {
   };
 
   if (loading) {
-    return <div className="loading-container">Cargando...</div>;
+    return (
+      <div className="loading-container">
+        <p>Cargando...</p>
+      </div>
+    );
   }
 
   return (
     <div className="automatico-container">
-      <div className="page-header">
-        <h1>Gastos Automáticos</h1>
-        <p>Define gastos predefinidos que se pueden insertar rápidamente en reportes</p>
+      <div className="page-header-flex">
+        <div className="header-content">
+          <h1>Gastos Automáticos</h1>
+          <p>Define gastos predefinidos que se pueden insertar rápidamente en reportes</p>
+        </div>
+        {!mostrarForm && (
+          <button onClick={() => setMostrarForm(true)} className="btn btn-primary">
+            + Nuevo Gasto
+          </button>
+        )}
       </div>
 
-      <div className="automatico-layout">
-        {/* Columna derecha: Formulario / Botón de agregar */}
-        <div className="automatico-form-section">
-          {!mostrarForm && (
-            <button onClick={() => setMostrarForm(true)} className="btn btn-primary btn-agregar">
-              + Agregar Gasto Automático
-            </button>
-          )}
+      <FormModal
+        isOpen={mostrarForm}
+        titulo={gastoEditando ? 'Editar Gasto Automático' : 'Nuevo Gasto Automático'}
+        submitText={gastoEditando ? 'Actualizar' : 'Crear'}
+        onClose={cancelar}
+        onSubmit={handleSubmit}
+      >
+        <div className="form-group">
+          <label htmlFor="categoria">Categoría *</label>
+          <select
+            id="categoria"
+            name="categoria"
+            value={formData.categoria}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="">Selecciona una categoría</option>
+            {categorias.map(cat => (
+              <option key={cat.id} value={cat.id}>
+                {cat.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          {mostrarForm && (
-            <div className="form-card">
-              <h2>{editando ? 'Editar' : 'Nuevo'} Gasto Automático</h2>
-              <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label htmlFor="categoria">Categoría *</label>
-                  <select
-                    id="categoria"
-                    name="categoria"
-                    value={formData.categoria}
-                    onChange={handleInputChange}
-                    required
+        <div className="form-group">
+          <label htmlFor="descripcion">Descripción *</label>
+          <input
+            type="text"
+            id="descripcion"
+            name="descripcion"
+            value={formData.descripcion}
+            onChange={handleInputChange}
+            placeholder="Descripción del gasto"
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="valor">Valor *</label>
+          <input
+            type="number"
+            id="valor"
+            name="valor"
+            value={formData.valor}
+            onChange={handleInputChange}
+            step="0.01"
+            min="0"
+            placeholder="0.00"
+            required
+          />
+        </div>
+
+        <div className="form-group checkbox-group">
+          <label>
+            <input
+              type="checkbox"
+              name="activo"
+              checked={formData.activo}
+              onChange={handleInputChange}
+            />
+            Gasto activo
+          </label>
+        </div>
+      </FormModal>
+
+      {gastos.length === 0 ? (
+        <div className="empty-state">
+          <p>No hay gastos automáticos. Crea uno para comenzar.</p>
+        </div>
+      ) : (
+        <>
+          <div className="gastos-grid">
+            {gastosPaginados.map(gasto => (
+              <div key={gasto.id} className="gasto-card">
+                <div className="card-content">
+                  <h3>{gasto.descripcion}</h3>
+                  <p className="valor">${Number(gasto.valor).toLocaleString('es-CO')}</p>
+                  <p className="categoria">{getNombreCategoria(gasto.categoria)}</p>
+                  <span className={`badge ${gasto.activo ? 'badge-success' : 'badge-danger'}`}>
+                    {gasto.activo ? 'Activo' : 'Inactivo'}
+                  </span>
+                </div>
+
+                <div className="card-actions">
+                  <button
+                    className="btn btn-sm btn-secondary"
+                    onClick={() => handleEditar(gasto)}
+                    title="Editar"
                   >
-                    <option value="">Selecciona una categoría</option>
-                    {categorias.map(cat => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="descripcion">Descripción *</label>
-                  <input
-                    type="text"
-                    id="descripcion"
-                    name="descripcion"
-                    value={formData.descripcion}
-                    onChange={handleInputChange}
-                    placeholder="Descripción del gasto"
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="valor">Valor *</label>
-                  <input
-                    type="number"
-                    id="valor"
-                    name="valor"
-                    value={formData.valor}
-                    onChange={handleInputChange}
-                    step="0.01"
-                    min="0"
-                    placeholder="0.00"
-                    required
-                  />
-                </div>
-
-                <div className="form-group checkbox">
-                  <input
-                    type="checkbox"
-                    id="activo"
-                    name="activo"
-                    checked={formData.activo}
-                    onChange={handleInputChange}
-                  />
-                  <label htmlFor="activo">Activo</label>
-                </div>
-
-                <div className="form-actions">
-                  <button type="button" onClick={cancelar} className="btn btn-secondary">
-                    Cancelar
+                    ✎
                   </button>
-                  <button type="submit" className="btn btn-primary">
-                    {editando ? 'Actualizar' : 'Crear'}
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => handleEliminar(gasto.id)}
+                    title="Eliminar"
+                  >
+                    ✕
                   </button>
                 </div>
-              </form>
-            </div>
+              </div>
+            ))}
+          </div>
+
+          {gastos.length > 0 && (
+            <Pagination
+              paginaActual={paginaActual}
+              totalItems={gastos.length}
+              itemsPorPagina={itemsPorPagina}
+              onPaginaChange={setPaginaActual}
+            />
           )}
-        </div>
+        </>
+      )}
 
-        {/* Columna izquierda: Lista de gastos */}
-        <div className="automatico-list-section">
-          {gastos.length === 0 ? (
-            <div className="empty-state">
-              <p>No hay gastos automáticos configurados</p>
-            </div>
-          ) : (
-            <div className="gastos-grid">
-              {gastos.map(gasto => (
-                <div key={gasto.id} className="gasto-card">
-                  <div className="gasto-header">
-                    <h3>{gasto.descripcion}</h3>
-                    <span className={`badge ${gasto.activo ? 'badge-success' : 'badge-inactive'}`}>
-                      {gasto.activo ? 'Activo' : 'Inactivo'}
-                    </span>
-                  </div>
-
-                  <div className="gasto-info">
-                    <p>
-                      <strong>Categoría:</strong> {getNombreCategoria(gasto.categoria)}
-                    </p>
-                    <p>
-                      <strong>Valor:</strong> ${Number(gasto.valor).toLocaleString('es-CO')}
-                    </p>
-                  </div>
-
-                  <div className="gasto-actions">
-                    <button onClick={() => handleEditar(gasto)} className="btn btn-small btn-secondary">
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => handleEliminar(gasto.id)}
-                      className="btn btn-small btn-danger"
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
+      <ModalConfirmacion
+        isOpen={mostrarConfirmacion}
+        titulo="Eliminar Gasto Automático"
+        mensaje="¿Estás seguro de que deseas eliminar este gasto automático? Esta acción no se puede deshacer."
+        confirmText="Sí, Eliminar"
+        cancelText="Cancelar"
+        isDanger={true}
+        onConfirm={handleConfirmarEliminar}
+        onCancel={() => {
+          setMostrarConfirmacion(false);
+          setIdAEliminar(null);
+        }}
+      />
     </div>
   );
 };

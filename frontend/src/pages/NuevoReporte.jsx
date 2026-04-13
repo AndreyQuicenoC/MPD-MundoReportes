@@ -361,7 +361,7 @@ const NuevoReporte = ({ esEdicion = false }) => {
 
           {gastos.map((gasto, index) => (
             <div key={index} className="item-row">
-              <div className="form-group flex-2">
+              <div className="form-group flex-1">
                 <input
                   type="text"
                   placeholder="Descripción del gasto"

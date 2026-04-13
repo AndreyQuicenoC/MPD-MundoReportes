@@ -14,7 +14,9 @@ const reportesService = {
    * @returns {Promise} Lista de reportes
    */
   getReportes: async (params = {}) => {
-    const response = await apiClient.get('/reportes/', { params });
+    // Agregar limit alto para obtener todos los reportes sin paginación del backend
+    const fullParams = { limit: 9999, ...params };
+    const response = await apiClient.get('/reportes/', { params: fullParams });
     return response.data;
   },
 

@@ -303,7 +303,7 @@ class DashboardView(APIView):
             Response: KPIs del mes actual
         """
         from calendar import monthrange
-        
+
         hoy = datetime.now().date()
         primer_dia_mes = hoy.replace(day=1)
         # Obtener el último día del mes actual
@@ -334,3 +334,50 @@ class DashboardView(APIView):
         }
 
         return Response(dashboard, status=status.HTTP_200_OK)
+
+
+class DeduciblesView(APIView):
+    """
+    Vista para obtener gastos deducibles agrupados por tipo.
+
+    Calcula la suma de gastos cuyas categorías están marcadas como deducibles.
+
+    Query params:
+        - fecha_inicio: Fecha de inicio (YYYY-MM-DD)
+        - fecha_fin: Fecha de fin (YYYY-MM-DD)
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """
+        Obtener deducibles por tipo en un periodo.
+
+        Returns:
+            Response: Diccionario con totales por tipo (ingreso, ahorro, transferencia)
+        """
+        fecha_inicio = request.query_params.get("fecha_inicio")
+        fecha_fin = request.query_params.get("fecha_fin")
+
+        # Convertir strings a dates si existen
+        if fecha_inicio:
+            try:
+                fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d").date()
+            except ValueError:
+                return Response(
+                    {"error": "Formato de fecha_inicio inválido. Use YYYY-MM-DD"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        if fecha_fin:
+            try:
+                fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d").date()
+            except ValueError:
+                return Response(
+                    {"error": "Formato de fecha_fin inválido. Use YYYY-MM-DD"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        deducibles = ServicioEstadisticas.deducibles_por_tipo(fecha_inicio, fecha_fin)
+
+        return Response(deducibles, status=status.HTTP_200_OK)

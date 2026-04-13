@@ -184,12 +184,17 @@ class ActualizarReporteView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = ActualizarReporteDiarioSerializer(data=request.data)
+        serializer = ActualizarReporteDiarioSerializer(
+            data=request.data,
+            context={'reporte_id': pk}
+        )
         serializer.is_valid(raise_exception=True)
 
         try:
             # Extraer datos
             datos_reporte = {}
+            if "fecha" in serializer.validated_data:
+                datos_reporte["fecha"] = serializer.validated_data["fecha"]
             if "base_inicial" in serializer.validated_data:
                 datos_reporte["base_inicial"] = serializer.validated_data["base_inicial"]
             if "venta_total" in serializer.validated_data:
@@ -237,8 +242,19 @@ class ActualizarReporteView(APIView):
             )
 
         except ValueError as e:
+            error_message = str(e)
+            # Detectar si es error de fecha duplicada
+            if "Ya existe un reporte" in error_message:
+                return Response(
+                    {
+                        "error": error_message,
+                        "codigo_error": "REPORTE_EXISTE",
+                        "campo": "fecha"
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
             return Response(
-                {"error": str(e)},
+                {"error": error_message},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

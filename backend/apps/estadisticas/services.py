@@ -10,7 +10,7 @@ from decimal import Decimal
 from django.db.models import Sum, Count, Avg, Max, Min
 from django.db.models.functions import TruncMonth
 from apps.reportes.models import ReporteDiario, VentaProducto
-from apps.gastos.models import Gasto
+from apps.gastos.models import Gasto, GastoDeducible
 
 
 class ServicioEstadisticas:
@@ -267,3 +267,49 @@ class ServicioEstadisticas:
                 fecha_inicio, fecha_fin, limite=5
             ),
         }
+
+    @staticmethod
+    def deducibles_por_tipo(fecha_inicio=None, fecha_fin=None):
+        """
+        Calcular gastos deducibles agrupados por tipo.
+
+        Suma los valores de gastos cuyas categorías están marcadas como deducibles,
+        agrupado por tipo (ingreso, ahorro, transferencia).
+
+        Args:
+            fecha_inicio: Fecha de inicio del periodo (opcional)
+            fecha_fin: Fecha de fin del periodo (opcional)
+
+        Returns:
+            dict: Diccionario con totales por tipo de deducible
+        """
+        # Obtener todos los gastos en el rango de fechas
+        gastos = Gasto.objects.all()
+
+        if fecha_inicio:
+            gastos = gastos.filter(reporte__fecha__gte=fecha_inicio)
+        if fecha_fin:
+            gastos = gastos.filter(reporte__fecha__lte=fecha_fin)
+
+        # Obtener todas las categorías marcadas como deducibles
+        deducibles_map = {}
+        for deducible in GastoDeducible.objects.filter(activo=True):
+            deducibles_map[deducible.categoria_id] = deducible.tipo
+
+        # Inicializar diccionario de totales
+        totales = {
+            'ingreso': 0.0,
+            'ahorro': 0.0,
+            'transferencia': 0.0,
+            'total_deducible': 0.0,
+        }
+
+        # Sumar los gastos que son deducibles
+        for gasto in gastos:
+            if gasto.categoria_id in deducibles_map:
+                tipo = deducibles_map[gasto.categoria_id]
+                valor = float(gasto.valor or Decimal('0.00'))
+                totales[tipo] += valor
+                totales['total_deducible'] += valor
+
+        return totales
