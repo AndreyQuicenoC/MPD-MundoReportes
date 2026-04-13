@@ -140,7 +140,7 @@ const Estadisticas = () => {
     }
 
     try {
-      await exportarEstadisticasPDF(estadisticas, pdfRef.current);
+      await exportarEstadisticasPDF(pdfRef.current);
       toast.success('PDF descargado exitosamente');
     } catch (error) {
       toast.error(error.message || 'Error al descargar el PDF');
