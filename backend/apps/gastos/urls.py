@@ -18,8 +18,8 @@ from .views import (
 app_name = "gastos"
 
 router = DefaultRouter()
-router.register(r'automaticos', GastoAutomaticoViewSet, basename='gasto-automatico')
-router.register(r'deducibles', GastoDeducibleViewSet, basename='gasto-deducible')
+router.register(r"automaticos", GastoAutomaticoViewSet, basename="gasto-automatico")
+router.register(r"deducibles", GastoDeducibleViewSet, basename="gasto-deducible")
 
 urlpatterns = [
     path("", include(router.urls)),

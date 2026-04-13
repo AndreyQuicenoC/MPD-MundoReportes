@@ -175,9 +175,9 @@ class GastoDeducible(models.Model):
     """
 
     TIPO_CHOICES = [
-        ('transferencia', 'Transferencia'),
-        ('ahorro', 'Ahorro'),
-        ('ingreso', 'Ingreso'),
+        ("transferencia", "Transferencia"),
+        ("ahorro", "Ahorro"),
+        ("ingreso", "Ingreso"),
     ]
 
     categoria = models.OneToOneField(
@@ -192,7 +192,7 @@ class GastoDeducible(models.Model):
         verbose_name="tipo de deducible",
         max_length=20,
         choices=TIPO_CHOICES,
-        default='ingreso',
+        default="ingreso",
         help_text="Clasificación del deducible",
     )
 

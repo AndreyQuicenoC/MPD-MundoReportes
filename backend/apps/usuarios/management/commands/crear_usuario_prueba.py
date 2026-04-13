@@ -10,35 +10,35 @@ Usuario = get_user_model()
 
 
 class Command(BaseCommand):
-    help = 'Crea un usuario administrador de prueba'
+    help = "Crea un usuario administrador de prueba"
 
     def handle(self, *args, **kwargs):
-        email = 'adolfo.quiceno@correounivalle.edu.co'
-        password = '11Bakuarya11*'
-        
+        email = "adolfo.quiceno@correounivalle.edu.co"
+        password = "11Bakuarya11*"
+
         # Verificar si ya existe
         if Usuario.objects.filter(email=email).exists():
-            self.stdout.write(self.style.WARNING(f'Usuario {email} ya existe'))
+            self.stdout.write(self.style.WARNING(f"Usuario {email} ya existe"))
             usuario = Usuario.objects.get(email=email)
             # Actualizar contraseña
             usuario.set_password(password)
             usuario.save()
-            self.stdout.write(self.style.SUCCESS(f'Contraseña actualizada para {email}'))
+            self.stdout.write(self.style.SUCCESS(f"Contraseña actualizada para {email}"))
         else:
             # Crear nuevo usuario
             usuario = Usuario.objects.create_user(
                 email=email,
                 password=password,
-                nombre='Adolfo Quiceno',
-                rol='admin',
-                cedula='1234567890',
+                nombre="Adolfo Quiceno",
+                rol="admin",
+                cedula="1234567890",
                 is_staff=True,
                 is_superuser=True,
                 fecha_ingreso=datetime.now().date(),
-                fecha_fin=datetime.now().date() + timedelta(days=365)
+                fecha_fin=datetime.now().date() + timedelta(days=365),
             )
-            self.stdout.write(self.style.SUCCESS(f'✅ Usuario creado: {email}'))
-        
-        self.stdout.write(self.style.SUCCESS(f'Email: {email}'))
-        self.stdout.write(self.style.SUCCESS('Rol: {}'.format(usuario.rol)))
-        self.stdout.write(self.style.SUCCESS('Activo: {}'.format(usuario.is_active)))
+            self.stdout.write(self.style.SUCCESS(f"✅ Usuario creado: {email}"))
+
+        self.stdout.write(self.style.SUCCESS(f"Email: {email}"))
+        self.stdout.write(self.style.SUCCESS("Rol: {}".format(usuario.rol)))
+        self.stdout.write(self.style.SUCCESS("Activo: {}".format(usuario.is_active)))

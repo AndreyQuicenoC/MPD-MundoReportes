@@ -100,9 +100,7 @@ class GastoInputSerializer(serializers.Serializer):
                 # Esto es importante para poder editar reportes con categorías inactivas
                 cat = CategoriaGasto.objects.get(pk=value)
             except CategoriaGasto.DoesNotExist:
-                raise serializers.ValidationError(
-                    f"La categoría con ID {value} no existe"
-                )
+                raise serializers.ValidationError(f"La categoría con ID {value} no existe")
         return value
 
 
@@ -247,7 +245,7 @@ class ActualizarReporteDiarioSerializer(serializers.Serializer):
             serializers.ValidationError: Si ya existe otro reporte con esa fecha
         """
         # Se asume que el ID del reporte se pasa en el contexto
-        reporte_id = self.context.get('reporte_id')
+        reporte_id = self.context.get("reporte_id")
 
         if reporte_id:
             # Excluir el reporte actual
@@ -277,16 +275,14 @@ class ActualizarReporteDiarioSerializer(serializers.Serializer):
             return value
 
         for idx, gasto in enumerate(value):
-            if not gasto.get('descripcion', '').strip():
+            if not gasto.get("descripcion", "").strip():
                 raise serializers.ValidationError(
                     f"Gasto {idx + 1}: La descripción no puede estar vacía"
                 )
 
-            valor = gasto.get('valor')
+            valor = gasto.get("valor")
             if valor is None or valor <= 0:
-                raise serializers.ValidationError(
-                    f"Gasto {idx + 1}: El valor debe ser mayor a 0"
-                )
+                raise serializers.ValidationError(f"Gasto {idx + 1}: El valor debe ser mayor a 0")
 
         return value
 
@@ -307,7 +303,7 @@ class ActualizarReporteDiarioSerializer(serializers.Serializer):
             return value
 
         for idx, venta in enumerate(value):
-            cantidad = venta.get('cantidad')
+            cantidad = venta.get("cantidad")
             if cantidad is None or cantidad < 1:
                 raise serializers.ValidationError(
                     f"Venta {idx + 1}: La cantidad debe ser al menos 1"

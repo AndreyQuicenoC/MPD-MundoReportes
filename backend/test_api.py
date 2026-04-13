@@ -1,7 +1,7 @@
 import os
 import django
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
 
 from django.contrib.auth import get_user_model
@@ -14,7 +14,7 @@ User = get_user_model()
 client = APIClient()
 
 # Obtener o crear usuario de prueba
-user = User.objects.filter(rol='usuario').first()
+user = User.objects.filter(rol="usuario").first()
 if not user:
     print("No existe usuario con rol 'usuario'")
     user = User.objects.first()
@@ -24,13 +24,13 @@ if not user:
 
 # Obtener o crear token
 token, _ = Token.objects.get_or_create(user=user)
-client.credentials(HTTP_AUTHORIZATION=f'Token {token.key}')
+client.credentials(HTTP_AUTHORIZATION=f"Token {token.key}")
 
 print("=== TEST ENDPOINTS ===\n")
 
 # Test 1: Listar reportes
 print("1. GET /api/reportes/")
-response = client.get('/api/reportes/')
+response = client.get("/api/reportes/")
 print(f"   Status: {response.status_code}")
 if response.status_code == 200:
     data = response.json()
@@ -46,7 +46,7 @@ else:
 
 # Test 2: Dashboard
 print("\n2. GET /api/estadisticas/dashboard/")
-response = client.get('/api/estadisticas/dashboard/')
+response = client.get("/api/estadisticas/dashboard/")
 print(f"   Status: {response.status_code}")
 if response.status_code == 200:
     data = response.json()

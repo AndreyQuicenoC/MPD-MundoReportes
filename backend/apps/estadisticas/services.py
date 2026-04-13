@@ -298,18 +298,18 @@ class ServicioEstadisticas:
 
         # Inicializar diccionario de totales
         totales = {
-            'ingreso': 0.0,
-            'ahorro': 0.0,
-            'transferencia': 0.0,
-            'total_deducible': 0.0,
+            "ingreso": 0.0,
+            "ahorro": 0.0,
+            "transferencia": 0.0,
+            "total_deducible": 0.0,
         }
 
         # Sumar los gastos que son deducibles
         for gasto in gastos:
             if gasto.categoria_id in deducibles_map:
                 tipo = deducibles_map[gasto.categoria_id]
-                valor = float(gasto.valor or Decimal('0.00'))
+                valor = float(gasto.valor or Decimal("0.00"))
                 totales[tipo] += valor
-                totales['total_deducible'] += valor
+                totales["total_deducible"] += valor
 
         return totales

@@ -11,6 +11,7 @@ from datetime import datetime
 from django.db import connection
 from django.core import serializers
 
+
 def verify_connection():
     """Verificar conexión a Supabase"""
     try:
@@ -22,20 +23,24 @@ def verify_connection():
         print(f"Error: {e}")
         return False
 
+
 def get_existing_tables():
     """Obtener todas las tablas existentes"""
     try:
         with connection.cursor() as cursor:
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT table_name
                 FROM information_schema.tables
                 WHERE table_schema = 'public'
                 ORDER BY table_name
-            """)
+            """
+            )
             return [row[0] for row in cursor.fetchall()]
     except Exception as e:
         print(f"Error al obtener tablas: {e}")
         return []
+
 
 def count_records_by_table(table_names):
     """Contar registros en cada tabla"""
@@ -53,11 +58,12 @@ def count_records_by_table(table_names):
         print(f"Error: {e}")
     return counts
 
+
 def main():
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("SINCRONIZACIÓN PROFESIONAL CON SUPABASE")
     print("FASE 1: VERIFICACIÓN Y ANÁLISIS")
-    print("="*80 + "\n")
+    print("=" * 80 + "\n")
 
     # 1. Verificar conexión
     print("1️⃣  VERIFICANDO CONEXIÓN...")
@@ -77,14 +83,14 @@ def main():
     # 3. Contar registros
     print("3️⃣  REGISTROS POR TABLA (datos reales):")
     table_names = [
-        'usuarios_usuario',
-        'reportes_reportediario',
-        'reportes_ventaproducto',
-        'gastos_categoriagasto',
-        'gastos_gasto',
-        'gastos_gastoautomatico',
-        'gastos_gastodeducible',
-        'productos_producto',
+        "usuarios_usuario",
+        "reportes_reportediario",
+        "reportes_ventaproducto",
+        "gastos_categoriagasto",
+        "gastos_gasto",
+        "gastos_gastoautomatico",
+        "gastos_gastodeducible",
+        "productos_producto",
     ]
 
     counts = count_records_by_table(table_names)
@@ -101,20 +107,21 @@ def main():
     # 4. Verificar tablas críticas
     print("4️⃣  VERIFICACIÓN DE DATOS CRÍTICOS:")
     critical_status = {
-        'usuarios_usuario': counts.get('usuarios_usuario', 0) > 0,
-        'gastos_gastoautomatico': counts.get('gastos_gastoautomatico', 0) >= 0,
-        'gastos_gastodeducible': counts.get('gastos_gastodeducible', 0) >= 0,
+        "usuarios_usuario": counts.get("usuarios_usuario", 0) > 0,
+        "gastos_gastoautomatico": counts.get("gastos_gastoautomatico", 0) >= 0,
+        "gastos_gastodeducible": counts.get("gastos_gastodeducible", 0) >= 0,
     }
 
     for table, exists in critical_status.items():
         status = "✅" if exists else "⚠️ "
         print(f"     {status} {table}")
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("RESULTADO: Sistema listo para sincronizar")
-    print("="*80 + "\n")
+    print("=" * 80 + "\n")
 
     return True
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

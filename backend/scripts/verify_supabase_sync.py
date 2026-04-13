@@ -17,16 +17,16 @@ import os
 import sys
 from django.core.management import execute_from_command_line
 
-print("\n" + "="*70)
+print("\n" + "=" * 70)
 print("VERIFICACIÓN DE SINCRONIZACIÓN CON SUPABASE")
-print("="*70 + "\n")
+print("=" * 70 + "\n")
 
 # 1. Verificar configuración
 print("1️⃣  CONFIGURACIÓN")
 print("-" * 70)
 
-database_url = os.getenv('DATABASE_URL')
-is_supabase = 'supabase' in database_url.lower() if database_url else False
+database_url = os.getenv("DATABASE_URL")
+is_supabase = "supabase" in database_url.lower() if database_url else False
 
 print(f"   Base de datos configurada: {'✅ Supabase' if is_supabase else '⚠️  Otra'}")
 print(f"   DEBUG mode: {os.getenv('DEBUG', 'False')}")
@@ -110,9 +110,10 @@ print()
 
 # 5. Resumen
 print("5️⃣  RESUMEN")
-print("="*70)
+print("=" * 70)
 
-print("""
+print(
+    """
 ✅ PASOS SIGUIENTES:
 
 1. Asegurar que Supabase tiene datos existentes
@@ -133,6 +134,7 @@ print("""
 Este sistema carga DATOS REALES de Supabase.
 No crea datos sintéticos automáticamente.
 Todos los datos deben existir en Supabase previamente.
-""")
+"""
+)
 
-print("="*70 + "\n")
+print("=" * 70 + "\n")

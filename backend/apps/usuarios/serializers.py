@@ -170,5 +170,15 @@ class PerfilSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Usuario
-        fields = ["id", "email", "nombre", "cedula", "edad", "fecha_ingreso", "rol", "date_joined", "last_login"]
+        fields = [
+            "id",
+            "email",
+            "nombre",
+            "cedula",
+            "edad",
+            "fecha_ingreso",
+            "rol",
+            "date_joined",
+            "last_login",
+        ]
         read_only_fields = ["id", "email", "rol", "date_joined", "last_login"]

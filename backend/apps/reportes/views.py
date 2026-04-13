@@ -131,11 +131,7 @@ class CrearReporteView(APIView):
             # Detectar si es error de reporte duplicado
             if "Ya existe un reporte" in error_message:
                 return Response(
-                    {
-                        "error": error_message,
-                        "codigo_error": "REPORTE_EXISTE",
-                        "campo": "fecha"
-                    },
+                    {"error": error_message, "codigo_error": "REPORTE_EXISTE", "campo": "fecha"},
                     status=status.HTTP_409_CONFLICT,
                 )
             return Response(
@@ -185,8 +181,7 @@ class ActualizarReporteView(APIView):
             )
 
         serializer = ActualizarReporteDiarioSerializer(
-            data=request.data,
-            context={'reporte_id': pk}
+            data=request.data, context={"reporte_id": pk}
         )
         serializer.is_valid(raise_exception=True)
 
@@ -246,11 +241,7 @@ class ActualizarReporteView(APIView):
             # Detectar si es error de fecha duplicada
             if "Ya existe un reporte" in error_message:
                 return Response(
-                    {
-                        "error": error_message,
-                        "codigo_error": "REPORTE_EXISTE",
-                        "campo": "fecha"
-                    },
+                    {"error": error_message, "codigo_error": "REPORTE_EXISTE", "campo": "fecha"},
                     status=status.HTTP_409_CONFLICT,
                 )
             return Response(
