@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
-import { categoriasService } from '../services/categoriasService';
-import FormModal from '../components/FormModal';
-import Pagination from '../components/Pagination';
-import ModalConfirmacion from '../components/ModalConfirmacion';
+import { categoriasService } from '../../../services/categoriasService';
+import FormModal from '../../../components/FormModal';
+import Pagination from '../../../components/Pagination';
+import ModalConfirmacion from '../../../components/ModalConfirmacion';
 import toast from 'react-hot-toast';
-import './Productos.css';
 
 /**
- * Página de gestión de categorías de gastos.
- * CRUD con layout de cards y overlay para crear/editar.
+ * Categories management page.
+ * CRUD with card layout and overlay for create/edit.
  */
 const Categorias = () => {
   const [categorias, setCategorias] = useState([]);

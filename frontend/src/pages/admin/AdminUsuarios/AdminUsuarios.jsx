@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import api from '../../../services/api';
 import toast from 'react-hot-toast';
-import Pagination from '../components/Pagination';
+import Pagination from '../../../components/Pagination';
 import './AdminUsuarios.css';
 
 /**

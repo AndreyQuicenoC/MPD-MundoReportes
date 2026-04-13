@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import api from '../services/api';
-import FormModal from '../components/FormModal';
-import Pagination from '../components/Pagination';
-import ModalConfirmacion from '../components/ModalConfirmacion';
+import { useAuth } from '../../../context/AuthContext';
+import api from '../../../services/api';
+import FormModal from '../../../components/FormModal';
+import Pagination from '../../../components/Pagination';
+import ModalConfirmacion from '../../../components/ModalConfirmacion';
 import toast from 'react-hot-toast';
 import './Deducibles.css';
 

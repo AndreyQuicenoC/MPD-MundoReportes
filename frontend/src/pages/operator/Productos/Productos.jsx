@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { productosService } from '../services/productosService';
-import FormModal from '../components/FormModal';
-import Pagination from '../components/Pagination';
-import ModalConfirmacion from '../components/ModalConfirmacion';
+import { productosService } from '../../../services/productosService';
+import FormModal from '../../../components/FormModal';
+import Pagination from '../../../components/Pagination';
+import ModalConfirmacion from '../../../components/ModalConfirmacion';
 import toast from 'react-hot-toast';
 import './Productos.css';
 

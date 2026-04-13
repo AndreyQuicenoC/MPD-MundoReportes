@@ -1,8 +1,8 @@
 /**
- * Componente principal de la aplicación.
+ * Main application component.
  *
- * Configura las rutas, contexto de autenticación y layout global.
- * Controla el acceso por rol: admin solo ve usuarios, operarios ven reportes.
+ * Configures routes, authentication context and global layout.
+ * Controls access by role: admin only sees users, operators see reports.
  */
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
@@ -12,20 +12,20 @@ import PrivateRoute from './components/PrivateRoute';
 import RoleRoute from './components/RoleRoute';
 import ScrollToTop from './components/ScrollToTop';
 import Layout from './components/Layout';
-import Login from './pages/Login';
-import Reportes from './pages/Reportes';
-import NuevoReporte from './pages/NuevoReporte';
-import DetalleReporte from './pages/DetalleReporte';
-import Estadisticas from './pages/Estadisticas';
-import Productos from './pages/Productos';
-import Categorias from './pages/Categorias';
-import Automatico from './pages/Automatico';
-import Deducibles from './pages/Deducibles';
-import Perfil from './pages/Perfil';
-import AdminUsuarios from './pages/AdminUsuarios';
+import Login from './pages/common/Login/Login';
+import Reportes from './pages/operator/Reportes/Reportes';
+import NuevoReporte from './pages/operator/NuevoReporte/NuevoReporte';
+import DetalleReporte from './pages/operator/DetalleReporte/DetalleReporte';
+import Estadisticas from './pages/operator/Estadisticas/Estadisticas';
+import Productos from './pages/operator/Productos/Productos';
+import Categorias from './pages/common/Categorias/Categorias';
+import Automatico from './pages/operator/Automatico/Automatico';
+import Deducibles from './pages/operator/Deducibles/Deducibles';
+import Perfil from './pages/common/Perfil/Perfil';
+import AdminUsuarios from './pages/admin/AdminUsuarios/AdminUsuarios';
 import './styles/global.css';
 
-// Componente para redirigir según rol
+// Component to redirect based on role
 const RoleBasedRedirect = () => {
   const { usuario } = useAuth();
 
@@ -35,7 +35,7 @@ const RoleBasedRedirect = () => {
     return <Navigate to="/admin/usuarios" replace />;
   }
 
-  // Dashboard eliminado, redirigir a reportes
+  // Dashboard removed, redirect to reports
   return <Navigate to="/reportes" replace />;
 };
 
@@ -79,7 +79,7 @@ function App() {
           >
             <Route index element={<RoleBasedRedirect />} />
 
-            {/* Rutas solo para operarios */}
+            {/* Routes only for operators */}
             <Route
               path="reportes"
               element={
@@ -153,7 +153,7 @@ function App() {
               }
             />
 
-            {/* Rutas solo para administradores */}
+            {/* Routes only for administrators */}
             <Route
               path="admin/usuarios"
               element={
@@ -163,7 +163,7 @@ function App() {
               }
             />
 
-            {/* Perfil: accesible para todos */}
+            {/* Profile: accessible to all */}
             <Route path="perfil" element={<Perfil />} />
           </Route>
 

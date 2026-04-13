@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { estadisticasService } from '../services/estadisticasService';
-import api from '../services/api';
-import RankingProductos from '../components/RankingProductos';
-import RankingMeses from '../components/RankingMeses';
-import ProductosTodosVendidos from '../components/ProductosTodosVendidos';
+import { estadisticasService } from '../../../services/estadisticasService';
+import api from '../../../services/api';
+import RankingProductos from '../../../components/RankingProductos';
+import RankingMeses from '../../../components/RankingMeses';
+import ProductosTodosVendidos from '../../../components/ProductosTodosVendidos';
 import {
   Chart as ChartJS,
   ArcElement,
@@ -18,8 +18,8 @@ import {
 } from 'chart.js';
 import { Pie, Bar, Line } from 'react-chartjs-2';
 import toast from 'react-hot-toast';
-import { formatearMoneda } from '../utils/reportes';
-import { exportarEstadisticasPDF } from '../utils/pdf';
+import { formatearMoneda } from '../../../utils/reportes';
+import { exportarEstadisticasPDF } from '../../../utils/pdf';
 import './Estadisticas.css';
 
 // Registrar componentes de Chart.js

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { reportesService } from '../services/reportesService';
-import estadisticasService from '../services/estadisticasService';
-import api from '../services/api';
-import Pagination from '../components/Pagination';
-import ModalVistaPreviaReporte from '../components/ModalVistaPreviaReporte';
-import ModalConfirmacion from '../components/ModalConfirmacion';
+import { reportesService } from '../../../services/reportesService';
+import estadisticasService from '../../../services/estadisticasService';
+import api from '../../../services/api';
+import Pagination from '../../../components/Pagination';
+import ModalVistaPreviaReporte from '../../../components/ModalVistaPreviaReporte';
+import ModalConfirmacion from '../../../components/ModalConfirmacion';
 import toast from 'react-hot-toast';
 import './Reportes.css';
 

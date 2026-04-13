@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { reportesService } from '../services/reportesService';
+import { reportesService } from '../../../services/reportesService';
 import toast from 'react-hot-toast';
-import { exportarReportePDF } from '../utils/pdf';
+import { exportarReportePDF } from '../../../utils/pdf';
 import './DetalleReporte.css';
 
 /**

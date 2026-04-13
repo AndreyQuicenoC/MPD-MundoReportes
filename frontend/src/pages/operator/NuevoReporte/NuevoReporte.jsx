@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { reportesService } from '../services/reportesService';
-import { productosService } from '../services/productosService';
-import { categoriasService } from '../services/categoriasService';
-import { gastosService } from '../services/gastosService';
+import { reportesService } from '../../../services/reportesService';
+import { productosService } from '../../../services/productosService';
+import { categoriasService } from '../../../services/categoriasService';
+import { gastosService } from '../../../services/gastosService';
 import toast from 'react-hot-toast';
-import { calcularBaseSiguiente, formatearMoneda } from '../utils/reportes';
+import { calcularBaseSiguiente, formatearMoneda } from '../../../utils/reportes';
 import './NuevoReporte.css';
 
 /**
