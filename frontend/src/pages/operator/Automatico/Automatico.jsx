@@ -9,6 +9,7 @@ import './Automatico.css';
 /**
  * Página de gestión de gastos automáticos predefinidos.
  * Permite crear, editar y eliminar gastos que se pueden insertar automáticamente en reportes.
+ * Includes search and status filters.
  */
 const Automatico = () => {
   const [gastos, setGastos] = useState([]);
@@ -19,6 +20,8 @@ const Automatico = () => {
   const [paginaActual, setPaginaActual] = useState(1);
   const [idAEliminar, setIdAEliminar] = useState(null);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+  const [busqueda, setBusqueda] = useState('');
+  const [filtroEstado, setFiltroEstado] = useState('todos');
   const itemsPorPagina = 10;
 
   const [formData, setFormData] = useState({
@@ -32,22 +35,21 @@ const Automatico = () => {
     cargarDatos();
   }, []);
 
+  // Load all automatic expenses (both active and inactive)
   const cargarDatos = async () => {
     try {
       setLoading(true);
       const [gastosRes, categoriasRes] = await Promise.all([
         api.get('/gastos/automaticos/'),
-        api.get('/gastos/categorias/activas/'),
+        api.get('/gastos/categorias/'),
       ]);
 
       let gastosData = gastosRes.data.results || gastosRes.data;
-      // Filtrar solo gastos automáticos activos (soft delete: marcar como inactivo)
-      gastosData = gastosData.filter(g => g.activo === true);
+      // Load all expenses without filtering
       setGastos(gastosData);
       setCategorias(categoriasRes.data.results || categoriasRes.data);
       setPaginaActual(1);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error al cargar datos:', error);
       toast.error('Error al cargar gastos automáticos');
       setGastos([]);
@@ -56,9 +58,24 @@ const Automatico = () => {
     }
   };
 
+  // Apply search and status filters
+  let gastosFiltrados = gastos;
+
+  if (busqueda.trim()) {
+    gastosFiltrados = gastosFiltrados.filter(g =>
+      g.descripcion.toLowerCase().includes(busqueda.toLowerCase())
+    );
+  }
+
+  if (filtroEstado === 'activos') {
+    gastosFiltrados = gastosFiltrados.filter(g => g.activo === true);
+  } else if (filtroEstado === 'inactivos') {
+    gastosFiltrados = gastosFiltrados.filter(g => g.activo === false);
+  }
+
   const indiceInicio = (paginaActual - 1) * itemsPorPagina;
   const indiceFin = indiceInicio + itemsPorPagina;
-  const gastosPaginados = gastos.slice(indiceInicio, indiceFin);
+  const gastosPaginados = gastosFiltrados.slice(indiceInicio, indiceFin);
 
   const handleInputChange = e => {
     const { name, value, type, checked } = e.target;
@@ -97,7 +114,6 @@ const Automatico = () => {
       setMostrarForm(false);
       cargarDatos();
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error:', error);
       toast.error('Error al guardar gasto automático');
     }
@@ -114,6 +130,22 @@ const Automatico = () => {
     setMostrarForm(true);
   };
 
+  // Toggle expense active/inactive status
+  const handleToggleEstado = async (gasto) => {
+    try {
+      const nuevoEstado = !gasto.activo;
+      await api.patch(`/gastos/automaticos/${gasto.id}/`, {
+        ...gasto,
+        activo: nuevoEstado,
+      });
+      toast.success(nuevoEstado ? 'Gasto activado' : 'Gasto desactivado');
+      cargarDatos();
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Error al cambiar estado');
+    }
+  };
+
   const handleEliminar = id => {
     setIdAEliminar(id);
     setMostrarConfirmacion(true);
@@ -127,7 +159,6 @@ const Automatico = () => {
       setIdAEliminar(null);
       cargarDatos();
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error:', error);
       toast.error('Error al eliminar');
       setMostrarConfirmacion(false);
@@ -142,6 +173,12 @@ const Automatico = () => {
 
   const getNombreCategoria = id => {
     return categorias.find(c => c.id === id)?.nombre || 'Sin categoría';
+  };
+
+  const handleLimpiarBusqueda = () => {
+    setBusqueda('');
+    setFiltroEstado('todos');
+    setPaginaActual(1);
   };
 
   if (loading) {
@@ -164,6 +201,57 @@ const Automatico = () => {
             + Nuevo Gasto
           </button>
         )}
+      </div>
+
+      {/* Search and Filter Controls */}
+      <div className="filter-section">
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Buscar por descripción..."
+            value={busqueda}
+            onChange={e => {
+              setBusqueda(e.target.value);
+              setPaginaActual(1);
+            }}
+            className="search-input"
+          />
+        </div>
+
+        <div className="filter-buttons">
+          <button
+            className={`filter-btn ${filtroEstado === 'todos' ? 'active' : ''}`}
+            onClick={() => {
+              setFiltroEstado('todos');
+              setPaginaActual(1);
+            }}
+          >
+            Todos
+          </button>
+          <button
+            className={`filter-btn ${filtroEstado === 'activos' ? 'active' : ''}`}
+            onClick={() => {
+              setFiltroEstado('activos');
+              setPaginaActual(1);
+            }}
+          >
+            Activos
+          </button>
+          <button
+            className={`filter-btn ${filtroEstado === 'inactivos' ? 'active' : ''}`}
+            onClick={() => {
+              setFiltroEstado('inactivos');
+              setPaginaActual(1);
+            }}
+          >
+            Inactivos
+          </button>
+          {(busqueda || filtroEstado !== 'todos') && (
+            <button className="filter-btn reset" onClick={handleLimpiarBusqueda}>
+              Limpiar
+            </button>
+          )}
+        </div>
       </div>
 
       <FormModal
@@ -232,9 +320,13 @@ const Automatico = () => {
         </div>
       </FormModal>
 
-      {gastos.length === 0 ? (
+      {gastosFiltrados.length === 0 ? (
         <div className="empty-state">
-          <p>No hay gastos automáticos. Crea uno para comenzar.</p>
+          <p>
+            {busqueda || filtroEstado !== 'todos'
+              ? 'No se encontraron gastos con los filtros aplicados'
+              : 'No hay gastos automáticos. Crea uno para comenzar.'}
+          </p>
         </div>
       ) : (
         <>
@@ -259,6 +351,13 @@ const Automatico = () => {
                     ✎
                   </button>
                   <button
+                    className={`btn btn-sm ${gasto.activo ? 'btn-warning' : 'btn-success'}`}
+                    onClick={() => handleToggleEstado(gasto)}
+                    title={gasto.activo ? 'Desactivar' : 'Activar'}
+                  >
+                    {gasto.activo ? '○' : '●'}
+                  </button>
+                  <button
                     className="btn btn-sm btn-danger"
                     onClick={() => handleEliminar(gasto.id)}
                     title="Eliminar"
@@ -270,10 +369,10 @@ const Automatico = () => {
             ))}
           </div>
 
-          {gastos.length > 0 && (
+          {gastosFiltrados.length > 0 && (
             <Pagination
               paginaActual={paginaActual}
-              totalItems={gastos.length}
+              totalItems={gastosFiltrados.length}
               itemsPorPagina={itemsPorPagina}
               onPaginaChange={setPaginaActual}
             />

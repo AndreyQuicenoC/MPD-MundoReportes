@@ -8,7 +8,7 @@ import './Productos.css';
 
 /**
  * Página de gestión de productos.
- * CRUD con layout de cards y overlay para crear/editar.
+ * CRUD con layout de cards, búsqueda y filtros de estado.
  */
 const Productos = () => {
   const [productos, setProductos] = useState([]);
@@ -18,6 +18,8 @@ const Productos = () => {
   const [paginaActual, setPaginaActual] = useState(1);
   const [idAEliminar, setIdAEliminar] = useState(null);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+  const [busqueda, setBusqueda] = useState('');
+  const [filtroEstado, setFiltroEstado] = useState('todos');
   const itemsPorPagina = 10;
 
   const [formData, setFormData] = useState({
@@ -30,13 +32,13 @@ const Productos = () => {
     cargarProductos();
   }, []);
 
+  // Load all products (both active and inactive)
   const cargarProductos = async () => {
     try {
       setLoading(true);
       const data = await productosService.obtenerProductos();
       let productosData = Array.isArray(data) ? data : data?.results || [];
-      // Filtrar solo productos activos (soft delete: marcar como inactivo)
-      productosData = productosData.filter(p => p.activo === true);
+      // Load all products without filtering
       setProductos(productosData);
       setPaginaActual(1);
     } catch (error) {
@@ -48,9 +50,24 @@ const Productos = () => {
     }
   };
 
+  // Apply search and status filters
+  let productosFiltrados = productos;
+
+  if (busqueda.trim()) {
+    productosFiltrados = productosFiltrados.filter(p =>
+      p.nombre.toLowerCase().includes(busqueda.toLowerCase())
+    );
+  }
+
+  if (filtroEstado === 'activos') {
+    productosFiltrados = productosFiltrados.filter(p => p.activo === true);
+  } else if (filtroEstado === 'inactivos') {
+    productosFiltrados = productosFiltrados.filter(p => p.activo === false);
+  }
+
   const indiceInicio = (paginaActual - 1) * itemsPorPagina;
   const indiceFin = indiceInicio + itemsPorPagina;
-  const productosPaginados = productos.slice(indiceInicio, indiceFin);
+  const productosPaginados = productosFiltrados.slice(indiceInicio, indiceFin);
 
   const handleInputChange = e => {
     const { name, value, type, checked } = e.target;
@@ -102,6 +119,22 @@ const Productos = () => {
     setMostrarForm(true);
   };
 
+  // Toggle product active/inactive status
+  const handleToggleEstado = async (producto) => {
+    try {
+      const nuevoEstado = !producto.activo;
+      await productosService.actualizarProducto(producto.id, {
+        ...producto,
+        activo: nuevoEstado,
+      });
+      toast.success(nuevoEstado ? 'Producto activado' : 'Producto desactivado');
+      cargarProductos();
+    } catch (error) {
+      toast.error('Error al cambiar estado');
+      console.error(error);
+    }
+  };
+
   const handleEliminar = id => {
     setIdAEliminar(id);
     setMostrarConfirmacion(true);
@@ -127,6 +160,12 @@ const Productos = () => {
     setFormData({ nombre: '', precio_unitario: '', activo: true });
   };
 
+  const handleLimpiarBusqueda = () => {
+    setBusqueda('');
+    setFiltroEstado('todos');
+    setPaginaActual(1);
+  };
+
   if (loading) {
     return (
       <div className="loading-container">
@@ -147,6 +186,57 @@ const Productos = () => {
             + Nuevo Producto
           </button>
         )}
+      </div>
+
+      {/* Search and Filter Controls */}
+      <div className="filter-section">
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Buscar por nombre..."
+            value={busqueda}
+            onChange={e => {
+              setBusqueda(e.target.value);
+              setPaginaActual(1);
+            }}
+            className="search-input"
+          />
+        </div>
+
+        <div className="filter-buttons">
+          <button
+            className={`filter-btn ${filtroEstado === 'todos' ? 'active' : ''}`}
+            onClick={() => {
+              setFiltroEstado('todos');
+              setPaginaActual(1);
+            }}
+          >
+            Todos
+          </button>
+          <button
+            className={`filter-btn ${filtroEstado === 'activos' ? 'active' : ''}`}
+            onClick={() => {
+              setFiltroEstado('activos');
+              setPaginaActual(1);
+            }}
+          >
+            Activos
+          </button>
+          <button
+            className={`filter-btn ${filtroEstado === 'inactivos' ? 'active' : ''}`}
+            onClick={() => {
+              setFiltroEstado('inactivos');
+              setPaginaActual(1);
+            }}
+          >
+            Inactivos
+          </button>
+          {(busqueda || filtroEstado !== 'todos') && (
+            <button className="filter-btn reset" onClick={handleLimpiarBusqueda}>
+              Limpiar
+            </button>
+          )}
+        </div>
       </div>
 
       <FormModal
@@ -198,9 +288,13 @@ const Productos = () => {
         </div>
       </FormModal>
 
-      {productos.length === 0 ? (
+      {productosFiltrados.length === 0 ? (
         <div className="empty-state">
-          <p>No hay productos. Crea uno para comenzar.</p>
+          <p>
+            {busqueda || filtroEstado !== 'todos'
+              ? 'No se encontraron productos con los filtros aplicados'
+              : 'No hay productos. Crea uno para comenzar.'}
+          </p>
         </div>
       ) : (
         <>
@@ -224,6 +318,13 @@ const Productos = () => {
                     ✎
                   </button>
                   <button
+                    className={`btn btn-sm ${producto.activo ? 'btn-warning' : 'btn-success'}`}
+                    onClick={() => handleToggleEstado(producto)}
+                    title={producto.activo ? 'Desactivar' : 'Activar'}
+                  >
+                    {producto.activo ? '○' : '●'}
+                  </button>
+                  <button
                     className="btn btn-sm btn-danger"
                     onClick={() => handleEliminar(producto.id)}
                     title="Eliminar"
@@ -235,10 +336,10 @@ const Productos = () => {
             ))}
           </div>
 
-          {productos.length > 0 && (
+          {productosFiltrados.length > 0 && (
             <Pagination
               paginaActual={paginaActual}
-              totalItems={productos.length}
+              totalItems={productosFiltrados.length}
               itemsPorPagina={itemsPorPagina}
               onPaginaChange={setPaginaActual}
             />

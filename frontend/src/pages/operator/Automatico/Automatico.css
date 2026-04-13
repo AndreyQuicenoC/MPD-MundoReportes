@@ -26,6 +26,79 @@
   font-size: 0.95rem;
 }
 
+/* Search and Filter Section */
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.search-container {
+  flex: 1;
+}
+
+.search-input {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(155, 147, 59, 0.1);
+}
+
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  color: var(--color-text);
+}
+
+.filter-btn:hover {
+  border-color: var(--color-primary);
+  background: #fafaf9;
+}
+
+.filter-btn.active {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.filter-btn.reset {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.filter-btn.reset:hover {
+  background: #fca5a5;
+  border-color: #f87171;
+}
+
 /* Form Card */
 .form-card {
   background: white;
@@ -216,6 +289,28 @@
 
 .btn-danger:hover {
   background-color: #b91c1c;
+}
+
+.btn-warning {
+  background-color: #fcd34d;
+  color: #b45309;
+  flex: 1;
+}
+
+.btn-warning:hover {
+  background-color: #fde68a;
+  color: #92400e;
+}
+
+.btn-success {
+  background-color: #86efac;
+  color: #15803d;
+  flex: 1;
+}
+
+.btn-success:hover {
+  background-color: #6ee7b7;
+  color: #166534;
 }
 
 .btn-sm {
