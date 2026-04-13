@@ -63,6 +63,8 @@ const Estadisticas = () => {
 
   const pdfRef = useRef(null);
 
+  const pdfRef = useRef(null);
+
   const cargarEstadisticas = useCallback(async () => {
     try {
       setLoading(true);
