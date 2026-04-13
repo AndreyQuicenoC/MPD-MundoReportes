@@ -80,6 +80,31 @@ class GastoInputSerializer(serializers.Serializer):
             raise serializers.ValidationError("La descripción no puede estar vacía")
         return value.strip()
 
+    def validate_valor(self, value):
+        """Validar que el valor sea mayor a 0."""
+        if value <= 0:
+            raise serializers.ValidationError("El valor del gasto debe ser mayor a 0")
+        return value
+
+    def validate_categoria(self, value):
+        """Validar que la categoría exista si se especifica.
+
+        En actualización, permitir categorías inactivas para no perder datos históricos.
+        En creación, permitir tanto activas como inactivas.
+        """
+        from apps.gastos.models import CategoriaGasto
+
+        if value is not None:
+            try:
+                # Permitir categorías tanto activas como inactivas
+                # Esto es importante para poder editar reportes con categorías inactivas
+                cat = CategoriaGasto.objects.get(pk=value)
+            except CategoriaGasto.DoesNotExist:
+                raise serializers.ValidationError(
+                    f"La categoría con ID {value} no existe"
+                )
+        return value
+
 
 class ReporteDiarioSerializer(serializers.ModelSerializer):
     """
@@ -232,5 +257,60 @@ class ActualizarReporteDiarioSerializer(serializers.Serializer):
             # Si no hay ID, validar que no exista ninguno
             if ReporteDiario.objects.filter(fecha=value).exists():
                 raise serializers.ValidationError(f"Ya existe un reporte para la fecha {value}")
+
+        return value
+
+    def validate_gastos(self, value):
+        """
+        Validar que los gastos tengan descripción y valor válido.
+
+        Args:
+            value: Lista de gastos
+
+        Returns:
+            list: Gastos validados
+
+        Raises:
+            serializers.ValidationError: Si hay gastos inválidos
+        """
+        if not value:
+            return value
+
+        for idx, gasto in enumerate(value):
+            if not gasto.get('descripcion', '').strip():
+                raise serializers.ValidationError(
+                    f"Gasto {idx + 1}: La descripción no puede estar vacía"
+                )
+
+            valor = gasto.get('valor')
+            if valor is None or valor <= 0:
+                raise serializers.ValidationError(
+                    f"Gasto {idx + 1}: El valor debe ser mayor a 0"
+                )
+
+        return value
+
+    def validate_ventas_productos(self, value):
+        """
+        Validar que las ventas de productos tengan cantidad válida.
+
+        Args:
+            value: Lista de ventas
+
+        Returns:
+            list: Ventas validadas
+
+        Raises:
+            serializers.ValidationError: Si hay ventas inválidas
+        """
+        if not value:
+            return value
+
+        for idx, venta in enumerate(value):
+            cantidad = venta.get('cantidad')
+            if cantidad is None or cantidad < 1:
+                raise serializers.ValidationError(
+                    f"Venta {idx + 1}: La cantidad debe ser al menos 1"
+                )
 
         return value

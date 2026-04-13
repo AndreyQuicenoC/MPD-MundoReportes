@@ -63,15 +63,15 @@ const Estadisticas = () => {
 
   const pdfRef = useRef(null);
 
-  const pdfRef = useRef(null);
-
-  const cargarEstadisticas = useCallback(async () => {
+  const cargarEstadisticas = useCallback(async (inicio = null, fin = null) => {
     try {
       setLoading(true);
 
-      const params = {};
-      if (fechaInicio) params.fecha_inicio = fechaInicio;
-      if (fechaFin) params.fecha_fin = fechaFin;
+      // Solo usar fechas si se especifican explícitamente
+      let params = {};
+      if (inicio) params.fecha_inicio = inicio;
+      if (fin) params.fecha_fin = fin;
+      // Si no hay fechas, se envía {} y trae TODO el período
 
       const [stats, gastos, productos, productosTotal, ventas, deduciblesRes, deduciblesCalc] = await Promise.all([
         estadisticasService.getEstadisticasVentas(params),
@@ -107,20 +107,20 @@ const Estadisticas = () => {
       }
     } catch (error) {
       toast.error('Error al cargar estadísticas');
-      // eslint-disable-next-line no-console
-      console.error(error);
     } finally {
       setLoading(false);
     }
-  }, [fechaInicio, fechaFin]);
+  }, []);
 
   useEffect(() => {
+    // Carga inicial - TODO el período sin filtros
     cargarEstadisticas();
   }, [cargarEstadisticas]);
 
   const handleFiltrar = e => {
     e.preventDefault();
-    cargarEstadisticas();
+    // Solo llamar cuando se presiona el botón, con las fechas especificadas
+    cargarEstadisticas(fechaInicio || null, fechaFin || null);
     toast.success('Filtro aplicado correctamente');
   };
 
@@ -128,6 +128,7 @@ const Estadisticas = () => {
     setFechaInicio('');
     setFechaFin('');
     setAnoFiltro(new Date().getFullYear());
+    // Volver a cargar sin filtros (TODO el período)
     cargarEstadisticas();
     toast.success('Filtros limpiados');
   };
@@ -330,7 +331,7 @@ const Estadisticas = () => {
             <button type="button" onClick={handleLimpiar} className="btn-secondary">
               Limpiar
             </button>
-            <button type="button" onClick={handleExportPDF} className="btn-action">
+            <button type="button" onClick={handleExportPDF} className="btn-action" data-export-btn>
               PDF
             </button>
           </div>
@@ -373,21 +374,7 @@ const Estadisticas = () => {
               <small>Acumulado</small>
             </div>
 
-            <div className="stat-card">
-              <h3>Margen de Ganancia</h3>
-              <p className="stat-value success">
-                {((((estadisticas.total_ventas - estadisticas.total_gastos) / estadisticas.total_ventas) * 100) || 0).toFixed(1)}%
-              </p>
-              <small>Beneficio/Ventas</small>
-            </div>
-
-            <div className="stat-card">
-              <h3>Ratio Gastos</h3>
-              <p className="stat-value">
-                {((estadisticas.total_gastos / estadisticas.total_ventas * 100) || 0).toFixed(1)}%
-              </p>
-              <small>Gastos vs Ventas</small>
-            </div>
+            
           </div>
 
           {/* Tarjetas de Deducibles */}
@@ -415,6 +402,21 @@ const Estadisticas = () => {
                 </p>
                 <small>Gastos reales</small>
               </div>
+              <div className="stat-card">
+              <h3>Margen de Ganancia</h3>
+              <p className="stat-value success">
+                {((((estadisticas.total_ventas - (Number(estadisticas.total_gastos) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia))) / estadisticas.total_ventas) * 100) || 0).toFixed(1)}%
+              </p>
+              <small>Beneficio/Ventas</small>
+            </div>
+
+            <div className="stat-card">
+              <h3>Ratio Gastos</h3>
+              <p className="stat-value">
+                {((((Number(estadisticas.total_gastos) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia)) / estadisticas.total_ventas) * 100) || 0).toFixed(1)}%
+              </p>
+              <small>Gastos vs Ventas</small>
+            </div>
             </div>
           )}
 

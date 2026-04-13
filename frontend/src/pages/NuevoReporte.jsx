@@ -74,13 +74,12 @@ const NuevoReporte = ({ esEdicion = false }) => {
 
         // Cargar gastos
         if (reporteData.gastos && reporteData.gastos.length > 0) {
-          setGastos(
-            reporteData.gastos.map(g => ({
-              descripcion: g.descripcion,
-              valor: g.valor,
-              categoria: g.categoria || '',
-            }))
-          );
+          const gastosFormato = reporteData.gastos.map(g => ({
+            descripcion: g.descripcion,
+            valor: g.valor,
+            categoria: g.categoria ? String(g.categoria) : '', // Guardar como string, el select lo requiere
+          }));
+          setGastos(gastosFormato);
         }
 
         // Cargar ventas de productos
@@ -103,8 +102,6 @@ const NuevoReporte = ({ esEdicion = false }) => {
       }
     } catch (error) {
       toast.error('Error al cargar datos iniciales');
-      // eslint-disable-next-line no-console
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -182,7 +179,7 @@ const NuevoReporte = ({ esEdicion = false }) => {
     try {
       setLoading(true);
 
-      // Filtrar gastos válidos
+      // Filtrar gastos válidos (solo los que tienen valor > 0)
       const gastosValidos = gastos.filter(g => parseFloat(g.valor) > 0 && g.descripcion.trim());
 
       // Convertir cantidades de productos a array
@@ -199,11 +196,24 @@ const NuevoReporte = ({ esEdicion = false }) => {
         venta_total: parseFloat(ventaTotal || 0),
         entrega: parseFloat(entrega || 0),
         observacion: observacion.trim(),
-        gastos: gastosValidos.map(g => ({
-          descripcion: g.descripcion,
-          valor: parseFloat(g.valor),
-          categoria: g.categoria || null,
-        })),
+        gastos: gastosValidos.map((g, idx) => {
+          // Convertir categoría a número
+          let categoriaFinal = null;
+          if (g.categoria && g.categoria !== '') {
+            const categoriaNum = parseInt(g.categoria, 10);
+            if (!isNaN(categoriaNum) && categoriaNum > 0) {
+              categoriaFinal = categoriaNum;
+            }
+          }
+
+          console.log(`Gasto ${idx + 1}: descripcion="${g.descripcion}", valor=${g.valor}, categoria="${g.categoria}" -> ${categoriaFinal}`);
+
+          return {
+            descripcion: g.descripcion.trim(),
+            valor: parseFloat(g.valor),
+            categoria: categoriaFinal,
+          };
+        }),
         ventas_productos: ventasValidas,
       };
 
@@ -216,6 +226,7 @@ const NuevoReporte = ({ esEdicion = false }) => {
       }
       navigate('/reportes');
     } catch (error) {
+
       if (error.response?.data) {
         const datos = error.response.data;
 
@@ -237,8 +248,6 @@ const NuevoReporte = ({ esEdicion = false }) => {
       } else {
         toast.error(esEdicion ? 'Error al actualizar el reporte' : 'Error al crear el reporte');
       }
-      // eslint-disable-next-line no-console
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -269,8 +278,10 @@ const NuevoReporte = ({ esEdicion = false }) => {
                 id="fecha"
                 value={fecha}
                 onChange={e => setFecha(e.target.value)}
+                disabled={esEdicion}
                 required
               />
+              {esEdicion && <small style={{ marginTop: '5px', color: '#666' }}>La fecha no se puede cambiar al editar</small>}
             </div>
 
             <div className="form-group">
