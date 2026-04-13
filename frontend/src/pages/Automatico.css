@@ -1,5 +1,5 @@
 .automatico-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
@@ -19,13 +19,43 @@
   font-size: 0.95rem;
 }
 
+/* Layout de dos columnas */
+.automatico-layout {
+  display: grid;
+  grid-template-columns: 1fr 450px;
+  gap: 2rem;
+  align-items: start;
+}
+
+.automatico-list-section {
+  order: -1;
+}
+
+.automatico-form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.btn-agregar {
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  width: 100%;
+  text-align: center;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .form-card {
   background: white;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 1.5rem;
-  margin-bottom: 2rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 100px;
 }
 
 .form-card h2 {
@@ -33,7 +63,7 @@
   color: #333;
   font-size: 1.3rem;
   margin-bottom: 1.5rem;
-  border-bottom: 2px solid #6B8E23;
+  border-bottom: 2px solid #6b8e23;
   padding-bottom: 0.5rem;
 }
 
@@ -48,8 +78,8 @@
   color: #333;
 }
 
-.form-group input[type="text"],
-.form-group input[type="number"],
+.form-group input[type='text'],
+.form-group input[type='number'],
 .form-group select,
 .form-group textarea {
   width: 100%;
@@ -60,12 +90,12 @@
   font-family: inherit;
 }
 
-.form-group input[type="text"]:focus,
-.form-group input[type="number"]:focus,
+.form-group input[type='text']:focus,
+.form-group input[type='number']:focus,
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #6B8E23;
+  border-color: #6b8e23;
   box-shadow: 0 0 0 3px rgba(107, 142, 35, 0.1);
 }
 
@@ -75,7 +105,7 @@
   margin-bottom: 1rem;
 }
 
-.form-group.checkbox input[type="checkbox"] {
+.form-group.checkbox input[type='checkbox'] {
   width: auto;
   margin-right: 0.5rem;
   cursor: pointer;
@@ -96,7 +126,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
-  margin-top: 2rem;
 }
 
 .gasto-card {
@@ -159,7 +188,7 @@
 }
 
 .btn-primary {
-  background-color: #6B8E23;
+  background-color: #6b8e23;
   color: white;
 }
 
@@ -173,6 +202,7 @@
   background-color: #f5f5f5;
   color: #333;
   border: 1px solid #ddd;
+  flex: 1;
 }
 
 .btn-secondary:hover {
@@ -187,6 +217,7 @@
 .btn-danger {
   background-color: #d32f2f;
   color: white;
+  flex: 1;
 }
 
 .btn-danger:hover {
@@ -222,6 +253,20 @@
   text-align: center;
   padding: 2rem;
   color: #666;
+}
+
+@media (max-width: 1024px) {
+  .automatico-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .automatico-list-section {
+    order: 0;
+  }
+
+  .form-card {
+    position: static;
+  }
 }
 
 @media (max-width: 768px) {

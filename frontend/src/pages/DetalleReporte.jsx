@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { reportesService } from '../services/reportesService';
 import toast from 'react-hot-toast';
+import { exportarReportePDF } from '../utils/pdf';
 import './DetalleReporte.css';
 
 /**
@@ -12,6 +13,7 @@ const DetalleReporte = () => {
   const navigate = useNavigate();
   const [reporte, setReporte] = useState(null);
   const [loading, setLoading] = useState(true);
+  const pdfRef = useRef(null);
 
   useEffect(() => {
     cargarReporte();
@@ -49,6 +51,22 @@ const DetalleReporte = () => {
     }
   };
 
+  const handleExportPDF = async () => {
+    if (!pdfRef.current) {
+      toast.error('Error: no se puede exportar en este momento');
+      return;
+    }
+
+    try {
+      await exportarReportePDF(reporte, pdfRef.current);
+      toast.success('PDF descargado exitosamente');
+    } catch (error) {
+      toast.error(error.message || 'Error al descargar el PDF');
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="loading">
@@ -76,10 +94,13 @@ const DetalleReporte = () => {
           <button className="btn btn-danger" onClick={handleEliminar}>
             Eliminar
           </button>
+          <button className="btn btn-action" onClick={handleExportPDF}>
+            PDF
+          </button>
         </div>
       </div>
 
-      <div className="detalle-grid">
+      <div className="detalle-grid" ref={pdfRef}>
         {/* Información general */}
         <div className="detalle-card">
           <h2>Información General</h2>
@@ -167,9 +188,9 @@ const DetalleReporte = () => {
                   <td>${Number(venta.precio_unitario_momento || 0).toLocaleString('es-CO')}</td>
                   <td>
                     $
-                    {Number(
-                      venta.cantidad * (venta.precio_unitario_momento || 0)
-                    ).toLocaleString('es-CO')}
+                    {Number(venta.cantidad * (venta.precio_unitario_momento || 0)).toLocaleString(
+                      'es-CO'
+                    )}
                   </td>
                 </tr>
               ))}

@@ -57,13 +57,9 @@ const Footer = () => {
                   <Link to="/perfil">Mi Perfil</Link>
                 </li>
                 <li>
-                    <a
-                        href="/docs/manual_usuario.pdf"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Manual de Usuario
-                    </a>
+                  <a href="/docs/manual_usuario.pdf" target="_blank" rel="noopener noreferrer">
+                    Manual de Usuario
+                  </a>
                 </li>
               </>
             )}
@@ -113,8 +109,8 @@ const Footer = () => {
 
       <div className="footer-bottom">
         <p>
-          Desarrollado para <strong>Mundo Pinturas Diana</strong> | Todos los derechos
-          reservados © {currentYear}
+          Desarrollado para <strong>Mundo Pinturas Diana</strong> | Todos los derechos reservados ©{' '}
+          {currentYear}
         </p>
       </div>
     </footer>

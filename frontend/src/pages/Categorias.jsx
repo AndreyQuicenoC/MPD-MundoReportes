@@ -1,17 +1,24 @@
 import { useState, useEffect } from 'react';
 import { categoriasService } from '../services/categoriasService';
+import Pagination from '../components/Pagination';
+import ModalConfirmacion from '../components/ModalConfirmacion';
 import toast from 'react-hot-toast';
-import './Productos.css'; // Reutilizamos los mismos estilos
+import './Productos.css';
 
 /**
  * Página de gestión de categorías de gastos.
- * CRUD completo de categorías.
+ * CRUD con layout de cards y overlay para crear/editar.
  */
 const Categorias = () => {
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [mostrarModal, setMostrarModal] = useState(false);
+  const [mostrarForm, setMostrarForm] = useState(false);
   const [categoriaEditando, setCategoriaEditando] = useState(null);
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [idAEliminar, setIdAEliminar] = useState(null);
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+  const itemsPorPagina = 10;
+
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
@@ -26,38 +33,27 @@ const Categorias = () => {
     try {
       setLoading(true);
       const data = await categoriasService.obtenerCategorias();
-      // Asegurar que sea un array
       setCategorias(Array.isArray(data) ? data : data?.results || []);
+      setPaginaActual(1);
     } catch (error) {
       toast.error('Error al cargar categorías');
-      // eslint-disable-next-line no-console
       console.error(error);
-      setCategorias([]); // Fallback a array vacío
+      setCategorias([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const abrirModalNuevo = () => {
-    setCategoriaEditando(null);
-    setFormData({ nombre: '', descripcion: '', activa: true });
-    setMostrarModal(true);
-  };
+  const indiceInicio = (paginaActual - 1) * itemsPorPagina;
+  const indiceFin = indiceInicio + itemsPorPagina;
+  const categoriasPaginadas = categorias.slice(indiceInicio, indiceFin);
 
-  const abrirModalEditar = categoria => {
-    setCategoriaEditando(categoria);
-    setFormData({
-      nombre: categoria.nombre,
-      descripcion: categoria.descripcion || '',
-      activa: categoria.activa,
-    });
-    setMostrarModal(true);
-  };
-
-  const cerrarModal = () => {
-    setMostrarModal(false);
-    setCategoriaEditando(null);
-    setFormData({ nombre: '', descripcion: '', activa: true });
+  const handleInputChange = e => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
   };
 
   const handleSubmit = async e => {
@@ -71,163 +67,183 @@ const Categorias = () => {
     try {
       if (categoriaEditando) {
         await categoriasService.actualizarCategoria(categoriaEditando.id, formData);
-        toast.success('Categoría actualizada exitosamente');
+        toast.success('Categoría actualizada');
       } else {
         await categoriasService.crearCategoria(formData);
-        toast.success('Categoría creada exitosamente');
+        toast.success('Categoría creada');
       }
-      cerrarModal();
+
+      setFormData({ nombre: '', descripcion: '', activa: true });
+      setCategoriaEditando(null);
+      setMostrarForm(false);
       cargarCategorias();
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Error al guardar categoría');
-      // eslint-disable-next-line no-console
+      toast.error(error.response?.data?.error || 'Error al guardar');
       console.error(error);
     }
   };
 
-  const handleEliminar = async id => {
-    if (!window.confirm('¿Estás seguro de eliminar esta categoría?')) {
-      return;
-    }
+  const handleEditar = categoria => {
+    setCategoriaEditando(categoria);
+    setFormData({
+      nombre: categoria.nombre,
+      descripcion: categoria.descripcion || '',
+      activa: categoria.activa,
+    });
+    setMostrarForm(true);
+  };
 
+  const handleEliminar = id => {
+    setIdAEliminar(id);
+    setMostrarConfirmacion(true);
+  };
+
+  const handleConfirmarEliminar = async () => {
     try {
-      await categoriasService.eliminarCategoria(id);
-      toast.success('Categoría eliminada exitosamente');
+      await categoriasService.eliminarCategoria(idAEliminar);
+      toast.success('Categoría eliminada');
+      setMostrarConfirmacion(false);
+      setIdAEliminar(null);
       cargarCategorias();
     } catch (error) {
-      toast.error('Error al eliminar categoría');
-      // eslint-disable-next-line no-console
+      toast.error('Error al eliminar');
       console.error(error);
+      setMostrarConfirmacion(false);
     }
+  };
+
+  const cancelar = () => {
+    setMostrarForm(false);
+    setCategoriaEditando(null);
+    setFormData({ nombre: '', descripcion: '', activa: true });
   };
 
   if (loading) {
     return (
-      <div className="loading">
-        <div className="spinner"></div>
-        <p>Cargando categorías...</p>
+      <div className="loading-container">
+        <p>Cargando...</p>
       </div>
     );
   }
 
   return (
     <div className="productos-container">
-      <div className="productos-header">
-        <h1>Categorías de Gastos</h1>
-        <button className="btn btn-primary" onClick={abrirModalNuevo}>
-          + Nueva Categoría
-        </button>
+      <div className="page-header-flex">
+        <div className="header-content">
+          <h1>Categorías de Gastos</h1>
+          <p>Gestiona las categorías disponibles para clasificar gastos</p>
+        </div>
+        {!mostrarForm && (
+          <button onClick={() => setMostrarForm(true)} className="btn btn-primary">
+            + Nueva Categoría
+          </button>
+        )}
       </div>
 
-      <div className="productos-tabla-container">
-        <table className="productos-tabla">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Descripción</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {categorias.length === 0 ? (
-              <tr>
-                <td colSpan="4" className="text-center">
-                  No hay categorías registradas
-                </td>
-              </tr>
-            ) : (
-              categorias.map(categoria => (
-                <tr key={categoria.id}>
-                  <td>{categoria.nombre}</td>
-                  <td>{categoria.descripcion || '-'}</td>
-                  <td>
-                    <span className={`badge ${categoria.activa ? 'badge-success' : 'badge-danger'}`}>
-                      {categoria.activa ? 'Activa' : 'Inactiva'}
-                    </span>
-                  </td>
-                  <td>
-                    <button
-                      className="btn btn-sm btn-secondary"
-                      onClick={() => abrirModalEditar(categoria)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => handleEliminar(categoria.id)}
-                    >
-                      Eliminar
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Modal */}
-      {mostrarModal && (
-        <div className="modal-overlay" onClick={cerrarModal}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>{categoriaEditando ? 'Editar Categoría' : 'Nueva Categoría'}</h2>
-              <button className="modal-close" onClick={cerrarModal}>
-                ×
-              </button>
+      {mostrarForm && (
+        <div className="form-card">
+          <h2>{categoriaEditando ? 'Editar' : 'Nueva'} Categoría</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="nombre">Nombre *</label>
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                value={formData.nombre}
+                onChange={handleInputChange}
+                required
+                placeholder="Ej: Servicios Públicos"
+              />
             </div>
 
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="nombre">Nombre *</label>
+            <div className="form-group">
+              <label htmlFor="descripcion">Descripción</label>
+              <textarea
+                id="descripcion"
+                name="descripcion"
+                value={formData.descripcion}
+                onChange={handleInputChange}
+                rows="3"
+                placeholder="Descripción opcional..."
+              />
+            </div>
+
+            <div className="form-group checkbox-group">
+              <label>
                 <input
-                  type="text"
-                  id="nombre"
-                  value={formData.nombre}
-                  onChange={e => setFormData({ ...formData, nombre: e.target.value })}
-                  required
-                  placeholder="Ej: Servicios Públicos"
+                  type="checkbox"
+                  name="activa"
+                  checked={formData.activa}
+                  onChange={handleInputChange}
                 />
-              </div>
+                Categoría activa
+              </label>
+            </div>
 
-              <div className="form-group">
-                <label htmlFor="descripcion">Descripción</label>
-                <textarea
-                  id="descripcion"
-                  value={formData.descripcion}
-                  onChange={e => setFormData({ ...formData, descripcion: e.target.value })}
-                  rows="3"
-                  placeholder="Descripción opcional de la categoría"
-                />
-              </div>
-
-              <div className="form-group checkbox-group">
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={formData.activa}
-                    onChange={e => setFormData({ ...formData, activa: e.target.checked })}
-                  />
-                  Categoría activa
-                </label>
-              </div>
-
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={cerrarModal}>
-                  Cancelar
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  {categoriaEditando ? 'Actualizar' : 'Crear'}
-                </button>
-              </div>
-            </form>
-          </div>
+            <div className="form-actions">
+              <button type="button" className="btn btn-secondary" onClick={cancelar}>
+                Cancelar
+              </button>
+              <button type="submit" className="btn btn-primary">
+                {categoriaEditando ? 'Actualizar' : 'Crear'}
+              </button>
+            </div>
+          </form>
         </div>
+      )}
+
+      {categorias.length === 0 ? (
+        <div className="empty-state">
+          <p>No hay categorías. Crea una para comenzar.</p>
+        </div>
+      ) : (
+        <>
+          <div className="productos-grid">
+            {categoriasPaginadas.map(categoria => (
+              <div key={categoria.id} className="producto-card">
+                <div className="card-content">
+                  <h3>{categoria.nombre}</h3>
+                  {categoria.descripcion && (
+                    <p className="descripcion">{categoria.descripcion}</p>
+                  )}
+                  <span className={`badge ${categoria.activa ? 'badge-success' : 'badge-danger'}`}>
+                    {categoria.activa ? 'Activa' : 'Inactiva'}
+                  </span>
+                </div>
+
+                <div className="card-actions">
+                  <button
+                    className="btn btn-sm btn-secondary"
+                    onClick={() => handleEditar(categoria)}
+                    title="Editar"
+                  >
+                    ✎
+                  </button>
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => handleEliminar(categoria.id)}
+                    title="Eliminar"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {categorias.length > 0 && (
+            <Pagination
+              paginaActual={paginaActual}
+              totalItems={categorias.length}
+              itemsPorPagina={itemsPorPagina}
+              onPaginaChange={setPaginaActual}
+            />
+          )}
+        </>
       )}
     </div>
   );
 };
 
 export default Categorias;
-

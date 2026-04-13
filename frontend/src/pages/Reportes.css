@@ -37,7 +37,9 @@
   padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .dashboard-card:hover {
@@ -61,6 +63,62 @@
   color: var(--color-primary);
 }
 
+/* Filtros Section */
+.filtros-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.filtros-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.filtro-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 200px;
+}
+
+.filtro-item label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.filtro-select,
+.filtro-input {
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #333;
+  background: white;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.filtro-select:focus,
+.filtro-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(155, 147, 59, 0.1);
+}
+
+.filtros-acciones {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
 /* Tabla de Reportes */
 .reportes-tabla-section {
   background: white;
@@ -77,16 +135,31 @@
 
 .acciones-cell {
   white-space: nowrap;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .acciones-cell .btn {
-  margin-right: 0.5rem;
-  margin-bottom: 0.25rem;
+  margin: 0;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+.icon-eye {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
 }
 
 .btn-info {
   background: #17a2b8;
   color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
 }
 
 .btn-info:hover {
@@ -122,6 +195,57 @@
   }
 }
 
+/* Tabla de Reportes - Estilos Mejorados */
+.productos-tabla-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+}
+
+.productos-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.productos-tabla thead {
+  background: var(--color-primary);
+  color: white;
+  font-weight: 600;
+}
+
+.productos-tabla th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.productos-tabla td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+}
+
+.productos-tabla tbody tr {
+  transition: background-color 0.2s;
+}
+
+.productos-tabla tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.productos-tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.text-center {
+  text-align: center;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .dashboard-grid {
@@ -138,6 +262,27 @@
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
+  }
+
+  .filtros-section {
+    padding: 1rem;
+  }
+
+  .filtros-group {
+    flex-direction: column;
+  }
+
+  .filtro-item {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .filtros-acciones {
+    width: 100%;
+  }
+
+  .filtros-acciones .btn {
+    flex: 1;
   }
 
   .dashboard-grid {
@@ -167,3 +312,4 @@
     margin-bottom: 0.5rem;
   }
 }
+

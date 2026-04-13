@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { reportesService } from '../services/reportesService';
 import { productosService } from '../services/productosService';
 import { categoriasService } from '../services/categoriasService';
+import { gastosService } from '../services/gastosService';
 import toast from 'react-hot-toast';
 import { calcularBaseSiguiente, formatearMoneda } from '../utils/reportes';
 import './NuevoReporte.css';
@@ -17,6 +18,7 @@ const NuevoReporte = ({ esEdicion = false }) => {
   const [loading, setLoading] = useState(true);
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
+  const [gastosAutomaticos, setGastosAutomaticos] = useState([]);
 
   // Datos del reporte
   const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
@@ -36,17 +38,22 @@ const NuevoReporte = ({ esEdicion = false }) => {
 
   const cargarDatos = async () => {
     try {
-      const [prodData, catData] = await Promise.all([
+      const [prodData, catData, gastosAutoData] = await Promise.all([
         productosService.obtenerProductos(),
         categoriasService.obtenerCategorias(),
+        gastosService.obtenerAutomaticos(),
       ]);
 
       // Asegurar que sean arrays
       const productosArray = Array.isArray(prodData) ? prodData : prodData?.results || [];
       const categoriasArray = Array.isArray(catData) ? catData : catData?.results || [];
+      const gastosAutoArray = Array.isArray(gastosAutoData)
+        ? gastosAutoData
+        : gastosAutoData?.results || [];
 
       setProductos(productosArray);
       setCategorias(categoriasArray);
+      setGastosAutomaticos(gastosAutoArray);
 
       // Inicializar cantidades en 0 para todos los productos
       const cantidadesIniciales = {};
@@ -57,7 +64,7 @@ const NuevoReporte = ({ esEdicion = false }) => {
       if (esEdicion && id) {
         // Cargar datos del reporte existente
         const reporteData = await reportesService.getReporte(id);
-        
+
         // Cargar datos básicos
         setFecha(reporteData.fecha);
         setBaseInicial(reporteData.base_inicial || 0);
@@ -109,6 +116,18 @@ const NuevoReporte = ({ esEdicion = false }) => {
 
   const eliminarGasto = index => {
     setGastos(gastos.filter((_, i) => i !== index));
+  };
+
+  const agregarGastoAutomatico = gastoAuto => {
+    setGastos([
+      ...gastos,
+      {
+        descripcion: gastoAuto.descripcion,
+        valor: gastoAuto.valor,
+        categoria: gastoAuto.categoria,
+      },
+    ]);
+    toast.success(`Gasto automático "${gastoAuto.descripcion}" agregado`);
   };
 
   const actualizarGasto = (index, campo, valor) => {
@@ -202,7 +221,9 @@ const NuevoReporte = ({ esEdicion = false }) => {
 
         // Manejo específico de reporte duplicado
         if (datos.codigo_error === 'REPORTE_EXISTE') {
-          toast.error(`Ya existe un reporte para la fecha ${fecha}. Por favor selecciona otra fecha.`);
+          toast.error(
+            `Ya existe un reporte para la fecha ${fecha}. Por favor selecciona otra fecha.`
+          );
         } else if (datos.error) {
           toast.error(datos.error);
         } else if (datos.mensaje) {
@@ -255,12 +276,14 @@ const NuevoReporte = ({ esEdicion = false }) => {
             <div className="form-group">
               <label htmlFor="baseInicial">Base Inicial</label>
               <input
-                type="number"
+                type="text"
                 id="baseInicial"
                 value={baseInicial}
-                onChange={e => setBaseInicial(e.target.value)}
-                step="0.01"
-                min="0"
+                onChange={e => {
+                  const valor = e.target.value.replace(/[^0-9.]/g, '');
+                  setBaseInicial(valor);
+                }}
+                placeholder="0.00"
               />
               <small>Automático desde el reporte anterior</small>
             </div>
@@ -268,25 +291,29 @@ const NuevoReporte = ({ esEdicion = false }) => {
             <div className="form-group">
               <label htmlFor="ventaTotal">Venta Total *</label>
               <input
-                type="number"
+                type="text"
                 id="ventaTotal"
                 value={ventaTotal}
-                onChange={e => setVentaTotal(e.target.value)}
+                onChange={e => {
+                  const valor = e.target.value.replace(/[^0-9.]/g, '');
+                  setVentaTotal(valor);
+                }}
                 required
-                step="0.01"
-                min="0"
+                placeholder="0.00"
               />
             </div>
 
             <div className="form-group">
               <label htmlFor="entrega">Entrega</label>
               <input
-                type="number"
+                type="text"
                 id="entrega"
                 value={entrega}
-                onChange={e => setEntrega(e.target.value)}
-                step="0.01"
-                min="0"
+                onChange={e => {
+                  const valor = e.target.value.replace(/[^0-9.]/g, '');
+                  setEntrega(valor);
+                }}
+                placeholder="0.00"
               />
             </div>
 
@@ -312,6 +339,26 @@ const NuevoReporte = ({ esEdicion = false }) => {
             </button>
           </div>
 
+          {/* Gastos Automáticos disponibles */}
+          {gastosAutomaticos.length > 0 && (
+            <div className="gastos-automaticos">
+              <p className="gastos-automaticos-label">Gastos automáticos disponibles:</p>
+              <div className="gastos-automaticos-list">
+                {gastosAutomaticos.map(gastoAuto => (
+                  <button
+                    key={gastoAuto.id}
+                    type="button"
+                    onClick={() => agregarGastoAutomatico(gastoAuto)}
+                    className="btn btn-sm btn-gasto-auto"
+                    title={`${gastoAuto.descripcion} - ${formatearMoneda(gastoAuto.valor)}`}
+                  >
+                    + {gastoAuto.descripcion}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {gastos.map((gasto, index) => (
             <div key={index} className="item-row">
               <div className="form-group flex-2">
@@ -325,12 +372,13 @@ const NuevoReporte = ({ esEdicion = false }) => {
 
               <div className="form-group flex-1">
                 <input
-                  type="number"
+                  type="text"
                   placeholder="Valor"
                   value={gasto.valor}
-                  onChange={e => actualizarGasto(index, 'valor', e.target.value)}
-                  step="0.01"
-                  min="0"
+                  onChange={e => {
+                    const valor = e.target.value.replace(/[^0-9.]/g, '');
+                    actualizarGasto(index, 'valor', valor);
+                  }}
                 />
               </div>
 
@@ -391,14 +439,33 @@ const NuevoReporte = ({ esEdicion = false }) => {
                       </span>
                     </div>
                     <div className="producto-contador">
+                      <button
+                        type="button"
+                        className="btn-contador"
+                        onClick={() => cambiarCantidadProducto(producto.id, Math.max(0, (cantidadesProductos[producto.id] || 0) - 1))}
+                        disabled={cantidadesProductos[producto.id] <= 0}
+                        title="Disminuir cantidad"
+                      >
+                        −
+                      </button>
                       <input
-                        type="number"
+                        type="text"
                         className="cantidad-input"
                         value={cantidadesProductos[producto.id] || 0}
-                        onChange={e => cambiarCantidadProducto(producto.id, e.target.value)}
-                        min="0"
-                        placeholder="Cantidad"
+                        onChange={e => {
+                          const valor = e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value) || 0);
+                          cambiarCantidadProducto(producto.id, valor);
+                        }}
+                        placeholder="0"
                       />
+                      <button
+                        type="button"
+                        className="btn-contador"
+                        onClick={() => cambiarCantidadProducto(producto.id, (cantidadesProductos[producto.id] || 0) + 1)}
+                        title="Aumentar cantidad"
+                      >
+                        +
+                      </button>
                     </div>
                   </div>
                 ))

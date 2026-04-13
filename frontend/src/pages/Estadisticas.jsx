@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { estadisticasService } from '../services/estadisticasService';
 import {
   Chart as ChartJS,
@@ -15,6 +15,7 @@ import {
 import { Pie, Bar, Line } from 'react-chartjs-2';
 import toast from 'react-hot-toast';
 import { formatearMoneda } from '../utils/reportes';
+import { exportarEstadisticasPDF } from '../utils/pdf';
 import './Estadisticas.css';
 
 // Registrar componentes de Chart.js
@@ -45,6 +46,8 @@ const Estadisticas = () => {
   // Filtros
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
+
+  const pdfRef = useRef(null);
 
   const cargarEstadisticas = useCallback(async () => {
     try {
@@ -89,6 +92,22 @@ const Estadisticas = () => {
     cargarEstadisticas();
   };
 
+  const handleExportPDF = async () => {
+    if (!pdfRef.current) {
+      toast.error('Error: no se puede exportar en este momento');
+      return;
+    }
+
+    try {
+      await exportarEstadisticasPDF(estadisticas, pdfRef.current);
+      toast.success('PDF descargado exitosamente');
+    } catch (error) {
+      toast.error(error.message || 'Error al descargar el PDF');
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
+  };
+
   // Configuración de gráficos
   const chartOptions = {
     responsive: true,
@@ -106,7 +125,29 @@ const Estadisticas = () => {
       {
         label: 'Total Gastos',
         data: gastosPorCategoria.map(g => g.total),
-        backgroundColor: ['#9B933B', '#D4AF37', '#C9AE5D', '#8B7E39', '#A89842', '#BFB35E'],
+        backgroundColor: [
+          'var(--chart-color-1)', // Oliva
+          'var(--chart-color-2)', // Azul
+          'var(--chart-color-3)', // Rojo
+          'var(--chart-color-4)', // Verde
+          'var(--chart-color-5)', // Naranja
+          'var(--chart-color-6)', // Púrpura
+          'var(--chart-color-7)', // Cian
+          'var(--chart-color-8)', // Rosa
+        ].map(color => {
+          // Convertir las variables CSS a colores reales
+          const colorMap = {
+            'var(--chart-color-1)': '#9b933b',
+            'var(--chart-color-2)': '#2563eb',
+            'var(--chart-color-3)': '#dc2626',
+            'var(--chart-color-4)': '#16a34a',
+            'var(--chart-color-5)': '#f59e0b',
+            'var(--chart-color-6)': '#8b5cf6',
+            'var(--chart-color-7)': '#06b6d4',
+            'var(--chart-color-8)': '#ec4899',
+          };
+          return colorMap[color];
+        }),
       },
     ],
   };
@@ -117,7 +158,16 @@ const Estadisticas = () => {
       {
         label: 'Cantidad Vendida',
         data: productosMasVendidos.map(p => p.cantidad_total),
-        backgroundColor: '#9B933B',
+        backgroundColor: [
+          '#9b933b',
+          '#2563eb',
+          '#dc2626',
+          '#16a34a',
+          '#f59e0b',
+          '#8b5cf6',
+          '#06b6d4',
+          '#ec4899',
+        ],
       },
     ],
   };
@@ -131,6 +181,11 @@ const Estadisticas = () => {
         borderColor: '#9B933B',
         backgroundColor: 'rgba(155, 147, 59, 0.1)',
         tension: 0.4,
+        fill: true,
+        pointBackgroundColor: '#9B933B',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointRadius: 5,
       },
     ],
   };
@@ -177,74 +232,79 @@ const Estadisticas = () => {
             <button type="button" onClick={handleLimpiar} className="btn-secondary">
               Limpiar
             </button>
+            <button type="button" onClick={handleExportPDF} className="btn-action">
+              PDF
+            </button>
           </div>
         </form>
       </div>
 
       {/* Tarjetas de resumen */}
       {estadisticas && (
-        <div className="stats-cards">
-          <div className="stat-card">
-            <h3>Total Ventas</h3>
-            <p className="stat-value">{formatearMoneda(estadisticas.total_ventas)}</p>
-            <small>{estadisticas.total_reportes} reportes</small>
+        <div ref={pdfRef}>
+          <div className="stats-cards">
+            <div className="stat-card">
+              <h3>Total Ventas</h3>
+              <p className="stat-value">{formatearMoneda(estadisticas.total_ventas)}</p>
+              <small>{estadisticas.total_reportes} reportes</small>
+            </div>
+
+            <div className="stat-card">
+              <h3>Promedio Ventas</h3>
+              <p className="stat-value">{formatearMoneda(estadisticas.promedio_ventas)}</p>
+              <small>Por reporte</small>
+            </div>
+
+            <div className="stat-card">
+              <h3>Total Gastos</h3>
+              <p className="stat-value danger">{formatearMoneda(estadisticas.total_gastos)}</p>
+              <small>Acumulado</small>
+            </div>
+
+            <div className="stat-card">
+              <h3>Total Entregas</h3>
+              <p className="stat-value">{formatearMoneda(estadisticas.total_entregas)}</p>
+              <small>Acumulado</small>
+            </div>
           </div>
 
-          <div className="stat-card">
-            <h3>Promedio Ventas</h3>
-            <p className="stat-value">{formatearMoneda(estadisticas.promedio_ventas)}</p>
-            <small>Por reporte</small>
-          </div>
+          {/* Gráficos */}
+          <div className="charts-grid">
+            <div className="chart-card">
+              <h2>Gastos por Categoría</h2>
+              <div className="chart-container">
+                {gastosPorCategoria.length > 0 ? (
+                  <Pie data={gastosData} options={chartOptions} />
+                ) : (
+                  <p className="no-data">No hay datos de gastos</p>
+                )}
+              </div>
+            </div>
 
-          <div className="stat-card">
-            <h3>Total Gastos</h3>
-            <p className="stat-value danger">{formatearMoneda(estadisticas.total_gastos)}</p>
-            <small>Acumulado</small>
-          </div>
+            <div className="chart-card">
+              <h2>Productos Más Vendidos</h2>
+              <div className="chart-container">
+                {productosMasVendidos.length > 0 ? (
+                  <Bar data={productosData} options={chartOptions} />
+                ) : (
+                  <p className="no-data">No hay datos de ventas de productos</p>
+                )}
+              </div>
+            </div>
 
-          <div className="stat-card">
-            <h3>Total Entregas</h3>
-            <p className="stat-value">{formatearMoneda(estadisticas.total_entregas)}</p>
-            <small>Acumulado</small>
+            <div className="chart-card full-width">
+              <h2>Evolución de Ventas (Acumulado Mensual)</h2>
+              <div className="chart-container">
+                {ventasPorMes.length > 0 ? (
+                  <Bar data={ventasData} options={chartOptions} />
+                ) : (
+                  <p className="no-data">No hay datos de ventas mensuales</p>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}
-
-      {/* Gráficos */}
-      <div className="charts-grid">
-        <div className="chart-card">
-          <h2>Gastos por Categoría</h2>
-          <div className="chart-container">
-            {gastosPorCategoria.length > 0 ? (
-              <Pie data={gastosData} options={chartOptions} />
-            ) : (
-              <p className="no-data">No hay datos de gastos</p>
-            )}
-          </div>
-        </div>
-
-        <div className="chart-card">
-          <h2>Productos Más Vendidos</h2>
-          <div className="chart-container">
-            {productosMasVendidos.length > 0 ? (
-              <Bar data={productosData} options={chartOptions} />
-            ) : (
-              <p className="no-data">No hay datos de ventas de productos</p>
-            )}
-          </div>
-        </div>
-
-        <div className="chart-card full-width">
-          <h2>Evolución de Ventas (Acumulado Mensual)</h2>
-          <div className="chart-container">
-            {ventasPorMes.length > 0 ? (
-              <Bar data={ventasData} options={chartOptions} />
-            ) : (
-              <p className="no-data">No hay datos de ventas mensuales</p>
-            )}
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
