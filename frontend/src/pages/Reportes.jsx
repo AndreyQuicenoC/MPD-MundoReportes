@@ -113,6 +113,25 @@ const Reportes = () => {
     } else if (filtroMes === 'todos') {
       nuevoFiltroActivo = false;
     }
+    cargarDatos();
+  };
+
+  const limpiarFiltros = () => {
+    setFiltroMes('actual');
+    setFechaInicio('');
+    setFechaFin('');
+    setFiltroActivo(false);
+    cargarDatos();
+  };
+
+  useEffect(() => {
+    cargarDatos();
+  }, []);
+
+  // Calcular índices para la paginación
+  const indiceInicio = (paginaActual - 1) * itemsPorPagina;
+  const indiceFin = indiceInicio + itemsPorPagina;
+  const reportesPaginados = reportes.slice(indiceInicio, indiceFin);
 
     // Pasar los valores directamente a cargarDatos para evitar timing issues
     cargarDatos(filtroMes, nuevoFiltroActivo, fechaInicio, fechaFin);
