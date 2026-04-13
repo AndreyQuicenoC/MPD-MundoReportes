@@ -22,18 +22,19 @@ print("VERIFICACIÓN DE SINCRONIZACIÓN CON SUPABASE")
 print("=" * 70 + "\n")
 
 # 1. Verificar configuración
-print("1️⃣  CONFIGURACIÓN")
+print("1. CONFIGURACIÓN")
 print("-" * 70)
 
 database_url = os.getenv("DATABASE_URL")
 is_supabase = "supabase" in database_url.lower() if database_url else False
 
-print(f"   Base de datos configurada: {'✅ Supabase' if is_supabase else '⚠️  Otra'}")
+status_db = "OK - Supabase" if is_supabase else "OK - Other"
+print(f"   Base de datos configurada: {status_db}")
 print(f"   DEBUG mode: {os.getenv('DEBUG', 'False')}")
 print()
 
 # 2. Verificar modelos
-print("2️⃣  MODELOS DJANGO")
+print("2. MODELOS DJANGO")
 print("-" * 70)
 
 from apps.usuarios.models import Usuario
@@ -55,15 +56,15 @@ models_to_check = [
 for name, model in models_to_check:
     try:
         count = model.objects.count()
-        status = "✅" if count > 0 else "⚠️  (vacío)"
-        print(f"   {status} {name}: {count} registros")
+        status = "OK" if count > 0 else "EMPTY"
+        print(f"   [{status}] {name}: {count} records")
     except Exception as e:
-        print(f"   ❌ {name}: ERROR - {str(e)}")
+        print(f"   [ERROR] {name}: {str(e)}")
 
 print()
 
 # 3. Verificar datos críticos
-print("3️⃣  DATOS CRÍTICOS")
+print("3. DATOS CRÍTICOS")
 print("-" * 70)
 
 try:
@@ -78,19 +79,19 @@ try:
     print(f"   Categorías: {categorias}")
 
     if usuarios > 0 and reportes > 0:
-        print("\n   ✅ Sistema tiene datos para operar")
+        print("\n   [OK] System has data to operate")
     else:
-        print("\n   ⚠️  Sistema necesita datos iniciales")
-        print("      - Si usas Supabase: Agrega datos manualmente")
-        print("      - Si desarrollas localmente: Crea datos a través del UI")
+        print("\n   [WARNING] System needs initial data")
+        print("      - If using Supabase: Add data manually")
+        print("      - If developing locally: Create data through UI")
 
 except Exception as e:
-    print(f"   ❌ Error al verificar datos: {str(e)}")
+    print(f"   [ERROR] Error verifying data: {str(e)}")
 
 print()
 
 # 4. Verificar API endpoints
-print("4️⃣  ENDPOINTS DE API")
+print("4. ENDPOINTS DE API")
 print("-" * 70)
 
 endpoints = [
@@ -102,38 +103,38 @@ endpoints = [
     "/api/categorias/",
 ]
 
-print("   Los siguientes endpoints están disponibles:")
+print("   The following endpoints are available:")
 for endpoint in endpoints:
     print(f"   - /api{endpoint}")
 
 print()
 
 # 5. Resumen
-print("5️⃣  RESUMEN")
+print("5. RESUMEN")
 print("=" * 70)
 
 print(
     """
-✅ PASOS SIGUIENTES:
+[OK] NEXT STEPS:
 
-1. Asegurar que Supabase tiene datos existentes
-2. Ejecutar: python manage.py migrate
-3. Verificar nuevamente este script
-4. Iniciar servidor: python manage.py runserver
-5. Iniciar frontend: npm run dev
+1. Ensure Supabase has existing data
+2. Run: python manage.py migrate
+3. Verify this script again
+4. Start server: python manage.py runserver
+5. Start frontend: npm run dev
 
-❌ SI HAY ERRORES:
+[ERROR] IF THERE ARE ERRORS:
 
-- Verificar DATABASE_URL en .env
-- Verificar que Supabase está accesible
-- Ejecutar migraciones: python manage.py migrate --verbose
-- Ver logs de Django para más detalles
+- Verify DATABASE_URL in .env
+- Verify Supabase is accessible
+- Run migrations: python manage.py migrate --verbose
+- Check Django logs for more details
 
-💾 NOTA IMPORTANTE:
+[NOTE] IMPORTANT NOTE:
 
-Este sistema carga DATOS REALES de Supabase.
-No crea datos sintéticos automáticamente.
-Todos los datos deben existir en Supabase previamente.
+This system loads REAL DATA from Supabase.
+It does not create synthetic data automatically.
+All data must exist in Supabase previously.
 """
 )
 

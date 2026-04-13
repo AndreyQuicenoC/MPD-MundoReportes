@@ -66,22 +66,22 @@ def main():
     print("=" * 80 + "\n")
 
     # 1. Verificar conexión
-    print("1️⃣  VERIFICANDO CONEXIÓN...")
+    print("1. VERIFICANDO CONEXIÓN...")
     if verify_connection():
-        print("     ✅ Conexión exitosa a Supabase\n")
+        print("     [OK] Conexión exitosa a Supabase\n")
     else:
-        print("     ❌ Error de conexión\n")
+        print("     [ERROR] Error de conexión\n")
         return False
 
     # 2. Obtener tablas
-    print("2️⃣  TABLAS EXISTENTES:")
+    print("2. TABLAS EXISTENTES:")
     tables = get_existing_tables()
     for table in tables:
-        print(f"     📋 {table}")
+        print(f"     [TABLE] {table}")
     print(f"     Total: {len(tables)} tablas\n")
 
     # 3. Contar registros
-    print("3️⃣  REGISTROS POR TABLA (datos reales):")
+    print("3. REGISTROS POR TABLA (datos reales):")
     table_names = [
         "usuarios_usuario",
         "reportes_reportediario",
@@ -97,15 +97,15 @@ def main():
     total_records = 0
     for table, count in counts.items():
         if count > 0:
-            print(f"     ✅ {table}: {count} registros")
+            print(f"     [OK] {table}: {count} registros")
             total_records += count
         else:
-            print(f"     ⚠️  {table}: vacío")
+            print(f"     [EMPTY] {table}: vacío")
 
     print(f"\n     TOTAL DE REGISTROS REALES: {total_records}\n")
 
     # 4. Verificar tablas críticas
-    print("4️⃣  VERIFICACIÓN DE DATOS CRÍTICOS:")
+    print("4. VERIFICACIÓN DE DATOS CRÍTICOS:")
     critical_status = {
         "usuarios_usuario": counts.get("usuarios_usuario", 0) > 0,
         "gastos_gastoautomatico": counts.get("gastos_gastoautomatico", 0) >= 0,
@@ -113,7 +113,7 @@ def main():
     }
 
     for table, exists in critical_status.items():
-        status = "✅" if exists else "⚠️ "
+        status = "[OK]" if exists else "[WARNING]"
         print(f"     {status} {table}")
 
     print("\n" + "=" * 80)
