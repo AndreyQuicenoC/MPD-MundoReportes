@@ -1,11 +1,12 @@
 """
 Serializadores para la aplicación de gastos.
 
-Maneja la serialización y validación de categorías y gastos.
+Maneja la serialización y validación de categorías, gastos,
+gastos automáticos y gastos deducibles.
 """
 
 from rest_framework import serializers
-from .models import CategoriaGasto, Gasto
+from .models import CategoriaGasto, Gasto, GastoAutomatico, GastoDeducible
 
 
 class CategoriaGastoSerializer(serializers.ModelSerializer):
@@ -126,3 +127,23 @@ class GastoSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Gasto
         fields = ["id", "descripcion", "valor", "categoria", "categoria_nombre"]
+
+
+class GastoAutomaticoSerializer(serializers.ModelSerializer):
+    """Serializador para gastos automáticos predefinidos."""
+
+    categoria_nombre = serializers.CharField(source='categoria.nombre', read_only=True)
+
+    class Meta:
+        model = GastoAutomatico
+        fields = ['id', 'categoria', 'categoria_nombre', 'descripcion', 'valor', 'activo']
+
+
+class GastoDeducibleSerializer(serializers.ModelSerializer):
+    """Serializador para categorías de gastos deducibles."""
+
+    categoria_nombre = serializers.CharField(source='categoria.nombre', read_only=True)
+
+    class Meta:
+        model = GastoDeducible
+        fields = ['id', 'categoria', 'categoria_nombre', 'tipo', 'descripcion', 'activo']

@@ -117,21 +117,6 @@ const NuevoReporte = ({ esEdicion = false }) => {
     setGastos(nuevosGastos);
   };
 
-  // Nuevas funciones para manejar cantidades de productos
-  const incrementarProducto = idProducto => {
-    setCantidadesProductos(prev => ({
-      ...prev,
-      [idProducto]: (prev[idProducto] || 0) + 1,
-    }));
-  };
-
-  const decrementarProducto = idProducto => {
-    setCantidadesProductos(prev => ({
-      ...prev,
-      [idProducto]: Math.max(0, (prev[idProducto] || 0) - 1),
-    }));
-  };
-
   const cambiarCantidadProducto = (idProducto, valor) => {
     const cantidad = parseInt(valor) || 0;
     setCantidadesProductos(prev => ({
@@ -213,10 +198,21 @@ const NuevoReporte = ({ esEdicion = false }) => {
       navigate('/reportes');
     } catch (error) {
       if (error.response?.data) {
-        const errores = error.response.data;
-        Object.keys(errores).forEach(campo => {
-          toast.error(`${campo}: ${errores[campo]}`);
-        });
+        const datos = error.response.data;
+
+        // Manejo específico de reporte duplicado
+        if (datos.codigo_error === 'REPORTE_EXISTE') {
+          toast.error(`Ya existe un reporte para la fecha ${fecha}. Por favor selecciona otra fecha.`);
+        } else if (datos.error) {
+          toast.error(datos.error);
+        } else if (datos.mensaje) {
+          toast.error(datos.mensaje);
+        } else {
+          // Si es validación de campos
+          Object.keys(datos).forEach(campo => {
+            toast.error(`${campo}: ${datos[campo]}`);
+          });
+        }
       } else {
         toast.error(esEdicion ? 'Error al actualizar el reporte' : 'Error al crear el reporte');
       }
@@ -244,64 +240,66 @@ const NuevoReporte = ({ esEdicion = false }) => {
         <section className="form-section">
           <h2>Datos del Reporte</h2>
 
-          <div className="form-group">
-            <label htmlFor="fecha">Fecha *</label>
-            <input
-              type="date"
-              id="fecha"
-              value={fecha}
-              onChange={e => setFecha(e.target.value)}
-              required
-            />
-          </div>
+          <div className="datos-grid">
+            <div className="form-group">
+              <label htmlFor="fecha">Fecha *</label>
+              <input
+                type="date"
+                id="fecha"
+                value={fecha}
+                onChange={e => setFecha(e.target.value)}
+                required
+              />
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="baseInicial">Base Inicial</label>
-            <input
-              type="number"
-              id="baseInicial"
-              value={baseInicial}
-              onChange={e => setBaseInicial(e.target.value)}
-              step="0.01"
-              min="0"
-            />
-            <small>Automático desde el reporte anterior</small>
-          </div>
+            <div className="form-group">
+              <label htmlFor="baseInicial">Base Inicial</label>
+              <input
+                type="number"
+                id="baseInicial"
+                value={baseInicial}
+                onChange={e => setBaseInicial(e.target.value)}
+                step="0.01"
+                min="0"
+              />
+              <small>Automático desde el reporte anterior</small>
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="ventaTotal">Venta Total *</label>
-            <input
-              type="number"
-              id="ventaTotal"
-              value={ventaTotal}
-              onChange={e => setVentaTotal(e.target.value)}
-              required
-              step="0.01"
-              min="0"
-            />
-          </div>
+            <div className="form-group">
+              <label htmlFor="ventaTotal">Venta Total *</label>
+              <input
+                type="number"
+                id="ventaTotal"
+                value={ventaTotal}
+                onChange={e => setVentaTotal(e.target.value)}
+                required
+                step="0.01"
+                min="0"
+              />
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="entrega">Entrega</label>
-            <input
-              type="number"
-              id="entrega"
-              value={entrega}
-              onChange={e => setEntrega(e.target.value)}
-              step="0.01"
-              min="0"
-            />
-          </div>
+            <div className="form-group">
+              <label htmlFor="entrega">Entrega</label>
+              <input
+                type="number"
+                id="entrega"
+                value={entrega}
+                onChange={e => setEntrega(e.target.value)}
+                step="0.01"
+                min="0"
+              />
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="observacion">Observación</label>
-            <textarea
-              id="observacion"
-              value={observacion}
-              onChange={e => setObservacion(e.target.value)}
-              rows="3"
-              placeholder="Notas adicionales del día..."
-            />
+            <div className="form-group">
+              <label htmlFor="observacion">Observación</label>
+              <textarea
+                id="observacion"
+                value={observacion}
+                onChange={e => setObservacion(e.target.value)}
+                rows="3"
+                placeholder="Notas adicionales del día..."
+              />
+            </div>
           </div>
         </section>
 
@@ -309,8 +307,8 @@ const NuevoReporte = ({ esEdicion = false }) => {
         <section className="form-section">
           <div className="section-header">
             <h2>Gastos del Día</h2>
-            <button type="button" onClick={agregarGasto} className="btn btn-add">
-              ➕ Agregar Gasto
+            <button type="button" onClick={agregarGasto} className="btn btn-action">
+              Agregar Gasto
             </button>
           </div>
 
@@ -393,28 +391,14 @@ const NuevoReporte = ({ esEdicion = false }) => {
                       </span>
                     </div>
                     <div className="producto-contador">
-                      <button
-                        type="button"
-                        className="btn-contador"
-                        onClick={() => decrementarProducto(producto.id)}
-                        disabled={!cantidadesProductos[producto.id]}
-                      >
-                        −
-                      </button>
                       <input
                         type="number"
                         className="cantidad-input"
                         value={cantidadesProductos[producto.id] || 0}
                         onChange={e => cambiarCantidadProducto(producto.id, e.target.value)}
                         min="0"
+                        placeholder="Cantidad"
                       />
-                      <button
-                        type="button"
-                        className="btn-contador"
-                        onClick={() => incrementarProducto(producto.id)}
-                      >
-                        +
-                      </button>
                     </div>
                   </div>
                 ))

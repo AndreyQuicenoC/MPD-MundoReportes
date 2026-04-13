@@ -9,6 +9,11 @@
   --color-primary-dark: #6f6a2a;
   --color-primary-light: #b0aa4d;
 
+  /* Colores de accion (azul) */
+  --color-action: #2563eb;
+  --color-action-dark: #1d4ed8;
+  --color-action-light: #3b82f6;
+
   --color-secondary: #166d92;
   --color-secondary-light: #2a84bc;
   --color-secondary-dark: #0f4c6a;
@@ -20,10 +25,20 @@
   --color-gray-dark: #333333;
 
   /* Colores de estado */
-  --color-error: #c94a4a;
-  --color-warning: #e0c65a;
-  --color-success: #6b8e23;
-  --color-info: #5b9bd5;
+  --color-error: #dc2626;
+  --color-warning: #f59e0b;
+  --color-success: #16a34a;
+  --color-info: #0284c7;
+
+  /* Paleta de graficos - variada */
+  --chart-color-1: #9b933b;
+  --chart-color-2: #2563eb;
+  --chart-color-3: #dc2626;
+  --chart-color-4: #16a34a;
+  --chart-color-5: #f59e0b;
+  --chart-color-6: #8b5cf6;
+  --chart-color-7: #06b6d4;
+  --chart-color-8: #ec4899;
 
   /* Tipografía */
   --font-family:
@@ -55,6 +70,7 @@
   /* Transiciones */
   --transition-fast: 150ms ease-in-out;
   --transition-normal: 250ms ease-in-out;
+  --transition-slow: 350ms ease-in-out;
 }
 
 /* Reset y configuración base */
@@ -145,16 +161,38 @@ a:hover {
   background-color: var(--color-primary);
   color: var(--color-white);
 }
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-action {
+  background-color: var(--color-action);
+  color: var(--color-white);
+}
+
+.btn-action:hover:not(:disabled) {
+  background-color: var(--color-action-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-action:active:not(:disabled) {
+  transform: translateY(0);
+}
+
 .btn-primary-opposite {
   background-color: var(--color-secondary);
   color: var(--color-white);
 }
 .btn-primary-opposite:hover:not(:disabled) {
   background-color: var(--color-secondary-dark);
-}
-
-.btn-primary:hover:not(:disabled) {
-  background-color: var(--color-primary-dark);
 }
 
 .btn-secondary {

@@ -1,17 +1,22 @@
 """
 Vistas para la aplicación de gastos.
 
-Maneja el CRUD de categorías de gastos.
-Los gastos individuales se gestionan a través de reportes.
+Maneja el CRUD de categorías de gastos, gastos automáticos
+y gastos deducibles. Los gastos individuales se gestionan a través de reportes.
 """
 
-from rest_framework import generics, status, filters
+from rest_framework import generics, status, filters, viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import CategoriaGasto
-from .serializers import CategoriaGastoSerializer, CategoriaGastoListaSerializer
+from .models import CategoriaGasto, GastoAutomatico, GastoDeducible
+from .serializers import (
+    CategoriaGastoSerializer,
+    CategoriaGastoListaSerializer,
+    GastoAutomaticoSerializer,
+    GastoDeducibleSerializer,
+)
 from apps.usuarios.permissions import EsAdministrador, EsOperarioOAdmin
 
 
@@ -124,3 +129,62 @@ class CategoriasActivasView(generics.ListAPIView):
     search_fields = ["nombre"]
     ordering_fields = ["nombre"]
     ordering = ["nombre"]
+
+
+class GastoAutomaticoViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet para gestionar gastos automáticos predefinidos.
+
+    Endpoints:
+    - GET /api/gastos-automaticos/ - Listar gastos automáticos
+    - POST /api/gastos-automaticos/ - Crear gasto automático
+    - GET /api/gastos-automaticos/{id}/ - Ver detalle
+    - PUT/PATCH /api/gastos-automaticos/{id}/ - Actualizar
+    - DELETE /api/gastos-automaticos/{id}/ - Eliminar
+    """
+
+    queryset = GastoAutomatico.objects.filter(activo=True)
+    serializer_class = GastoAutomaticoSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ["categoria", "activo"]
+    search_fields = ["descripcion", "categoria__nombre"]
+    ordering_fields = ["categoria", "descripcion"]
+    ordering = ["categoria", "descripcion"]
+
+    def get_permissions(self):
+        """Permisos dinámicos: lectura para todos, escritura para admin/operario."""
+        if self.request.method in ["POST", "PUT", "PATCH", "DELETE"]:
+            return [IsAuthenticated(), EsOperarioOAdmin()]
+        return [IsAuthenticated()]
+
+
+class GastoDeducibleViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet para gestionar categorías de gastos deducibles.
+
+    Los deducibles son categorías que, aunque se registran como gastos,
+    representan ingresos o ahorros y se restan del total de gastos.
+
+    Endpoints:
+    - GET /api/gastos-deducibles/ - Listar deducibles
+    - POST /api/gastos-deducibles/ - Crear deducible
+    - GET /api/gastos-deducibles/{id}/ - Ver detalle
+    - PUT/PATCH /api/gastos-deducibles/{id}/ - Actualizar
+    - DELETE /api/gastos-deducibles/{id}/ - Eliminar
+    """
+
+    queryset = GastoDeducible.objects.filter(activo=True)
+    serializer_class = GastoDeducibleSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ["tipo", "activo"]
+    search_fields = ["categoria__nombre", "descripcion"]
+    ordering_fields = ["categoria", "tipo"]
+    ordering = ["categoria"]
+
+    def get_permissions(self):
+        """Permisos dinámicos: solo admin puede crear/modificar deducibles."""
+        if self.request.method in ["POST", "PUT", "PATCH", "DELETE"]:
+            return [IsAuthenticated(), EsAdministrador()]
+        return [IsAuthenticated()]

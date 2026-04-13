@@ -1,13 +1,10 @@
 #!/bin/bash
 
-echo "🔄 Ejecutando migraciones..."
+echo "Ejecutando migraciones..."
 python manage.py migrate --noinput
 
-echo "� Creando usuario de prueba..."
-python manage.py crear_usuario_prueba
-
-echo "�📁 Recolectando archivos estáticos..."
+echo "Recolectando archivos estaticos..."
 python manage.py collectstatic --noinput
 
-echo "🚀 Iniciando servidor..."
+echo "Iniciando servidor..."
 gunicorn config.wsgi:application

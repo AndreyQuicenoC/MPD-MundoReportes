@@ -41,14 +41,14 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         """
         import logging
         logger = logging.getLogger(__name__)
-        
-        logger.info(f"🔐 [LOGIN] Intento de login con email: {attrs.get('email', attrs.get('username', 'N/A'))}")
-        
+
+        logger.info(f"[LOGIN] Intento de login con email: {attrs.get('email', attrs.get('username', 'N/A'))}")
+
         try:
             data = super().validate(attrs)
-            logger.info(f"✅ [LOGIN] Validación exitosa para usuario: {self.user.email}")
+            logger.info(f"[LOGIN] Validacion exitosa para usuario: {self.user.email}")
         except Exception as e:
-            logger.error(f"❌ [LOGIN] Error en validación: {str(e)}")
+            logger.error(f"[LOGIN] Error en validacion: {str(e)}")
             raise
 
         # Verificar si el usuario puede acceder al sistema después de validar credenciales
@@ -56,12 +56,12 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             from rest_framework.exceptions import PermissionDenied
 
             if not self.user.is_active:
-                logger.warning(f"⚠️ [LOGIN] Usuario inactivo: {self.user.email}")
+                logger.warning(f"[LOGIN] Usuario inactivo: {self.user.email}")
                 raise PermissionDenied("Tu cuenta ha sido desactivada. Contacta al administrador.")
             else:
-                logger.warning(f"⚠️ [LOGIN] Período de acceso finalizado: {self.user.email}")
+                logger.warning(f"[LOGIN] Periodo de acceso finalizado: {self.user.email}")
                 raise PermissionDenied(
-                    "Tu período de acceso ha finalizado. Contacta al administrador."
+                    "Tu periodo de acceso ha finalizado. Contacta al administrador."
                 )
 
         # Agregar información del usuario

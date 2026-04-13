@@ -19,6 +19,8 @@ import DetalleReporte from './pages/DetalleReporte';
 import Estadisticas from './pages/Estadisticas';
 import Productos from './pages/Productos';
 import Categorias from './pages/Categorias';
+import Automatico from './pages/Automatico';
+import Deducibles from './pages/Deducibles';
 import Perfil from './pages/Perfil';
 import AdminUsuarios from './pages/AdminUsuarios';
 import './styles/global.css';
@@ -131,6 +133,22 @@ function App() {
               element={
                 <RoleRoute allowedRoles={['usuario']}>
                   <Categorias />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="automatico"
+              element={
+                <RoleRoute allowedRoles={['usuario']}>
+                  <Automatico />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="deducibles"
+              element={
+                <RoleRoute allowedRoles={['admin']}>
+                  <Deducibles />
                 </RoleRoute>
               }
             />

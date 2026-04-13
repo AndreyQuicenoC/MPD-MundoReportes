@@ -176,7 +176,7 @@ class PerfilUsuarioSerializer(serializers.ModelSerializer):
     """
     Serializador para que usuarios vean y editen su propio perfil.
 
-    No permite editar email ni cédula.
+    No permite editar email, cédula, fecha de ingreso ni fecha de fin.
     """
 
     class Meta:
@@ -201,6 +201,7 @@ class PerfilUsuarioSerializer(serializers.ModelSerializer):
             "date_joined",
             "last_login",
             "fecha_fin",
+            "fecha_ingreso",
         ]
 
 

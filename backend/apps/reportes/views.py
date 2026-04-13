@@ -127,8 +127,19 @@ class CrearReporteView(APIView):
             )
 
         except ValueError as e:
+            error_message = str(e)
+            # Detectar si es error de reporte duplicado
+            if "Ya existe un reporte" in error_message:
+                return Response(
+                    {
+                        "error": error_message,
+                        "codigo_error": "REPORTE_EXISTE",
+                        "campo": "fecha"
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
             return Response(
-                {"error": str(e)},
+                {"error": error_message},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
