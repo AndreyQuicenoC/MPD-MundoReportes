@@ -8,22 +8,22 @@
 
 Daily sales and expense reporting system for paint warehouse management.
 
-## 📋 Description
+## Description
 
 Mundo Reporte is a web system designed to replace manual Excel spreadsheets for recording and analyzing daily sales and expenses in a paint warehouse. The system enables:
 
-- ✅ Daily registration of opening balance, sales, expenses, deliveries and closing balance
-- ✅ Quantity tracking of products sold
-- ✅ Expense classification by reusable categories
-- ✅ **Automatic predefined expenses for quick insertion**
-- ✅ **Marking categories as deductible (transfer/savings/income)**
-- ✅ Generation of reliable statistics by periods
-- ✅ **Report filtering by month or custom date range**
-- ✅ **Pagination in all main tables**
-- ✅ **PDF export for reports and statistics**
-- ✅ Secure access through authentication
+- Daily registration of opening balance, sales, expenses, deliveries and closing balance
+- Quantity tracking of products sold
+- Expense classification by reusable categories
+- **Automatic predefined expenses for quick insertion**
+- **Marking categories as deductible (transfer/savings/income)**
+- Generation of reliable statistics by periods
+- **Report filtering by month or custom date range**
+- **Pagination in all main tables**
+- **PDF export for reports and statistics**
+- Secure access through authentication
 
-## 🎯 Target User
+## Target User
 
 System specially designed for elderly adults and non-technical users, prioritizing:
 
@@ -32,7 +32,7 @@ System specially designed for elderly adults and non-technical users, prioritizi
 - Intuitive forms
 - Immediate feedback
 
-## 🛠️ Technologies
+## Technologies
 
 ### Backend
 
@@ -57,7 +57,7 @@ System specially designed for elderly adults and non-technical users, prioritizi
 - **Pytest**: Backend testing
 - **Jest**: Frontend testing
 
-## 🏗️ Architecture
+## Architecture
 
 The project follows a decoupled client-server architecture:
 
@@ -81,7 +81,7 @@ The project follows a decoupled client-server architecture:
 3. **Domain Layer**: Services with business logic
 4. **Persistence Layer**: Django models and database
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 MPD-MundoReportes/
@@ -119,7 +119,7 @@ MPD-MundoReportes/
 └── CHANGELOG.md
 ```
 
-## 🚀 Installation and Usage
+## Installation and Usage
 
 ### Prerequisites
 
@@ -187,7 +187,7 @@ npm run preview
 
 Frontend will be available at `http://localhost:5173` (development) or `http://localhost:4173` (preview)
 
-## 🧪 Testing
+## Testing
 
 ### Backend
 
@@ -205,7 +205,7 @@ npm test
 npm test -- --coverage  # With coverage
 ```
 
-## 🔍 Code Quality
+## Code Quality
 
 ### Backend
 
@@ -227,7 +227,7 @@ npm run format
 npm run lint
 ```
 
-## 🎨 Visual Identity
+## Visual Identity
 
 ### Primary Color
 
@@ -243,7 +243,7 @@ npm run lint
 - Soft red: `#C94A4A` (errors)
 - Soft yellow: `#E0C65A` (warnings)
 
-## 📊 Main Models
+## Main Models
 
 ### DailyReport
 
@@ -283,7 +283,7 @@ npm run lint
 - Types: transfer, savings, income
 - Allows separate analysis of deductible expenses
 
-## ✨ Main Features (v1.2.2+)
+## Main Features (v1.2.2+)
 
 ### Smart Pagination
 
@@ -322,7 +322,7 @@ npm run lint
 - Admin fields protected against user editing
 - Improved role-based access control
 
-## 🔒 Security
+## Security
 
 - ✅ JWT authentication
 - ✅ Backend input validation
@@ -331,7 +331,7 @@ npm run lint
 - ✅ Sensitive variables in environment
 - ✅ HTTPS mandatory in production
 
-## 📈 Metrics and Statistics
+## Metrics and Statistics
 
 The system automatically generates metrics about:
 
@@ -341,7 +341,7 @@ The system automatically generates metrics about:
 - Most sold products
 - Basic profitability (sales - expenses)
 
-## 🚢 Deployment
+## Deployment
 
 ### Recommendations
 
@@ -370,7 +370,7 @@ The system automatically generates metrics about:
 
 - `REACT_APP_API_URL`: Backend URL
 
-## 📝 Commit Conventions
+## Commit Conventions
 
 Commits follow the format:
 
@@ -400,7 +400,7 @@ the next day balance using the formula:
 next_balance = opening_balance + sales - expenses - delivery
 ```
 
-## 👥 User Roles
+## User Roles
 
 ### Administrator
 
@@ -415,18 +415,18 @@ next_balance = opening_balance + sales - expenses - delivery
 - Consults historical reports
 - Exports information
 
-## 📖 Additional Documentation
+## Additional Documentation
 
 - [Project Guidelines](docs/)
 - [Installation Guide](docs/INSTRUCCIONES_INICIO.md)
 - [Deployment Solutions](docs/SOLUCION_DESPLIEGUE.md)
 - [Supabase Setup](docs/SUPABASE_SETUP.md)
 
-## 📄 License
+## License
 
 This project is private and exclusively for use by the paint warehouse.
 
-## 👨‍💻 Development
+## Development
 
 The project is developed following agile methodologies with feature branches:
 
