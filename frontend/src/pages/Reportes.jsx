@@ -10,8 +10,8 @@ import toast from 'react-hot-toast';
 import './Reportes.css';
 
 /**
- * Página principal de Reportes.
- * Muestra dashboard con métricas y tabla de reportes con CRUD y paginación.
+ * Main Reports page.
+ * Displays dashboard with metrics and reports table with CRUD and pagination.
  */
 const Reportes = () => {
   const navigate = useNavigate();
@@ -31,8 +31,8 @@ const Reportes = () => {
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const itemsPorPagina = 10;
 
-  // Estados para filtros
-  const [filtroMes, setFiltroMes] = useState('todos'); // 'actual' o 'todos' - DEFAULT: todos
+  // Filter states
+  const [filtroMes, setFiltroMes] = useState('todos'); // 'actual' or 'todos' - DEFAULT: todos
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
   const [filtroActivo, setFiltroActivo] = useState(false);
@@ -41,7 +41,7 @@ const Reportes = () => {
     try {
       setLoading(true);
 
-      // Usar parámetros si se proporcionan, sino usar estado
+      // Use parameters if provided, otherwise use state
       const mes = filtroMesParam !== null ? filtroMesParam : filtroMes;
       const activo = filtroActivoParam !== null ? filtroActivoParam : filtroActivo;
       const inicio = fechaInicioParam !== null ? fechaInicioParam : fechaInicio;
@@ -49,18 +49,18 @@ const Reportes = () => {
 
       let reportesPromise;
 
-      // Si hay filtro de fechas personalizado
+      // If there is custom date filter
       if (activo && (inicio || fin)) {
         reportesPromise = reportesService.getReportes({
           fecha_inicio: inicio,
           fecha_fin: fin,
         });
       } else {
-        // Cargar todos sin filtro de backend
+        // Load all without backend filter
         reportesPromise = reportesService.getReportes();
       }
 
-      // DEDUCIBLES SIEMPRE DEL MES ACTUAL (para los cards)
+      // DEDUCTIBLES ALWAYS FROM CURRENT MONTH (for the cards)
       const ahora = new Date();
       const primerDia = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
       const ultimoDia = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0);
@@ -79,7 +79,7 @@ const Reportes = () => {
         ? reportesData
         : reportesData?.results || [];
 
-      // Filtrar según el mes seleccionado - SOLO si mes es 'actual' Y no hay filtro activo personalizado
+      // Filter by selected month - ONLY if mes is 'actual' AND no custom active filter
       if (mes === 'actual' && !activo) {
         const ahora = new Date();
         const mesActual = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}`;
@@ -102,9 +102,9 @@ const Reportes = () => {
     }
   };
 
-  // Aplicar filtros
+  // Apply filters
   const aplicarFiltros = () => {
-    let nuevoFiltroActivo = filtroActivo;
+    let nuevoFiltroActivo = false;
 
     if (filtroMes === 'actual') {
       nuevoFiltroActivo = false;
@@ -113,27 +113,7 @@ const Reportes = () => {
     } else if (filtroMes === 'todos') {
       nuevoFiltroActivo = false;
     }
-    cargarDatos();
-  };
 
-  const limpiarFiltros = () => {
-    setFiltroMes('actual');
-    setFechaInicio('');
-    setFechaFin('');
-    setFiltroActivo(false);
-    cargarDatos();
-  };
-
-  useEffect(() => {
-    cargarDatos();
-  }, []);
-
-  // Calcular índices para la paginación
-  const indiceInicio = (paginaActual - 1) * itemsPorPagina;
-  const indiceFin = indiceInicio + itemsPorPagina;
-  const reportesPaginados = reportes.slice(indiceInicio, indiceFin);
-
-    // Pasar los valores directamente a cargarDatos para evitar timing issues
     cargarDatos(filtroMes, nuevoFiltroActivo, fechaInicio, fechaFin);
     toast.success('Filtro aplicado correctamente');
   };
@@ -143,17 +123,15 @@ const Reportes = () => {
     setFechaInicio('');
     setFechaFin('');
     setFiltroActivo(false);
-    // Pasar valores limpios directamente
     cargarDatos('todos', false, '', '');
     toast.success('Filtros limpiados');
   };
 
-  // useEffect inicial - solo cargar una vez
   useEffect(() => {
     cargarDatos('todos', false, '', '');
   }, []);
 
-  // Calcular índices para la paginación
+  // Calculate pagination indices
   const indiceInicio = (paginaActual - 1) * itemsPorPagina;
   const indiceFin = indiceInicio + itemsPorPagina;
   const reportesPaginados = reportes.slice(indiceInicio, indiceFin);
@@ -201,40 +179,40 @@ const Reportes = () => {
 
   return (
     <div className="reportes-container">
-      {/* Header con botón de nuevo reporte */}
+      {/* Header with new report button */}
       <div className="reportes-header">
         <div>
-          <h1>Reportes Diarios</h1>
+          <h1>Daily Reports</h1>
           {dashboard && (
-            <p className="reportes-subtitle">Resumen del mes: {dashboard.mes_actual}</p>
+            <p className="reportes-subtitle">Month Summary: {dashboard.mes_actual}</p>
           )}
         </div>
         <button className="btn btn-primary" onClick={() => navigate('/reportes/nuevo')}>
-          + Nuevo Reporte
+          + New Report
         </button>
       </div>
 
-      {/* Filtros */}
+      {/* Filters */}
       <div className="filtros-section">
         <div className="filtros-group">
           <div className="filtro-item">
-            <label htmlFor="filtroMes">Filtrar por:</label>
+            <label htmlFor="filtroMes">Filter by:</label>
             <select
               id="filtroMes"
               value={filtroMes}
               onChange={e => setFiltroMes(e.target.value)}
               className="filtro-select"
             >
-              <option value="actual">Mes Actual</option>
-              <option value="todos">Todos los reportes</option>
-              <option value="personalizado">Rango personalizado</option>
+              <option value="actual">Current Month</option>
+              <option value="todos">All Reports</option>
+              <option value="personalizado">Custom Range</option>
             </select>
           </div>
 
           {filtroMes === 'personalizado' && (
             <>
               <div className="filtro-item">
-                <label htmlFor="fechaInicio">Fecha Inicio:</label>
+                <label htmlFor="fechaInicio">Start Date:</label>
                 <input
                   type="date"
                   id="fechaInicio"
@@ -245,7 +223,7 @@ const Reportes = () => {
               </div>
 
               <div className="filtro-item">
-                <label htmlFor="fechaFin">Fecha Fin:</label>
+                <label htmlFor="fechaFin">End Date:</label>
                 <input
                   type="date"
                   id="fechaFin"
@@ -259,70 +237,70 @@ const Reportes = () => {
 
           <div className="filtros-acciones">
             <button onClick={aplicarFiltros} className="btn btn-sm btn-primary">
-              Aplicar Filtro
+              Apply Filter
             </button>
             {filtroActivo && (
               <button onClick={limpiarFiltros} className="btn btn-sm btn-secondary">
-                Limpiar
+                Clear
               </button>
             )}
           </div>
         </div>
       </div>
 
-      {/* Dashboard - Métricas principales */}
+      {/* Dashboard - Main Metrics */}
       {dashboard && (
         <>
           <div className="dashboard-grid">
             <div className="dashboard-card">
-              <h3>Ventas del Mes</h3>
+              <h3>Monthly Sales</h3>
               <p className="dashboard-value">
                 ${Number(dashboard.total_ventas_mes).toLocaleString('es-CO')}
               </p>
             </div>
 
             <div className="dashboard-card">
-              <h3>Gastos del Mes</h3>
+              <h3>Monthly Expenses</h3>
               <p className="dashboard-value">
                 ${Number(dashboard.total_gastos_mes).toLocaleString('es-CO')}
               </p>
             </div>
 
             <div className="dashboard-card">
-              <h3>Promedio Diario</h3>
+              <h3>Daily Average</h3>
               <p className="dashboard-value">
                 ${Math.round(Number(dashboard.promedio_ventas_diarias)).toLocaleString('es-CO')}
               </p>
             </div>
 
             <div className="dashboard-card">
-              <h3>Reportes Registrados</h3>
+              <h3>Registered Reports</h3>
               <p className="dashboard-value">{dashboard.cantidad_reportes}</p>
             </div>
           </div>
 
-          {/* Deducibles Summary */}
+          {/* Deductibles Summary */}
           <div className="dashboard-grid">
             <div className="dashboard-card">
-              <h3>Ingresos (No Gastos)</h3>
+              <h3>Income (Non-Expenses)</h3>
               <p className="dashboard-value">
                 ${Number(gastosParaDeducir.ingreso).toLocaleString('es-CO')}
               </p>
             </div>
             <div className="dashboard-card">
-              <h3>Ahorros (No Gastos)</h3>
+              <h3>Savings (Non-Expenses)</h3>
               <p className="dashboard-value">
                 ${Number(gastosParaDeducir.ahorro).toLocaleString('es-CO')}
               </p>
             </div>
             <div className="dashboard-card">
-              <h3>Transferencias (No Gastos)</h3>
+              <h3>Transfers (Non-Expenses)</h3>
               <p className="dashboard-value">
                 ${Number(gastosParaDeducir.transferencia).toLocaleString('es-CO')}
               </p>
             </div>
             <div className="dashboard-card">
-              <h3>Gasto Ajustado</h3>
+              <h3>Adjusted Expenses</h3>
               <p className="dashboard-value">
                 ${(Number(dashboard.total_gastos_mes) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia)).toLocaleString('es-CO')}
               </p>
@@ -331,26 +309,26 @@ const Reportes = () => {
         </>
       )}
 
-      {/* Tabla de reportes */}
+      {/* Reports Table */}
       <div className="reportes-tabla-section">
-        <h2>Historial de Reportes</h2>
+        <h2>Report History</h2>
         <div className="productos-tabla-container">
           <table className="productos-tabla">
             <thead>
               <tr>
-                <th>Fecha</th>
-                <th>Base Inicial</th>
-                <th>Venta Total</th>
-                <th>Gastos</th>
-                <th>Base Siguiente</th>
-                <th>Acciones</th>
+                <th>Date</th>
+                <th>Initial Balance</th>
+                <th>Total Sales</th>
+                <th>Expenses</th>
+                <th>Next Balance</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {reportes.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="text-center">
-                    No hay reportes registrados
+                    No reports registered
                   </td>
                 </tr>
               ) : (
@@ -365,8 +343,8 @@ const Reportes = () => {
                       <button
                         className="btn btn-sm btn-info"
                         onClick={() => handleVistaPreviaReporte(reporte)}
-                        title="Ver vista previa del reporte"
-                        aria-label="Ver vista previa"
+                        title="View report preview"
+                        aria-label="View preview"
                       >
                         <svg className="icon-eye" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
@@ -375,16 +353,16 @@ const Reportes = () => {
                       <button
                         className="btn btn-sm btn-secondary"
                         onClick={() => handleEditar(reporte.id)}
-                        title="Editar este reporte"
+                        title="Edit this report"
                       >
-                        Editar
+                        Edit
                       </button>
                       <button
                         className="btn btn-sm btn-danger"
                         onClick={() => handleEliminar(reporte.id)}
-                        title="Eliminar este reporte"
+                        title="Delete this report"
                       >
-                        Eliminar
+                        Delete
                       </button>
                     </td>
                   </tr>
@@ -412,10 +390,10 @@ const Reportes = () => {
 
       <ModalConfirmacion
         isOpen={mostrarConfirmacion}
-        titulo="Eliminar Reporte"
-        mensaje="¿Estás seguro de que deseas eliminar este reporte? Esta acción no se puede deshacer."
-        confirmText="Sí, Eliminar"
-        cancelText="Cancelar"
+        titulo="Delete Report"
+        mensaje="Are you sure you want to delete this report? This action cannot be undone."
+        confirmText="Yes, Delete"
+        cancelText="Cancel"
         isDanger={true}
         onConfirm={handleConfirmarEliminar}
         onCancel={() => {

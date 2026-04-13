@@ -224,7 +224,7 @@
   flex: 1;
 }
 
-/* Mobile: Botones pequeños lado a lado */
+/* Mobile: Small buttons side by side */
 @media (max-width: 640px) {
   .btn-sm {
     flex: 1;
@@ -233,6 +233,7 @@
     min-width: auto;
     width: auto;
   }
+}
 
 /* Empty State */
 .empty-state {
