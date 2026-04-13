@@ -368,7 +368,7 @@ The system automatically generates metrics about:
 
 **Frontend**:
 
-- `REACT_APP_API_URL`: Backend URL
+- `VITE_API_URL`: Backend URL
 
 ## Commit Conventions
 
