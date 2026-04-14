@@ -23,27 +23,27 @@ from .views_admin import (
 )
 
 # Router para viewsets
-router = DefaultRouter()
+router = DefaultRouter(trailing_slash=False)
 router.register(r"admin/usuarios", AdminUsuarioViewSet, basename="admin-usuarios")
 
 app_name = "usuarios"
 
 urlpatterns = [
     # Autenticación
-    path("login/", LoginView.as_view(), name="login"),
-    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("login", LoginView.as_view(), name="login"),
+    path("token/refresh", TokenRefreshView.as_view(), name="token_refresh"),
     # Perfil (vistas nuevas)
-    path("perfil/", PerfilUsuarioAPIView.as_view(), name="perfil"),
+    path("perfil", PerfilUsuarioAPIView.as_view(), name="perfil"),
     path(
-        "perfil/cambiar-contrasena/", CambiarContrasenaAPIView.as_view(), name="cambiar_contrasena"
+        "perfil/cambiar-contrasena", CambiarContrasenaAPIView.as_view(), name="cambiar_contrasena"
     ),
     # Perfil (vistas antiguas, mantener por compatibilidad)
-    path("perfil-old/", PerfilView.as_view(), name="perfil-old"),
-    path("cambiar-password/", CambioPasswordView.as_view(), name="cambiar_password"),
+    path("perfil-old", PerfilView.as_view(), name="perfil-old"),
+    path("cambiar-password", CambioPasswordView.as_view(), name="cambiar_password"),
     # Gestión de usuarios (solo admin) - vistas antiguas
-    path("usuarios/", ListaUsuariosView.as_view(), name="lista_usuarios"),
-    path("usuarios/crear/", RegistroView.as_view(), name="crear_usuario"),
-    path("usuarios/<int:pk>/", DetalleUsuarioView.as_view(), name="detalle_usuario"),
+    path("usuarios", ListaUsuariosView.as_view(), name="lista_usuarios"),
+    path("usuarios/crear", RegistroView.as_view(), name="crear_usuario"),
+    path("usuarios/<int:pk>", DetalleUsuarioView.as_view(), name="detalle_usuario"),
     # Incluir rutas del router (nuevos endpoints)
     path("", include(router.urls)),
 ]

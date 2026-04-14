@@ -166,6 +166,9 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Disable automatic trailing slash addition
+APPEND_SLASH = False
+
 # Custom User Model
 AUTH_USER_MODEL = "usuarios.Usuario"
 
