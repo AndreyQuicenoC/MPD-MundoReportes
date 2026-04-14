@@ -18,7 +18,7 @@ from .serializers import (
     GastoAutomaticoSerializer,
     GastoDeducibleSerializer,
 )
-from apps.usuarios.permissions import EsAdministrador, EsOperarioOAdmin
+from apps.usuarios.permissions import EsOperarioOAdmin
 
 
 class ListaCategoriasView(generics.ListAPIView):

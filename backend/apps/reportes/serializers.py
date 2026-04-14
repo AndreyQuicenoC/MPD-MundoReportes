@@ -98,7 +98,7 @@ class GastoInputSerializer(serializers.Serializer):
             try:
                 # Permitir categorías tanto activas como inactivas
                 # Esto es importante para poder editar reportes con categorías inactivas
-                cat = CategoriaGasto.objects.get(pk=value)
+                CategoriaGasto.objects.get(pk=value)
             except CategoriaGasto.DoesNotExist:
                 raise serializers.ValidationError(f"La categoría con ID {value} no existe")
         return value

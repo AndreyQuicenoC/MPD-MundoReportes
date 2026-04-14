@@ -4,15 +4,6 @@ Tests para verificar creación de productos y categorías.
 Prueba que operarios pueden crear productos y categorías correctamente.
 """
 
-import os
-import sys
-import django
-
-# Configurar Django
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
-django.setup()
-
 from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework import status

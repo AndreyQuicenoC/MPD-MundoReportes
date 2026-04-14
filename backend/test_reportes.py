@@ -1,11 +1,11 @@
 import os
 import django
+from apps.reportes.models import ReporteDiario
+from datetime import datetime
+from apps.estadisticas.services import ServicioEstadisticas
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
-
-from apps.reportes.models import ReporteDiario
-from datetime import datetime
 
 # Contar reportes
 total = ReporteDiario.objects.count()
@@ -21,13 +21,12 @@ for r in reportes_mes:
     print(f"  - ID: {r.id}, Fecha: {r.fecha}, Venta: ${r.venta_total}, Gastos: ${r.total_gastos}")
 
 # Todos los reportes
-print(f"\nTodos los reportes:")
+print("\nTodos los reportes:")
 for r in ReporteDiario.objects.all():
     print(f"  - ID: {r.id}, Fecha: {r.fecha}, Venta: ${r.venta_total}, Gastos: ${r.total_gastos}")
 
 # Probar estadísticas
 print("\n=== Probando ServicioEstadisticas ===")
-from apps.estadisticas.services import ServicioEstadisticas
 
 try:
     ventas = ServicioEstadisticas.estadisticas_ventas(primer_dia, hoy)

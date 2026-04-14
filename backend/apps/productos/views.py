@@ -12,7 +12,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Producto
 from .serializers import ProductoSerializer, ProductoListaSerializer
-from apps.usuarios.permissions import EsAdministrador, EsOperarioOAdmin
+from apps.usuarios.permissions import EsOperarioOAdmin
 
 
 class ListaProductosView(generics.ListAPIView):
