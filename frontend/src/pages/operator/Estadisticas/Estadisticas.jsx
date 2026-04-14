@@ -73,15 +73,16 @@ const Estadisticas = () => {
       if (fin) params.fecha_fin = fin;
       // Si no hay fechas, se envía {} y trae TODO el período
 
-      const [stats, gastos, productos, productosTotal, ventas, deduciblesRes, deduciblesCalc] = await Promise.all([
-        estadisticasService.getEstadisticasVentas(params),
-        estadisticasService.getGastosPorCategoria(params),
-        estadisticasService.getProductosMasVendidos(params),
-        estadisticasService.getTodosProductosVendidos(params),
-        estadisticasService.getVentasMensuales(),
-        api.get('/gastos/deducibles/'),
-        estadisticasService.getDeducibles(params),
-      ]);
+      const [stats, gastos, productos, productosTotal, ventas, deduciblesRes, deduciblesCalc] =
+        await Promise.all([
+          estadisticasService.getEstadisticasVentas(params),
+          estadisticasService.getGastosPorCategoria(params),
+          estadisticasService.getProductosMasVendidos(params),
+          estadisticasService.getTodosProductosVendidos(params),
+          estadisticasService.getVentasMensuales(),
+          api.get('/gastos/deducibles/'),
+          estadisticasService.getDeducibles(params),
+        ]);
 
       setEstadisticas(stats);
       setGastosPorCategoria(gastos);
@@ -182,7 +183,9 @@ const Estadisticas = () => {
       {
         label: 'Total Gastos',
         data: gastosPorCategoria.map(g => g.total),
-        backgroundColor: gastosPorCategoria.map((_, idx) => paletaColores[idx % paletaColores.length]),
+        backgroundColor: gastosPorCategoria.map(
+          (_, idx) => paletaColores[idx % paletaColores.length]
+        ),
       },
     ],
   };
@@ -193,7 +196,9 @@ const Estadisticas = () => {
       {
         label: 'Cantidad Vendida',
         data: productosMasVendidos.map(p => p.cantidad_total),
-        backgroundColor: productosMasVendidos.map((_, idx) => paletaColores[idx % paletaColores.length]),
+        backgroundColor: productosMasVendidos.map(
+          (_, idx) => paletaColores[idx % paletaColores.length]
+        ),
       },
     ],
   };
@@ -204,7 +209,9 @@ const Estadisticas = () => {
       {
         label: 'Cantidad Vendida',
         data: productosMenosVendidos.map(p => p.cantidad_total),
-        backgroundColor: productosMenosVendidos.map((_, idx) => paletaColores[(idx + 6) % paletaColores.length]),
+        backgroundColor: productosMenosVendidos.map(
+          (_, idx) => paletaColores[(idx + 6) % paletaColores.length]
+        ),
       },
     ],
   };
@@ -216,7 +223,8 @@ const Estadisticas = () => {
         label: 'Ventas Totales',
         data: ventasPorMes.map(v => v.total_ventas),
         borderColor: '#9B933B',
-        backgroundColor: tipoGraficoVentas === 'area' ? 'rgba(155, 147, 59, 0.15)' : 'rgba(155, 147, 59, 0.05)',
+        backgroundColor:
+          tipoGraficoVentas === 'area' ? 'rgba(155, 147, 59, 0.15)' : 'rgba(155, 147, 59, 0.05)',
         borderWidth: 2,
         tension: 0.4,
         fill: tipoGraficoVentas === 'area' || tipoGraficoVentas === 'line',
@@ -229,25 +237,22 @@ const Estadisticas = () => {
   };
 
   // Calcular incremento/decremento mes a mes
-  const calcularCambios = (datos) => {
+  const calcularCambios = datos => {
     if (!datos || datos.length < 2) return [];
 
-    return datos
-      .slice(1)
-      .map((actual, idx) => {
-        const anterior = datos[idx];
-        const cambio = ((actual - anterior) / anterior) * 100;
-        return {
-          mes: `${datos[idx + 1]?.mes || actual}/${datos[idx + 1]?.anio || actual}`,
-          cambio: cambio,
-        };
-      });
+    return datos.slice(1).map((actual, idx) => {
+      const anterior = datos[idx];
+      const cambio = ((actual - anterior) / anterior) * 100;
+      return {
+        mes: `${datos[idx + 1]?.mes || actual}/${datos[idx + 1]?.anio || actual}`,
+        cambio: cambio,
+      };
+    });
   };
 
   const cambiosVentas = calcularCambios(ventasPorMes.map(v => v.total_ventas));
-  const cambiosGastos = ventasPorMes.length > 0
-    ? calcularCambios(ventasPorMes.map(v => v.total_ventas))
-    : [];
+  const cambiosGastos =
+    ventasPorMes.length > 0 ? calcularCambios(ventasPorMes.map(v => v.total_ventas)) : [];
 
   const cambiosVentasData = {
     labels: cambiosVentas.map((_, idx) => {
@@ -260,31 +265,36 @@ const Estadisticas = () => {
       {
         label: 'Cambio %',
         data: cambiosVentas.map(c => c.cambio),
-        backgroundColor: cambiosVentas.map(c => c.cambio >= 0 ? '#10B981' : '#EF4444'),
+        backgroundColor: cambiosVentas.map(c => (c.cambio >= 0 ? '#10B981' : '#EF4444')),
       },
     ],
   };
 
   const cambiosGastosData = {
-    labels: gastosPorCategoria.length > 0
-      ? gastosPorCategoria.slice(0, gastosPorCategoria.length - 1).map((g, idx) => `${g.categoria || 'Sin cat'} vs siguiente`)
-      : [],
+    labels:
+      gastosPorCategoria.length > 0
+        ? gastosPorCategoria
+            .slice(0, gastosPorCategoria.length - 1)
+            .map((g, idx) => `${g.categoria || 'Sin cat'} vs siguiente`)
+        : [],
     datasets: [
       {
         label: 'Cambio %',
-        data: gastosPorCategoria.length > 0
-          ? gastosPorCategoria.slice(0, -1).map((g, idx) => {
-              const siguiente = gastosPorCategoria[idx + 1]?.total || 0;
-              return ((siguiente - g.total) / g.total) * 100;
-            })
-          : [],
-        backgroundColor: gastosPorCategoria.length > 0
-          ? gastosPorCategoria.slice(0, -1).map((g, idx) => {
-              const siguiente = gastosPorCategoria[idx + 1]?.total || 0;
-              const cambio = ((siguiente - g.total) / g.total) * 100;
-              return cambio >= 0 ? '#10B981' : '#EF4444';
-            })
-          : [],
+        data:
+          gastosPorCategoria.length > 0
+            ? gastosPorCategoria.slice(0, -1).map((g, idx) => {
+                const siguiente = gastosPorCategoria[idx + 1]?.total || 0;
+                return ((siguiente - g.total) / g.total) * 100;
+              })
+            : [],
+        backgroundColor:
+          gastosPorCategoria.length > 0
+            ? gastosPorCategoria.slice(0, -1).map((g, idx) => {
+                const siguiente = gastosPorCategoria[idx + 1]?.total || 0;
+                const cambio = ((siguiente - g.total) / g.total) * 100;
+                return cambio >= 0 ? '#10B981' : '#EF4444';
+              })
+            : [],
       },
     ],
   };
@@ -344,9 +354,7 @@ const Estadisticas = () => {
           {/* Sección inicial con margen */}
           <div className="pdf-header-section">
             <h1 className="pdf-title">Reporte de Estadísticas</h1>
-            <p className="pdf-date">
-              Generado el {new Date().toLocaleDateString('es-CO')}
-            </p>
+            <p className="pdf-date">Generado el {new Date().toLocaleDateString('es-CO')}</p>
           </div>
 
           <div className="stats-cards">
@@ -373,8 +381,6 @@ const Estadisticas = () => {
               <p className="stat-value">{formatearMoneda(estadisticas.total_entregas)}</p>
               <small>Acumulado</small>
             </div>
-
-            
           </div>
 
           {/* Tarjetas de Deducibles */}
@@ -382,41 +388,70 @@ const Estadisticas = () => {
             <div className="stats-cards">
               <div className="stat-card">
                 <h3>Ingresos Deducibles</h3>
-                <p className="stat-value">${Number(gastosParaDeducir.ingreso).toLocaleString('es-CO')}</p>
+                <p className="stat-value">
+                  ${Number(gastosParaDeducir.ingreso).toLocaleString('es-CO')}
+                </p>
                 <small>No restados</small>
               </div>
               <div className="stat-card">
                 <h3>Ahorros Deducibles</h3>
-                <p className="stat-value">${Number(gastosParaDeducir.ahorro).toLocaleString('es-CO')}</p>
+                <p className="stat-value">
+                  ${Number(gastosParaDeducir.ahorro).toLocaleString('es-CO')}
+                </p>
                 <small>No restados</small>
               </div>
               <div className="stat-card">
                 <h3>Transferencias Deducibles</h3>
-                <p className="stat-value">${Number(gastosParaDeducir.transferencia).toLocaleString('es-CO')}</p>
+                <p className="stat-value">
+                  ${Number(gastosParaDeducir.transferencia).toLocaleString('es-CO')}
+                </p>
                 <small>No restados</small>
               </div>
               <div className="stat-card">
                 <h3>Gasto Ajustado</h3>
                 <p className="stat-value">
-                  ${(Number(estadisticas.total_gastos) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia)).toLocaleString('es-CO')}
+                  $
+                  {(
+                    Number(estadisticas.total_gastos) -
+                    (gastosParaDeducir.ingreso +
+                      gastosParaDeducir.ahorro +
+                      gastosParaDeducir.transferencia)
+                  ).toLocaleString('es-CO')}
                 </p>
                 <small>Gastos reales</small>
               </div>
               <div className="stat-card">
-              <h3>Margen de Ganancia</h3>
-              <p className="stat-value success">
-                {((((estadisticas.total_ventas - (Number(estadisticas.total_gastos) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia))) / estadisticas.total_ventas) * 100) || 0).toFixed(1)}%
-              </p>
-              <small>Beneficio/Ventas</small>
-            </div>
+                <h3>Margen de Ganancia</h3>
+                <p className="stat-value success">
+                  {(
+                    ((estadisticas.total_ventas -
+                      (Number(estadisticas.total_gastos) -
+                        (gastosParaDeducir.ingreso +
+                          gastosParaDeducir.ahorro +
+                          gastosParaDeducir.transferencia))) /
+                      estadisticas.total_ventas) *
+                      100 || 0
+                  ).toFixed(1)}
+                  %
+                </p>
+                <small>Beneficio/Ventas</small>
+              </div>
 
-            <div className="stat-card">
-              <h3>Ratio Gastos</h3>
-              <p className="stat-value">
-                {((((Number(estadisticas.total_gastos) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia)) / estadisticas.total_ventas) * 100) || 0).toFixed(1)}%
-              </p>
-              <small>Gastos vs Ventas</small>
-            </div>
+              <div className="stat-card">
+                <h3>Ratio Gastos</h3>
+                <p className="stat-value">
+                  {(
+                    ((Number(estadisticas.total_gastos) -
+                      (gastosParaDeducir.ingreso +
+                        gastosParaDeducir.ahorro +
+                        gastosParaDeducir.transferencia)) /
+                      estadisticas.total_ventas) *
+                      100 || 0
+                  ).toFixed(1)}
+                  %
+                </p>
+                <small>Gastos vs Ventas</small>
+              </div>
             </div>
           )}
 
@@ -426,7 +461,10 @@ const Estadisticas = () => {
             <div className="chart-card">
               <div className="pdf-section-header">
                 <h2>Gastos por Categoría</h2>
-                <p className="pdf-description">Distribución de gastos acumulados por categoría. Identifica qué áreas generan mayor gasto.</p>
+                <p className="pdf-description">
+                  Distribución de gastos acumulados por categoría. Identifica qué áreas generan
+                  mayor gasto.
+                </p>
               </div>
               <div className="chart-container">
                 {gastosPorCategoria.length > 0 ? (
@@ -440,21 +478,32 @@ const Estadisticas = () => {
             <div className="chart-card">
               <div className="pdf-section-header">
                 <h2>Todos los Productos Vendidos</h2>
-                <p className="pdf-description">Ranking completo de productos ordenados por cantidad vendida en el período.</p>
+                <p className="pdf-description">
+                  Ranking completo de productos ordenados por cantidad vendida en el período.
+                </p>
               </div>
               <div className="chart-container-horizontal">
-                <ProductosTodosVendidos productos={todosProductosVendidos} chartOptions={chartOptions} />
+                <ProductosTodosVendidos
+                  productos={todosProductosVendidos}
+                  chartOptions={chartOptions}
+                />
               </div>
             </div>
 
             {/* Fila 2: Rankings de Productos */}
-            <RankingProductos productosTop={productosMasVendidos} productosBajo={productosMenosVendidos} />
+            <RankingProductos
+              productosTop={productosMasVendidos}
+              productosBajo={productosMenosVendidos}
+            />
 
             {/* Fila 3: Evolución de Ventas */}
             <div className="chart-card full-width">
               <div className="pdf-section-header">
                 <h2>Evolución de Ventas (Acumulado Mensual)</h2>
-                <p className="pdf-description">Análisis temporal de ventas por mes. Visualiza tendencias y variaciones en el rendimiento a lo largo del período.</p>
+                <p className="pdf-description">
+                  Análisis temporal de ventas por mes. Visualiza tendencias y variaciones en el
+                  rendimiento a lo largo del período.
+                </p>
               </div>
               <div className="chart-header">
                 <div className="chart-controls">
@@ -495,7 +544,10 @@ const Estadisticas = () => {
             <div className="chart-card full-width">
               <div className="pdf-section-header">
                 <h2>% Mejora Entre Meses</h2>
-                <p className="pdf-description">Comparativa de cambios porcentuales mes a mes en ventas y gastos. Positivo = mejora, Negativo = declive.</p>
+                <p className="pdf-description">
+                  Comparativa de cambios porcentuales mes a mes en ventas y gastos. Positivo =
+                  mejora, Negativo = declive.
+                </p>
               </div>
               <div className="chart-container">
                 <RankingMeses ventasPorMes={ventasPorMes} chartOptions={chartOptions} />

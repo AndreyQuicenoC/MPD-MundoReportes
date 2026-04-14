@@ -62,7 +62,9 @@ const Deducibles = () => {
       setDeducibles(deduciblesData);
 
       // Load all categories to show names
-      const todasCategorias = (categoriasRes.data.results || categoriasRes.data).filter(c => c.activa);
+      const todasCategorias = (categoriasRes.data.results || categoriasRes.data).filter(
+        c => c.activa
+      );
       setCategorias(todasCategorias);
 
       // Filter available categories (without assigned deductible)
@@ -154,7 +156,7 @@ const Deducibles = () => {
   };
 
   // Toggle deductible active/inactive status
-  const handleToggleEstado = async (deducible) => {
+  const handleToggleEstado = async deducible => {
     try {
       const nuevoEstado = !deducible.activo;
       await api.patch(`/gastos/deducibles/${deducible.id}/`, {
@@ -309,13 +311,7 @@ const Deducibles = () => {
 
         <div className="form-group">
           <label htmlFor="tipo">Tipo de Deducible *</label>
-          <select
-            id="tipo"
-            name="tipo"
-            value={formData.tipo}
-            onChange={handleInputChange}
-            required
-          >
+          <select id="tipo" name="tipo" value={formData.tipo} onChange={handleInputChange} required>
             {TIPOS.map(tipo => (
               <option key={tipo.value} value={tipo.value}>
                 {tipo.label}
@@ -365,9 +361,7 @@ const Deducibles = () => {
                 <div className="card-content">
                   <h3>{deducible.categoria_nombre || getNombreCategoria(deducible.categoria)}</h3>
                   <p className="tipo">{getTipoLabel(deducible.tipo)}</p>
-                  {deducible.descripcion && (
-                    <p className="descripcion">{deducible.descripcion}</p>
-                  )}
+                  {deducible.descripcion && <p className="descripcion">{deducible.descripcion}</p>}
                   <span className={`badge badge-${deducible.tipo}`}>
                     {deducible.activo ? 'Activo' : 'Inactivo'}
                   </span>

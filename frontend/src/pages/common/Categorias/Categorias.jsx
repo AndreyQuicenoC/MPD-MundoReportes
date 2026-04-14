@@ -114,7 +114,7 @@ const Categorias = () => {
   };
 
   // Toggle category active/inactive status
-  const handleToggleEstado = async (categoria) => {
+  const handleToggleEstado = async categoria => {
     try {
       const nuevoEstado = !categoria.activa;
       await categoriasService.actualizarCategoria(categoria.id, {
@@ -142,7 +142,9 @@ const Categorias = () => {
       setIdAEliminar(null);
       cargarCategorias();
     } catch (error) {
-      toast.error(error.response?.data?.detail || error.response?.data?.error || 'Error al eliminar categoría');
+      toast.error(
+        error.response?.data?.detail || error.response?.data?.error || 'Error al eliminar categoría'
+      );
       setMostrarConfirmacion(false);
     }
   };
@@ -292,9 +294,7 @@ const Categorias = () => {
               <div key={categoria.id} className="producto-card">
                 <div className="card-content">
                   <h3>{categoria.nombre}</h3>
-                  {categoria.descripcion && (
-                    <p className="descripcion">{categoria.descripcion}</p>
-                  )}
+                  {categoria.descripcion && <p className="descripcion">{categoria.descripcion}</p>}
                   <span className={`badge ${categoria.activa ? 'badge-success' : 'badge-danger'}`}>
                     {categoria.activa ? 'Activa' : 'Inactiva'}
                   </span>

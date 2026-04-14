@@ -120,7 +120,7 @@ const Productos = () => {
   };
 
   // Toggle product active/inactive status
-  const handleToggleEstado = async (producto) => {
+  const handleToggleEstado = async producto => {
     try {
       const nuevoEstado = !producto.activo;
       await productosService.actualizarProducto(producto.id, {
@@ -303,7 +303,9 @@ const Productos = () => {
               <div key={producto.id} className="producto-card">
                 <div className="card-content">
                   <h3>{producto.nombre}</h3>
-                  <p className="precio">${Number(producto.precio_unitario).toLocaleString('es-CO')}</p>
+                  <p className="precio">
+                    ${Number(producto.precio_unitario).toLocaleString('es-CO')}
+                  </p>
                   <span className={`badge ${producto.activo ? 'badge-success' : 'badge-danger'}`}>
                     {producto.activo ? 'Activo' : 'Inactivo'}
                   </span>

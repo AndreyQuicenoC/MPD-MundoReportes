@@ -10,9 +10,8 @@ const RankingProductos = ({ productosTop = [], productosBajo = [] }) => {
 
   const RankingCard = ({ titulo, productos, icono }) => {
     // Calculate max quantity in the list for proper percentage calculation
-    const maxCantidad = productos.length > 0
-      ? Math.max(...productos.map(p => p.cantidad_total || 1))
-      : 1;
+    const maxCantidad =
+      productos.length > 0 ? Math.max(...productos.map(p => p.cantidad_total || 1)) : 1;
 
     return (
       <div className="ranking-card">
@@ -53,16 +52,8 @@ const RankingProductos = ({ productosTop = [], productosBajo = [] }) => {
 
   return (
     <div className="ranking-productos-container">
-      <RankingCard
-        titulo="Most Sold Products"
-        productos={productosTop}
-        icono="★"
-      />
-      <RankingCard
-        titulo="Least Sold Products"
-        productos={productosBajo}
-        icono="▼"
-      />
+      <RankingCard titulo="Most Sold Products" productos={productosTop} icono="★" />
+      <RankingCard titulo="Least Sold Products" productos={productosBajo} icono="▼" />
     </div>
   );
 };

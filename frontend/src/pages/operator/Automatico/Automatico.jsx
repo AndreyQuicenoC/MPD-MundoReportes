@@ -131,7 +131,7 @@ const Automatico = () => {
   };
 
   // Toggle expense active/inactive status
-  const handleToggleEstado = async (gasto) => {
+  const handleToggleEstado = async gasto => {
     try {
       const nuevoEstado = !gasto.activo;
       await api.patch(`/gastos/automaticos/${gasto.id}/`, {
