@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
-import { categoriasService } from '../services/categoriasService';
-import FormModal from '../components/FormModal';
-import Pagination from '../components/Pagination';
-import ModalConfirmacion from '../components/ModalConfirmacion';
+import { categoriasService } from '../../../services/categoriasService';
+import FormModal from '../../../components/FormModal';
+import Pagination from '../../../components/Pagination';
+import ModalConfirmacion from '../../../components/ModalConfirmacion';
 import toast from 'react-hot-toast';
-import './Productos.css';
 
 /**
- * Página de gestión de categorías de gastos.
- * CRUD con layout de cards y overlay para crear/editar.
+ * Categories management page.
+ * CRUD with card layout, search and status filters.
  */
 const Categorias = () => {
   const [categorias, setCategorias] = useState([]);
@@ -18,6 +17,8 @@ const Categorias = () => {
   const [paginaActual, setPaginaActual] = useState(1);
   const [idAEliminar, setIdAEliminar] = useState(null);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+  const [busqueda, setBusqueda] = useState('');
+  const [filtroEstado, setFiltroEstado] = useState('todos');
   const itemsPorPagina = 10;
 
   const [formData, setFormData] = useState({
@@ -30,13 +31,13 @@ const Categorias = () => {
     cargarCategorias();
   }, []);
 
+  // Load all categories (both active and inactive)
   const cargarCategorias = async () => {
     try {
       setLoading(true);
       const data = await categoriasService.obtenerCategorias();
       let categoriasData = Array.isArray(data) ? data : data?.results || [];
-      // Filtrar solo categorías activas (soft delete: marcar como inactiva)
-      categoriasData = categoriasData.filter(c => c.activa === true);
+      // Load all categories without filtering
       setCategorias(categoriasData);
       setPaginaActual(1);
     } catch (error) {
@@ -48,9 +49,24 @@ const Categorias = () => {
     }
   };
 
+  // Apply search and status filters
+  let categoriasFiltradas = categorias;
+
+  if (busqueda.trim()) {
+    categoriasFiltradas = categoriasFiltradas.filter(c =>
+      c.nombre.toLowerCase().includes(busqueda.toLowerCase())
+    );
+  }
+
+  if (filtroEstado === 'activas') {
+    categoriasFiltradas = categoriasFiltradas.filter(c => c.activa === true);
+  } else if (filtroEstado === 'inactivas') {
+    categoriasFiltradas = categoriasFiltradas.filter(c => c.activa === false);
+  }
+
   const indiceInicio = (paginaActual - 1) * itemsPorPagina;
   const indiceFin = indiceInicio + itemsPorPagina;
-  const categoriasPaginadas = categorias.slice(indiceInicio, indiceFin);
+  const categoriasPaginadas = categoriasFiltradas.slice(indiceInicio, indiceFin);
 
   const handleInputChange = e => {
     const { name, value, type, checked } = e.target;
@@ -97,6 +113,19 @@ const Categorias = () => {
     setMostrarForm(true);
   };
 
+  // Toggle category active/inactive status via the desactivar endpoint
+  const handleToggleEstado = async categoria => {
+    try {
+      await categoriasService.toggleCategoriaEstado(categoria.id);
+      const accion = categoria.activa ? 'desactivada' : 'activada';
+      toast.success(`Categoría ${accion} exitosamente`);
+      cargarCategorias();
+    } catch (error) {
+      toast.error('Error al cambiar estado');
+      console.error(error);
+    }
+  };
+
   const handleEliminar = id => {
     setIdAEliminar(id);
     setMostrarConfirmacion(true);
@@ -104,18 +133,15 @@ const Categorias = () => {
 
   const handleConfirmarEliminar = async () => {
     try {
-      console.log('Eliminando categoría con ID:', idAEliminar);
       await categoriasService.eliminarCategoria(idAEliminar);
-      console.log('Categoría eliminada exitosamente');
-      toast.success('Categoría eliminada');
+      toast.success('Categoría eliminada permanentemente');
       setMostrarConfirmacion(false);
       setIdAEliminar(null);
       cargarCategorias();
     } catch (error) {
-      console.error('Error al eliminar categoría:', error);
-      console.error('Status:', error.response?.status);
-      console.error('Datos:', error.response?.data);
-      toast.error(error.response?.data?.detail || error.response?.data?.error || 'Error al eliminar categoría');
+      toast.error(
+        error.response?.data?.detail || error.response?.data?.error || 'Error al eliminar categoría'
+      );
       setMostrarConfirmacion(false);
     }
   };
@@ -124,6 +150,12 @@ const Categorias = () => {
     setMostrarForm(false);
     setCategoriaEditando(null);
     setFormData({ nombre: '', descripcion: '', activa: true });
+  };
+
+  const handleLimpiarBusqueda = () => {
+    setBusqueda('');
+    setFiltroEstado('todos');
+    setPaginaActual(1);
   };
 
   if (loading) {
@@ -146,6 +178,57 @@ const Categorias = () => {
             + Nueva Categoría
           </button>
         )}
+      </div>
+
+      {/* Search and Filter Controls */}
+      <div className="filter-section">
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Buscar por nombre..."
+            value={busqueda}
+            onChange={e => {
+              setBusqueda(e.target.value);
+              setPaginaActual(1);
+            }}
+            className="search-input"
+          />
+        </div>
+
+        <div className="filter-buttons">
+          <button
+            className={`filter-btn ${filtroEstado === 'todos' ? 'active' : ''}`}
+            onClick={() => {
+              setFiltroEstado('todos');
+              setPaginaActual(1);
+            }}
+          >
+            Todos
+          </button>
+          <button
+            className={`filter-btn ${filtroEstado === 'activas' ? 'active' : ''}`}
+            onClick={() => {
+              setFiltroEstado('activas');
+              setPaginaActual(1);
+            }}
+          >
+            Activas
+          </button>
+          <button
+            className={`filter-btn ${filtroEstado === 'inactivas' ? 'active' : ''}`}
+            onClick={() => {
+              setFiltroEstado('inactivas');
+              setPaginaActual(1);
+            }}
+          >
+            Inactivas
+          </button>
+          {(busqueda || filtroEstado !== 'todos') && (
+            <button className="filter-btn reset" onClick={handleLimpiarBusqueda}>
+              Limpiar
+            </button>
+          )}
+        </div>
       </div>
 
       <FormModal
@@ -193,9 +276,13 @@ const Categorias = () => {
         </div>
       </FormModal>
 
-      {categorias.length === 0 ? (
+      {categoriasFiltradas.length === 0 ? (
         <div className="empty-state">
-          <p>No hay categorías. Crea una para comenzar.</p>
+          <p>
+            {busqueda || filtroEstado !== 'todos'
+              ? 'No se encontraron categorías con los filtros aplicados'
+              : 'No hay categorías. Crea una para comenzar.'}
+          </p>
         </div>
       ) : (
         <>
@@ -204,9 +291,7 @@ const Categorias = () => {
               <div key={categoria.id} className="producto-card">
                 <div className="card-content">
                   <h3>{categoria.nombre}</h3>
-                  {categoria.descripcion && (
-                    <p className="descripcion">{categoria.descripcion}</p>
-                  )}
+                  {categoria.descripcion && <p className="descripcion">{categoria.descripcion}</p>}
                   <span className={`badge ${categoria.activa ? 'badge-success' : 'badge-danger'}`}>
                     {categoria.activa ? 'Activa' : 'Inactiva'}
                   </span>
@@ -221,6 +306,13 @@ const Categorias = () => {
                     ✎
                   </button>
                   <button
+                    className={`btn btn-sm ${categoria.activa ? 'btn-warning' : 'btn-success'}`}
+                    onClick={() => handleToggleEstado(categoria)}
+                    title={categoria.activa ? 'Desactivar' : 'Activar'}
+                  >
+                    {categoria.activa ? '○' : '●'}
+                  </button>
+                  <button
                     className="btn btn-sm btn-danger"
                     onClick={() => handleEliminar(categoria.id)}
                     title="Eliminar"
@@ -232,10 +324,10 @@ const Categorias = () => {
             ))}
           </div>
 
-          {categorias.length > 0 && (
+          {categoriasFiltradas.length > 0 && (
             <Pagination
               paginaActual={paginaActual}
-              totalItems={categorias.length}
+              totalItems={categoriasFiltradas.length}
               itemsPorPagina={itemsPorPagina}
               onPaginaChange={setPaginaActual}
             />
@@ -246,7 +338,7 @@ const Categorias = () => {
       <ModalConfirmacion
         isOpen={mostrarConfirmacion}
         titulo="Eliminar Categoría"
-        mensaje="¿Estás seguro de que deseas eliminar esta categoría?"
+        mensaje="¿Estás seguro de que deseas eliminar esta categoría permanentemente? Esta acción no se puede deshacer."
         onConfirm={handleConfirmarEliminar}
         onCancel={() => setMostrarConfirmacion(false)}
         isDanger={true}

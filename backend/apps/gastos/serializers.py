@@ -132,18 +132,18 @@ class GastoSimpleSerializer(serializers.ModelSerializer):
 class GastoAutomaticoSerializer(serializers.ModelSerializer):
     """Serializador para gastos automáticos predefinidos."""
 
-    categoria_nombre = serializers.CharField(source='categoria.nombre', read_only=True)
+    categoria_nombre = serializers.CharField(source="categoria.nombre", read_only=True)
 
     class Meta:
         model = GastoAutomatico
-        fields = ['id', 'categoria', 'categoria_nombre', 'descripcion', 'valor', 'activo']
+        fields = ["id", "categoria", "categoria_nombre", "descripcion", "valor", "activo"]
 
 
 class GastoDeducibleSerializer(serializers.ModelSerializer):
     """Serializador para categorías de gastos deducibles."""
 
-    categoria_nombre = serializers.CharField(source='categoria.nombre', read_only=True)
+    categoria_nombre = serializers.CharField(source="categoria.nombre", read_only=True)
 
     class Meta:
         model = GastoDeducible
-        fields = ['id', 'categoria', 'categoria_nombre', 'tipo', 'descripcion', 'activo']
+        fields = ["id", "categoria", "categoria_nombre", "tipo", "descripcion", "activo"]

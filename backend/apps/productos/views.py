@@ -7,11 +7,12 @@ Maneja el CRUD de productos del catálogo.
 from rest_framework import generics, status, filters
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Producto
 from .serializers import ProductoSerializer, ProductoListaSerializer
-from apps.usuarios.permissions import EsAdministrador, EsOperarioOAdmin
+from apps.usuarios.permissions import EsOperarioOAdmin
 
 
 class ListaProductosView(generics.ListAPIView):
@@ -22,7 +23,7 @@ class ListaProductosView(generics.ListAPIView):
     Usuarios autenticados pueden ver todos los productos.
     """
 
-    queryset = Producto.objects.all()
+    queryset = Producto.objects.filter(deleted=False)
     serializer_class = ProductoListaSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -39,7 +40,7 @@ class CrearProductoView(generics.CreateAPIView):
     Administradores y operarios pueden crear productos.
     """
 
-    queryset = Producto.objects.all()
+    queryset = Producto.objects.filter(deleted=False)
     serializer_class = ProductoSerializer
     permission_classes = [EsOperarioOAdmin]
 
@@ -74,7 +75,7 @@ class DetalleProductoView(generics.RetrieveUpdateDestroyAPIView):
     Administradores y operarios pueden modificar o eliminar.
     """
 
-    queryset = Producto.objects.all()
+    queryset = Producto.objects.filter(deleted=False)
     serializer_class = ProductoSerializer
     permission_classes = [IsAuthenticated]
 
@@ -91,7 +92,7 @@ class DetalleProductoView(generics.RetrieveUpdateDestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         """
-        Desactivar producto en lugar de eliminarlo.
+        Eliminar permanentemente un producto.
 
         Args:
             request: Request HTTP
@@ -100,11 +101,34 @@ class DetalleProductoView(generics.RetrieveUpdateDestroyAPIView):
             Response: Confirmación
         """
         instance = self.get_object()
-        instance.activo = False
+        instance.deleted = True
         instance.save()
 
         return Response(
-            {"mensaje": "Producto desactivado exitosamente"},
+            {"mensaje": "Producto eliminado permanentemente"},
+            status=status.HTTP_200_OK,
+        )
+
+    @action(detail=True, methods=["post"])
+    def desactivar(self, request, pk=None):
+        """
+        Desactivar o activar un producto.
+
+        Args:
+            request: Request HTTP
+            pk: Product ID
+
+        Returns:
+            Response: Confirmación
+        """
+        producto = self.get_object()
+        nuevo_estado = not producto.activo
+        producto.activo = nuevo_estado
+        producto.save()
+
+        accion = "Desactivado" if not nuevo_estado else "Activado"
+        return Response(
+            {"mensaje": f"Producto {accion.lower()} exitosamente"},
             status=status.HTTP_200_OK,
         )
 
@@ -117,7 +141,7 @@ class ProductosActivosView(generics.ListAPIView):
     productos disponibles.
     """
 
-    queryset = Producto.objects.filter(activo=True)
+    queryset = Producto.objects.filter(activo=True, deleted=False)
     serializer_class = ProductoListaSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]

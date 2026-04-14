@@ -36,6 +36,12 @@ class CategoriaGasto(models.Model):
         help_text="Indica si la categoría está activa",
     )
 
+    deleted = models.BooleanField(
+        verbose_name="eliminada",
+        default=False,
+        help_text="Indica si la categoría ha sido eliminada (soft delete)",
+    )
+
     # Timestamps
     fecha_creacion = models.DateTimeField(verbose_name="fecha de creación", auto_now_add=True)
 
@@ -48,6 +54,7 @@ class CategoriaGasto(models.Model):
         indexes = [
             models.Index(fields=["nombre"]),
             models.Index(fields=["activa"]),
+            models.Index(fields=["deleted"]),
         ]
 
     def __str__(self):
@@ -148,6 +155,12 @@ class GastoAutomatico(models.Model):
         help_text="Indica si está disponible para usar",
     )
 
+    deleted = models.BooleanField(
+        verbose_name="eliminado",
+        default=False,
+        help_text="Indica si ha sido eliminado (soft delete)",
+    )
+
     # Timestamps
     fecha_creacion = models.DateTimeField(verbose_name="fecha de creación", auto_now_add=True)
 
@@ -159,6 +172,7 @@ class GastoAutomatico(models.Model):
         ordering = ["categoria", "descripcion"]
         indexes = [
             models.Index(fields=["categoria", "activo"]),
+            models.Index(fields=["deleted"]),
         ]
 
     def __str__(self):
@@ -175,9 +189,9 @@ class GastoDeducible(models.Model):
     """
 
     TIPO_CHOICES = [
-        ('transferencia', 'Transferencia'),
-        ('ahorro', 'Ahorro'),
-        ('ingreso', 'Ingreso'),
+        ("transferencia", "Transferencia"),
+        ("ahorro", "Ahorro"),
+        ("ingreso", "Ingreso"),
     ]
 
     categoria = models.OneToOneField(
@@ -192,7 +206,7 @@ class GastoDeducible(models.Model):
         verbose_name="tipo de deducible",
         max_length=20,
         choices=TIPO_CHOICES,
-        default='ingreso',
+        default="ingreso",
         help_text="Clasificación del deducible",
     )
 
@@ -208,6 +222,12 @@ class GastoDeducible(models.Model):
         help_text="Si está activo, se restará de gastos",
     )
 
+    deleted = models.BooleanField(
+        verbose_name="eliminado",
+        default=False,
+        help_text="Indica si ha sido eliminado (soft delete)",
+    )
+
     # Timestamps
     fecha_creacion = models.DateTimeField(verbose_name="fecha de creación", auto_now_add=True)
 
@@ -219,6 +239,7 @@ class GastoDeducible(models.Model):
         ordering = ["categoria"]
         indexes = [
             models.Index(fields=["activo", "tipo"]),
+            models.Index(fields=["deleted"]),
         ]
 
     def __str__(self):

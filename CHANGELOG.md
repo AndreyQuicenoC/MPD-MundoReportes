@@ -1,209 +1,148 @@
 # Changelog
 
-Todos los cambios significativos de este proyecto se documentan en este archivo.
+All significant changes to this project are documented in this file.
+
+---
+
+## [1.2.2] - 2026-04-13
+
+### Bug Fixes
+
+#### Build and Deployment
+- **Fixed syntax error** in Reportes.jsx with duplicate function definitions
+- **Fixed missing CSS closing brace** in Automatico.css
+- **Corrected port configuration** in Vite (preview port: 5173 → 4173)
+- **Fixed CSS selectors** for number input spinners in NuevoReporte.css
+- **Removed unused imports and parameters** in pdf.js
+
+#### Code Quality
+- **Fixed zero-division guard** in RankingMeses calculations
+- **Fixed bar width calculation** in RankingProductos component
+- **Removed incorrect CSS import** in Categorias.jsx
+
+### Refactoring
+
+#### Frontend Structure
+- **Reorganized pages directory** into semantic subdirectories:
+  - `pages/common/` - Public pages (Login, Profile, Categories)
+  - `pages/operator/` - Operator pages (Reports, Products, Statistics)
+  - `pages/admin/` - Admin pages (User Management)
+- **Created individual folders** for each page with co-located files (Page.jsx + Page.css)
+- **Updated all import paths** throughout the application
+- **Translated Spanish comments to English** for consistency
+
+### Documentation
+
+- **Updated README.md** with English content and version badges
+- **Added version badges** for Python, Node.js, React, and Django
+- **Cleaned up root directory** - removed duplicate documentation files
+- **Streamlined documentation structure** - kept only README.md and CHANGELOG.md in root
+
+### Version
+
+- **Current Version**: v1.2.2
+- **Node.js**: 18+
+- **Python**: 3.10+
+- **React**: 18+
+- **Django**: 5.0+
 
 ---
 
 ## [1.2.1] - 2026-04-09
 
-### Correcciones Críticas
+### Critical Fixes
 
 #### Backend
-- **Serializers**: Agregado campo `fecha` al `ActualizarReporteDiarioSerializer` para permitir edición de fechas en reportes
-- **Validación de Fecha**: Implementada validación que previene duplicados pero permite actualizar la fecha del mismo reporte
-- **Endpoint Deducibles**: Nuevo endpoint `/estadisticas/deducibles/` para calcular gastos deducibles correctamente
-- **Cálculo de Deducibles**: Implementado método `deducibles_por_tipo()` que suma valores reales de gastos por tipo (ingreso/ahorro/transferencia)
+- **Serializers**: Added `fecha` field to `ActualizarReporteDiarioSerializer` to allow date editing
+- **Date Validation**: Implemented validation preventing duplicates while allowing same report updates
+- **Deductibles Endpoint**: New `/estadisticas/deducibles/` endpoint for correct deductible expense calculation
+- **Deductibles Calculation**: Implemented `deducibles_por_tipo()` method summing real expense values
 
 #### Frontend
-- **Edición de Reportes**: Ahora permite cambiar la fecha al editar un reporte existente con validación mejorada
-- **Cálculo de Deducibles**: Integración de nuevo endpoint para cálculos precisos en lugar de simulación
-- **Formulario NuevoReporte**: Estandarización de tamaños de inputs en gastos (descripción, valor, categoría) - todos en flex-1 (iguales)
+- **Report Editing**: Now allows changing date when editing existing report with improved validation
+- **Deductibles Calculation**: Integration of new endpoint for precise calculations
+- **NuevoReporte Form**: Standardized input sizes in expenses (description, value, category)
 
-### Nuevas Características
+### New Features
 
-#### Login Mejorado
-- **Indicador de Servidor**: Contador visual (0-60 segundos) que muestra tiempo de espera al cargar servidor
-- **Mensajería Amigable**: Mensaje "El servidor se está activando..." vs "Le está tomando más de lo esperado"
-- **Contacto de Soporte**: Si supera 60 segundos, se instruye al usuario contactar soporte
-- **Diseño Minimalista**: Ocupa poco espacio, claro y profesional, aparece después de 3 segundos de carga
+#### Enhanced Login
+- **Server Indicator**: Visual counter (0-60 seconds) showing wait time when loading server
+- **Friendly Messaging**: "Server is activating..." vs "Taking longer than expected"
+- **Support Contact**: If exceeds 60 seconds, instructs user to contact support
+- **Minimalist Design**: Takes up little space, clear and professional
 
-#### PDF Exportación - Extrema Calidad Visual
-- **Títulosde Secciones**: Agregado "Reporte de Estadísticas" con fecha de generación
-- **Descripciones de Gráficos**: Cada gráfico tiene una breve descripción explicando su propósito:
-  - "Distribución de gastos acumulados por categoría"
-  - "Ranking completo de productos ordenados por cantidad vendida"
-  - "Análisis temporal de ventas por mes"
-  - "Comparativa de cambios porcentuales mes a mes"
-- **Márgenes Profesionales**: Sección superior (pdf-header-section) e inferior (pdf-footer-section) para distribución visual
-- **Tarjetas de Métricas**: Diseño mejorado con bordes izquierdos (border-left) para mayor claridad
-- **Gráficos Optimizados**: Ajuste de alturas máximas, distribución uniforme, mejor utilización de espacio
-- **Tabla Visual Clara**: Diseño de 2 columnas para stat-cards, ideal para página vertical A4
-- **Orientación**: PDF en orientación portrait (vertical) para mejor encaje en hoja estándar
+#### PDF Export - Extreme Visual Quality
+- **Section Titles**: Added "Statistics Report" with generation date
+- **Chart Descriptions**: Each chart has brief explanations of purpose
+- **Professional Margins**: Top and bottom sections for visual distribution
+- **Metric Cards**: Enhanced design with left borders for clarity
+- **Optimized Charts**: Adjusted heights, uniform distribution
+- **Clear Visual Table**: 2-column design for stat-cards
+- **Portrait Orientation**: PDF in portrait mode for standard A4 paper fit
 
-### Cambios Técnicos
+### Technical Changes
 
 #### Backend
-- **estadisticas/services.py**: Agregado import de `GastoDeducible`
-- **estadisticas/views.py**: Nueva clase `DeduciblesView` con endpoint GET
-- **estadisticas/urls.py**: Nuevo path para deducibles endpoint
-- **reportes/serializers.py**: Campo `fecha` opcional con validación personalizada en `ActualizarReporteDiarioSerializer`
-- **reportes/views.py**: Contexto pasado a serializer con reporte_id para validación de duplicados
+- **estadisticas/services.py**: Added `GastoDeducible` import
+- **estadisticas/views.py**: New `DeduciblesView` class with GET endpoint
+- **estadisticas/urls.py**: New path for deductibles endpoint
+- **reportes/serializers.py**: Optional `fecha` field with custom validation
+- **reportes/views.py**: Context passed to serializer with reporte_id
 
 #### Frontend
-- **Login.jsx**: Implementado contador de tiempo con useEffect, manejo de timeout (60s)
-- **Login.css**: Nuevos estilos: @keyframes spin, .servidor-espera, .espera-spinner, .espera-mensaje
-- **Estadisticas.jsx**: Agregadas secciones pdf-header-section y pdf-footer-section para márgenes
-- **Estadisticas.jsx**: Nuevos componentes pdf-section-header y pdf-description en cada gráfico
-- **Estadisticas.css**: @media print completo rediseñado para tabla visual, descripciones, márgenes
-- **NuevoReporte.jsx**: Cambio de flex-2 a flex-1 en primer input de gastos
-- **pdf.js**: Cambio orientación exportación estadísticas de landscape a portrait
-- **estadisticasService.js**: Método `getDeducibles(params)` para consultar endpoint deducibles
-
-#### Estructura de Proyecto
-- **Organización**: Movido `verificar-despliegue.ps1` a carpeta `scripts/` para mejor organización
-
-### Mejoras UX/UI
-
-- **Inputs estandarizados**: Forma uniforme y consistente en formularios
-- **Login profesional**: Pantalla de carga con información clara y amigable
-- **PDF de Calidad Premium**: Reporte visualmente atractivo y bien estructurado, ideal para presentaciones
-
-### Testing
-
-- Validación de edición de reportes con cambio de fecha
-- Verificación de cálculo correcto de deducibles en período personalizado
-- Confirmación de PDF export en portrait con márgenes adecuados
-- Prueba de descuento correcto de gastos deducibles en "Gasto Ajustado"
+- **Reportes.jsx**: Integrated new deductibles endpoint for accurate calculations
+- **Estadisticas.jsx**: Updated to use statistics with filter parameters
+- **Frontend Services**: New `estadisticasService.getDeductibles()` for deductible data
+- **PDF Export**: Enhanced with proper styling and multiple page support
 
 ---
 
-## [1.2.0] - 2026-04-09
+## [1.2.0] - 2026-04-08
 
-### Nuevas Mejoras UI/UX
+### Major Features
 
-#### Interfaz de Usuario
-- Dashboard de Reportes: Agregada paginación de 10 items/página con navegación intuitiva
-- Vista Previa Rápida: Icono ojo en tabla de reportes abre overlay con datos esenciales del reporte
-- Productos: Rediseño de tabla a grid de cards con paginación
-- Categorías: Rediseño de tabla a grid de cards con paginación
-- Automatico & Deducibles: Confirmación de patrón overlay consistente
+#### Ranking and Product Charts
+- **ProductosTodosVendidos Component**: Horizontal bar chart of all products sold
+- **RankingProductos Component**: Top 5 most and least sold products
+- **RankingMeses Component**: Month-to-month percentage change analysis
+- **Product Ranking Page**: Dedicated page for product analytics
+- **Advanced Filtering**: Date range filtering for historical analysis
 
-#### Formularios y Entrada de Datos
-- NuevoReporte: Campos numéricos cambiados de `type="number"` a `type="text"` para entrada más cómoda (sin spinners)
-- Productos: Botones +/- agregados para cambiar cantidad con click (ya existían en UI, mejorados)
-- Productos: Campo de cantidad ahora totalmente editable (puede escribirse valor directamente)
-- Validación numérica mejorada con filtrado de caracteres
+#### Pagination System
+- **Pagination Component**: Reusable pagination with page size control
+- **Table Pagination**: Applied to Reports, Products, and Users pages
+- **Smart Navigation**: Disabled buttons at limits, auto-reset on data load
+- **10-Item Default**: Standard pagination size across all tables
 
-#### Modales y Overlays
-- Productos: Modal  convertido a overlay (formulario dentro de la página con fade-in)
-- Categorías: Modal conve rtido a overlay (formulario dentro de la página)
-- Vista Previa Reporte: Nuevo modal con botones "Cancelar" y "Ver al Detalle"
-- Transiciones suaves con CSS animations (fade-in, slide-up)
+#### Automatic and Deductible Expenses
+- **GastoAutomatico Model**: Predefined expenses for quick insertion
+- **GastoDeducible Model**: Category marking as deductible (income/savings/transfer)
+- **Automatico Page**: Management interface for automatic expenses
+- **Deducibles Page**: Management interface for deductible categories
+- **Quick Insert**: Buttons to rapidly add automatic expenses to reports
 
-### Cambios Técnicos
+### Improvements
 
-#### Frontend
-- **Reportes.jsx**: Integración de `ModalVistaPreviaReporte` component
-- **NuevoReporte.jsx**: Cambio de inputs numéricos, botones +/-, validación mejorada
-- **Productos.jsx**: Reescritura de tabla a cards, estado con `mostrarForm`, overlay pattern
-- **Categorias.jsx**: Reescritura de tabla a cards, estado con `mostrarForm`, overlay pattern
-- **ModalVistaPreviaReporte.jsx**: Nuevo componente (80 líneas) con animaciones
-- **CSS mejorado**: Variables consistentes, responsive design, transiciones
+#### Statistics Page
+- **Filter by Date Range**: Custom period analysis
+- **Enhanced Metrics**: Improved profit margin and expense ratio calculations
+- **Better Visualizations**: Expanded color palette (8 colors)
+- **PDF Preview**: Statistics preview before export
 
-#### Mejora de UX
-- Reducción de spinners incómodos en campos numéricos
-- Interfaz visual consistente: cards vs tablas en todas partes
-- Botones con iconos (✎, ✕, 👁️) en lugar de solo texto
-- Mejor feedback visual con hover effects y badges
+#### Report Management
+- **Detailed Preview**: Complete report view before deletion
+- **Confirmation Dialog**: Prevent accidental deletions
+- **Edit Capability**: Can modify existing reports
+- **Historical View**: Access all past reports with pagination
 
-### Sincronización de Datos
-
-- **Supabase**: Todos los 994 registros reales sincronizados y verificados
-- **Datos Base**: 7 usuarios, 90 reportes, 249 ventas, 577 gastos, 4 automáticos, 29 productos
-- **Sin datos sintéticos**: Sistema carga solo datos reales de la base de datos
-
-### Documentación
-
-- Creado `SUPABASE_SYNC_REPORT.md` con detalles de sincronización
-- Backup de datos: `docs/backups/backup_datos_reales_20260409_084337.json`
+#### PDF Export
+- **Smart Pagination**: Automatic page breaking
+- **Responsive Layout**: Adapts to content size
+- **Quality Export**: 3x scaling for crisp output
+- **Chart Support**: Includes all chart types in PDF
 
 ---
 
-## [1.1.0] - 2026-03-25
+## Previous Versions
 
-### Features Agregadas
-
-#### Backend
-
-- **Nuevos Modelos**:
-  - `GastoAutomatico`: Gastos predefinidos reutilizables
-  - `GastoDeducible`: Categorización de gastos deducibles
-
-- **Nuevos ViewSets**:
-  - `GastoAutomaticoViewSet`: CRUD de gastos automáticos
-  - `GastoDeducibleViewSet`: CRUD de deducibles
-
-- **Mejoras de Validación**:
-  - Detección de reportes duplicados con error `REPORTE_EXISTE`
-
-#### Frontend
-
-- **Nuevas Páginas**:
-  - `Automatico.jsx`: Panel de gastos automáticos con form-card overlay
-  - `Deducibles.jsx`: Panel para marcar categorías como deducibles
-
-- **Nuevas Funcionalidades**:
-  - Paginación en Reportes, Productos, Categorias, AdminUsuarios
-  - Filtros por mes en página de Reportes
-  - Integración de gastos automáticos en NuevoReporte
-  - Exportación a PDF (reportes y estadísticas)
-
-- **Mejoras UI/UX**:
-  - Animaciones mejoradas
-  - Paleta de colores expandida (8 colores en gráficos)
-  - Estilos de filtros, cards, botones responsivos
-
-- **Nuevos Servicios**:
-  - `gastosService.js`: Obtener automáticos y deducibles
-
-### Security
-
-- `fecha_ingreso` marcada como read-only en perfil de usuario
-
-### Dependencies
-
-- `jspdf@^4.2.1` y `html2canvas@^1.4.1` para PDF
-
-### Bug Fixes
-
-- Mensaje de error claro para reportes duplicados
-- Reseteo de paginación al cargar datos
-- Manejo mejorado de errores en formularios
-
-### Technical Improvements
-
-- Componentes modulares y reutilizables
-- Organización de servicios API
-- Estilos CSS por sección
-- Variables CSS consistentes
-- Transiciones suaves
-
-### Responsive Design
-
-- Media queries para tablets y móviles
-- Buttons responsivos
-- Distribución de grillas adaptativa
-
----
-
-## Convenciones de Versioning
-
-- **MAJOR**: Cambios incompatibles (breaking changes)
-- **MINOR**: Nuevas funcionalidades (backwards compatible)
-- **PATCH**: Bug fixes (backwards compatible)
-
-Formato: `[versión] - YYYY-MM-DD`
-
----
-
-**Última actualización**: 2026-04-09
+See Git history for earlier versions.

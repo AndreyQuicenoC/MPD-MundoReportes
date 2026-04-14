@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { reportesService } from '../services/reportesService';
-import estadisticasService from '../services/estadisticasService';
-import api from '../services/api';
-import Pagination from '../components/Pagination';
-import ModalVistaPreviaReporte from '../components/ModalVistaPreviaReporte';
-import ModalConfirmacion from '../components/ModalConfirmacion';
+import { reportesService } from '../../../services/reportesService';
+import estadisticasService from '../../../services/estadisticasService';
+import api from '../../../services/api';
+import Pagination from '../../../components/Pagination';
+import ModalVistaPreviaReporte from '../../../components/ModalVistaPreviaReporte';
+import ModalConfirmacion from '../../../components/ModalConfirmacion';
 import toast from 'react-hot-toast';
 import './Reportes.css';
 
 /**
- * Página principal de Reportes.
- * Muestra dashboard con métricas y tabla de reportes con CRUD y paginación.
+ * Main Reports page.
+ * Displays dashboard with metrics and reports table with CRUD and pagination.
  */
 const Reportes = () => {
   const navigate = useNavigate();
@@ -31,17 +31,22 @@ const Reportes = () => {
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const itemsPorPagina = 10;
 
-  // Estados para filtros
-  const [filtroMes, setFiltroMes] = useState('todos'); // 'actual' o 'todos' - DEFAULT: todos
+  // Filter states
+  const [filtroMes, setFiltroMes] = useState('todos'); // 'actual' or 'todos' - DEFAULT: todos
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
   const [filtroActivo, setFiltroActivo] = useState(false);
 
-  const cargarDatos = async (filtroMesParam = null, filtroActivoParam = null, fechaInicioParam = null, fechaFinParam = null) => {
+  const cargarDatos = async (
+    filtroMesParam = null,
+    filtroActivoParam = null,
+    fechaInicioParam = null,
+    fechaFinParam = null
+  ) => {
     try {
       setLoading(true);
 
-      // Usar parámetros si se proporcionan, sino usar estado
+      // Use parameters if provided, otherwise use state
       const mes = filtroMesParam !== null ? filtroMesParam : filtroMes;
       const activo = filtroActivoParam !== null ? filtroActivoParam : filtroActivo;
       const inicio = fechaInicioParam !== null ? fechaInicioParam : fechaInicio;
@@ -49,18 +54,18 @@ const Reportes = () => {
 
       let reportesPromise;
 
-      // Si hay filtro de fechas personalizado
+      // If there is custom date filter
       if (activo && (inicio || fin)) {
         reportesPromise = reportesService.getReportes({
           fecha_inicio: inicio,
           fecha_fin: fin,
         });
       } else {
-        // Cargar todos sin filtro de backend
+        // Load all without backend filter
         reportesPromise = reportesService.getReportes();
       }
 
-      // DEDUCIBLES SIEMPRE DEL MES ACTUAL (para los cards)
+      // DEDUCTIBLES ALWAYS FROM CURRENT MONTH (for the cards)
       const ahora = new Date();
       const primerDia = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
       const ultimoDia = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0);
@@ -79,7 +84,7 @@ const Reportes = () => {
         ? reportesData
         : reportesData?.results || [];
 
-      // Filtrar según el mes seleccionado - SOLO si mes es 'actual' Y no hay filtro activo personalizado
+      // Filter by selected month - ONLY if mes is 'actual' AND no custom active filter
       if (mes === 'actual' && !activo) {
         const ahora = new Date();
         const mesActual = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}`;
@@ -102,9 +107,9 @@ const Reportes = () => {
     }
   };
 
-  // Aplicar filtros
+  // Apply filters
   const aplicarFiltros = () => {
-    let nuevoFiltroActivo = filtroActivo;
+    let nuevoFiltroActivo = false;
 
     if (filtroMes === 'actual') {
       nuevoFiltroActivo = false;
@@ -113,27 +118,7 @@ const Reportes = () => {
     } else if (filtroMes === 'todos') {
       nuevoFiltroActivo = false;
     }
-    cargarDatos();
-  };
 
-  const limpiarFiltros = () => {
-    setFiltroMes('actual');
-    setFechaInicio('');
-    setFechaFin('');
-    setFiltroActivo(false);
-    cargarDatos();
-  };
-
-  useEffect(() => {
-    cargarDatos();
-  }, []);
-
-  // Calcular índices para la paginación
-  const indiceInicio = (paginaActual - 1) * itemsPorPagina;
-  const indiceFin = indiceInicio + itemsPorPagina;
-  const reportesPaginados = reportes.slice(indiceInicio, indiceFin);
-
-    // Pasar los valores directamente a cargarDatos para evitar timing issues
     cargarDatos(filtroMes, nuevoFiltroActivo, fechaInicio, fechaFin);
     toast.success('Filtro aplicado correctamente');
   };
@@ -143,17 +128,15 @@ const Reportes = () => {
     setFechaInicio('');
     setFechaFin('');
     setFiltroActivo(false);
-    // Pasar valores limpios directamente
     cargarDatos('todos', false, '', '');
     toast.success('Filtros limpiados');
   };
 
-  // useEffect inicial - solo cargar una vez
   useEffect(() => {
     cargarDatos('todos', false, '', '');
   }, []);
 
-  // Calcular índices para la paginación
+  // Calculate pagination indices
   const indiceInicio = (paginaActual - 1) * itemsPorPagina;
   const indiceFin = indiceInicio + itemsPorPagina;
   const reportesPaginados = reportes.slice(indiceInicio, indiceFin);
@@ -201,12 +184,12 @@ const Reportes = () => {
 
   return (
     <div className="reportes-container">
-      {/* Header con botón de nuevo reporte */}
+      {/* Header with new report button */}
       <div className="reportes-header">
         <div>
           <h1>Reportes Diarios</h1>
           {dashboard && (
-            <p className="reportes-subtitle">Resumen del mes: {dashboard.mes_actual}</p>
+            <p className="reportes-subtitle">Resumen del Mes: {dashboard.mes_actual}</p>
           )}
         </div>
         <button className="btn btn-primary" onClick={() => navigate('/reportes/nuevo')}>
@@ -214,7 +197,7 @@ const Reportes = () => {
         </button>
       </div>
 
-      {/* Filtros */}
+      {/* Filters */}
       <div className="filtros-section">
         <div className="filtros-group">
           <div className="filtro-item">
@@ -226,15 +209,15 @@ const Reportes = () => {
               className="filtro-select"
             >
               <option value="actual">Mes Actual</option>
-              <option value="todos">Todos los reportes</option>
-              <option value="personalizado">Rango personalizado</option>
+              <option value="todos">Todos los Reportes</option>
+              <option value="personalizado">Rango Personalizado</option>
             </select>
           </div>
 
           {filtroMes === 'personalizado' && (
             <>
               <div className="filtro-item">
-                <label htmlFor="fechaInicio">Fecha Inicio:</label>
+                <label htmlFor="fechaInicio">Fecha de Inicio:</label>
                 <input
                   type="date"
                   id="fechaInicio"
@@ -245,7 +228,7 @@ const Reportes = () => {
               </div>
 
               <div className="filtro-item">
-                <label htmlFor="fechaFin">Fecha Fin:</label>
+                <label htmlFor="fechaFin">Fecha Final:</label>
                 <input
                   type="date"
                   id="fechaFin"
@@ -270,19 +253,19 @@ const Reportes = () => {
         </div>
       </div>
 
-      {/* Dashboard - Métricas principales */}
+      {/* Dashboard - Main Metrics */}
       {dashboard && (
         <>
           <div className="dashboard-grid">
             <div className="dashboard-card">
-              <h3>Ventas del Mes</h3>
+              <h3>Ventas Mensuales</h3>
               <p className="dashboard-value">
                 ${Number(dashboard.total_ventas_mes).toLocaleString('es-CO')}
               </p>
             </div>
 
             <div className="dashboard-card">
-              <h3>Gastos del Mes</h3>
+              <h3>Gastos Mensuales</h3>
               <p className="dashboard-value">
                 ${Number(dashboard.total_gastos_mes).toLocaleString('es-CO')}
               </p>
@@ -301,7 +284,7 @@ const Reportes = () => {
             </div>
           </div>
 
-          {/* Deducibles Summary */}
+          {/* Deductibles Summary */}
           <div className="dashboard-grid">
             <div className="dashboard-card">
               <h3>Ingresos (No Gastos)</h3>
@@ -322,16 +305,22 @@ const Reportes = () => {
               </p>
             </div>
             <div className="dashboard-card">
-              <h3>Gasto Ajustado</h3>
+              <h3>Gastos Ajustados</h3>
               <p className="dashboard-value">
-                ${(Number(dashboard.total_gastos_mes) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia)).toLocaleString('es-CO')}
+                $
+                {(
+                  Number(dashboard.total_gastos_mes) -
+                  (gastosParaDeducir.ingreso +
+                    gastosParaDeducir.ahorro +
+                    gastosParaDeducir.transferencia)
+                ).toLocaleString('es-CO')}
               </p>
             </div>
           </div>
         </>
       )}
 
-      {/* Tabla de reportes */}
+      {/* Reports Table */}
       <div className="reportes-tabla-section">
         <h2>Historial de Reportes</h2>
         <div className="productos-tabla-container">
@@ -339,10 +328,10 @@ const Reportes = () => {
             <thead>
               <tr>
                 <th>Fecha</th>
-                <th>Base Inicial</th>
-                <th>Venta Total</th>
+                <th>Saldo Inicial</th>
+                <th>Ventas Totales</th>
                 <th>Gastos</th>
-                <th>Base Siguiente</th>
+                <th>Siguiente Saldo</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -350,7 +339,7 @@ const Reportes = () => {
               {reportes.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="text-center">
-                    No hay reportes registrados
+                    Sin reportes registrados
                   </td>
                 </tr>
               ) : (
@@ -369,7 +358,7 @@ const Reportes = () => {
                         aria-label="Ver vista previa"
                       >
                         <svg className="icon-eye" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                          <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
                         </svg>
                       </button>
                       <button
@@ -413,7 +402,7 @@ const Reportes = () => {
       <ModalConfirmacion
         isOpen={mostrarConfirmacion}
         titulo="Eliminar Reporte"
-        mensaje="¿Estás seguro de que deseas eliminar este reporte? Esta acción no se puede deshacer."
+        mensaje="¿Está seguro de que desea eliminar este reporte? Esta acción no se puede deshacer."
         confirmText="Sí, Eliminar"
         cancelText="Cancelar"
         isDanger={true}

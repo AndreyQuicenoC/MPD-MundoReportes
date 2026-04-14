@@ -38,6 +38,12 @@ class Producto(models.Model):
         help_text="Indica si el producto está activo para ventas",
     )
 
+    deleted = models.BooleanField(
+        verbose_name="eliminado",
+        default=False,
+        help_text="Indica si el producto ha sido eliminado (soft delete)",
+    )
+
     # Timestamps
     fecha_creacion = models.DateTimeField(verbose_name="fecha de creación", auto_now_add=True)
 
@@ -50,6 +56,7 @@ class Producto(models.Model):
         indexes = [
             models.Index(fields=["nombre"]),
             models.Index(fields=["activo"]),
+            models.Index(fields=["deleted"]),
         ]
 
     def __str__(self):

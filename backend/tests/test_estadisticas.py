@@ -6,7 +6,8 @@ y que el dashboard muestre información completa.
 """
 
 from decimal import Decimal
-from django.test import TestCase
+import pytest
+from django.test import TransactionTestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
@@ -18,7 +19,8 @@ from apps.productos.models import Producto
 from apps.gastos.models import CategoriaGasto, Gasto
 
 
-class EstadisticasTests(TestCase):
+@pytest.mark.django_db(transaction=True)
+class EstadisticasTests(TransactionTestCase):
     """Tests para verificar endpoints de estadísticas."""
 
     def setUp(self):
@@ -34,13 +36,11 @@ class EstadisticasTests(TestCase):
 
         # Crear categoría y producto
         self.categoria = CategoriaGasto.objects.create(
-            nombre="Transporte",
-            descripcion="Gastos de transporte"
+            nombre="Transporte", descripcion="Gastos de transporte"
         )
-        
+
         self.producto = Producto.objects.create(
-            nombre="Producto Test",
-            precio_unitario=Decimal("10000.00")
+            nombre="Producto Test", precio_unitario=Decimal("10000.00")
         )
 
         # Crear reportes de prueba
@@ -102,7 +102,7 @@ class EstadisticasTests(TestCase):
         url = reverse("estadisticas:dashboard")
         response = self.client.get(url)
 
-        print("\n✓ Test dashboard_devuelve_datos_correctos:")
+        print("Test dashboard_devuelve_datos_correctos:")
         print(f"  Status: {response.status_code}")
         print(f"  Data: {response.data}")
 
@@ -111,7 +111,7 @@ class EstadisticasTests(TestCase):
         self.assertIn("total_gastos_mes", response.data)
         self.assertIn("promedio_ventas_diarias", response.data)
         self.assertIn("cantidad_reportes", response.data)
-        
+
         # El dashboard filtra por mes actual, así que puede ser 0 si no hay reportes del mes
         # Lo importante es que devuelva la estructura correcta
         self.assertIsNotNone(response.data["total_ventas_mes"])
@@ -122,7 +122,7 @@ class EstadisticasTests(TestCase):
         url = reverse("estadisticas:estadisticas_ventas")
         response = self.client.get(url)
 
-        print("\n✓ Test estadisticas_ventas_incluye_todos_campos:")
+        print("Test estadisticas_ventas_incluye_todos_campos:")
         print(f"  Status: {response.status_code}")
         print(f"  Data: {response.data}")
 
@@ -131,7 +131,7 @@ class EstadisticasTests(TestCase):
         self.assertIn("total_gastos", response.data)
         self.assertIn("total_entregas", response.data)
         self.assertIn("total_reportes", response.data)
-        
+
         # Verificar valores correctos
         self.assertEqual(float(response.data["total_ventas"]), 80000.00)  # 50k + 30k
         self.assertEqual(float(response.data["total_gastos"]), 15000.00)  # 5k + 10k
@@ -142,14 +142,14 @@ class EstadisticasTests(TestCase):
         url = reverse("estadisticas:gastos_por_categoria")
         response = self.client.get(url)
 
-        print("\n✓ Test gastos_por_categoria_devuelve_datos:")
+        print("Test gastos_por_categoria_devuelve_datos:")
         print(f"  Status: {response.status_code}")
         print(f"  Data: {response.data}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsInstance(response.data, list)
         self.assertGreater(len(response.data), 0)
-        
+
         # Verificar que tiene los campos correctos
         primer_gasto = response.data[0]
         self.assertIn("categoria", primer_gasto)
@@ -161,14 +161,14 @@ class EstadisticasTests(TestCase):
         url = reverse("estadisticas:productos_mas_vendidos")
         response = self.client.get(url)
 
-        print("\n✓ Test productos_mas_vendidos_devuelve_datos:")
+        print("Test productos_mas_vendidos_devuelve_datos:")
         print(f"  Status: {response.status_code}")
         print(f"  Data: {response.data}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsInstance(response.data, list)
         self.assertGreater(len(response.data), 0)
-        
+
         # Verificar estructura
         primer_producto = response.data[0]
         self.assertIn("producto", primer_producto)
@@ -179,13 +179,13 @@ class EstadisticasTests(TestCase):
         url = reverse("estadisticas:ventas_por_mes")
         response = self.client.get(url)
 
-        print("\n✓ Test ventas_mensuales_formato_correcto:")
+        print("Test ventas_mensuales_formato_correcto:")
         print(f"  Status: {response.status_code}")
         print(f"  Data: {response.data}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsInstance(response.data, list)
-        
+
         if len(response.data) > 0:
             primer_mes = response.data[0]
             self.assertIn("mes", primer_mes)
@@ -199,19 +199,21 @@ class EstadisticasTests(TestCase):
         url = reverse("reportes:lista_reportes")
         response = self.client.get(url)
 
-        print("\n✓ Test reporte_lista_incluye_base_inicial:")
+        print("Test reporte_lista_incluye_base_inicial:")
         print(f"  Status: {response.status_code}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
+
         # El response puede ser paginado o un array directo
-        reportes = response.data if isinstance(response.data, list) else response.data.get("results", [])
-        
+        reportes = (
+            response.data if isinstance(response.data, list) else response.data.get("results", [])
+        )
+
         self.assertGreater(len(reportes), 0)
-        
+
         # Verificar que tiene base_inicial
         primer_reporte = reportes[0]
         print(f"  Campos del reporte: {primer_reporte.keys()}")
-        
+
         self.assertIn("base_inicial", primer_reporte)
         self.assertIsNotNone(primer_reporte["base_inicial"])

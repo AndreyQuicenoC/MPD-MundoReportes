@@ -40,9 +40,11 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             dict: Tokens y datos del usuario
         """
         import logging
+
         logger = logging.getLogger(__name__)
 
-        logger.info(f"[LOGIN] Intento de login con email: {attrs.get('email', attrs.get('username', 'N/A'))}")
+        email_or_username = attrs.get("email", attrs.get("username", "N/A"))
+        logger.info(f"[LOGIN] Intento de login con email: {email_or_username}")
 
         try:
             data = super().validate(attrs)

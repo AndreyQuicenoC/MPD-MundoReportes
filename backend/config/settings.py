@@ -81,13 +81,42 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    "default": dj_database_url.config(
-        default=config("DATABASE_URL"),
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
-}
+# Try to use DATABASE_URL if provided, otherwise construct from individual DB variables
+DATABASE_URL = config("DATABASE_URL", default="")
+
+if DATABASE_URL:
+    # Use DATABASE_URL if provided (production, CI with DATABASE_URL)
+    DATABASES = {
+        "default": {
+            **dj_database_url.config(
+                default=DATABASE_URL,
+                conn_max_age=600,
+                conn_health_checks=True,
+            ),
+            "ATOMIC_REQUESTS": False,
+            "TEST": {
+                "NAME": "test_mundo_reportes",
+            },
+        }
+    }
+else:
+    # Fallback: construct from individual DB variables (local development)
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": config("DB_NAME", default="mundo_reportes"),
+            "USER": config("DB_USER", default="postgres"),
+            "PASSWORD": config("DB_PASSWORD", default="postgres"),
+            "HOST": config("DB_HOST", default="localhost"),
+            "PORT": config("DB_PORT", default="5432"),
+            "ATOMIC_REQUESTS": False,
+            "TEST": {
+                "NAME": "test_mundo_reportes",
+            },
+            "conn_max_age": 600,
+            "conn_health_checks": True,
+        }
+    }
 
 
 # Password validation
@@ -136,6 +165,9 @@ MEDIA_ROOT = BASE_DIR / "media"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Disable automatic trailing slash addition
+APPEND_SLASH = False
 
 # Custom User Model
 AUTH_USER_MODEL = "usuarios.Usuario"

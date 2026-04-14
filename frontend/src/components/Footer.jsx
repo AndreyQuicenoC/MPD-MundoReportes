@@ -12,10 +12,6 @@ const Footer = () => {
   const esAdmin = usuario?.rol === 'admin';
   const currentYear = new Date().getFullYear();
 
-  const cerrarMenu = () => {
-    setMenuAbierto(false);
-  };
-
   return (
     <footer className="footer">
       <div className="footer-container">

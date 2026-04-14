@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import api from '../services/api';
-import FormModal from '../components/FormModal';
-import Pagination from '../components/Pagination';
-import ModalConfirmacion from '../components/ModalConfirmacion';
+import { useAuth } from '../../../context/AuthContext';
+import api from '../../../services/api';
+import FormModal from '../../../components/FormModal';
+import Pagination from '../../../components/Pagination';
+import ModalConfirmacion from '../../../components/ModalConfirmacion';
 import toast from 'react-hot-toast';
 import './Deducibles.css';
 
@@ -11,8 +11,9 @@ import './Deducibles.css';
  * Página de gestión de gastos deducibles.
  * Permite marcar categorías como deducibles (ingresos, ahorros, transferencias)
  * que se restan del total de gastos en cálculos.
+ * Includes search and status filters.
  *
- * Accesible a todos los usuarios operarios para configurar deducibles.
+ * Accessible to all operator users for deductible configuration.
  */
 const Deducibles = () => {
   const { usuario } = useAuth();
@@ -26,6 +27,8 @@ const Deducibles = () => {
   const [paginaActual, setPaginaActual] = useState(1);
   const [idAEliminar, setIdAEliminar] = useState(null);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+  const [busqueda, setBusqueda] = useState('');
+  const [filtroEstado, setFiltroEstado] = useState('todos');
   const itemsPorPagina = 10;
 
   const [formData, setFormData] = useState({
@@ -45,6 +48,7 @@ const Deducibles = () => {
     cargarDatos();
   }, []);
 
+  // Load all deductibles (both active and inactive)
   const cargarDatos = async () => {
     try {
       setLoading(true);
@@ -54,21 +58,21 @@ const Deducibles = () => {
       ]);
 
       let deduciblesData = deduciblesRes.data.results || deduciblesRes.data;
-      // Filtrar solo deducibles activos (soft delete: marcar como inactivo)
-      deduciblesData = deduciblesData.filter(d => d.activo === true);
+      // Load all deductibles without filtering
       setDeducibles(deduciblesData);
 
-      // Cargar TODAS las categorías para mostrar nombres
-      const todasCategorias = (categoriasRes.data.results || categoriasRes.data).filter(c => c.activa);
+      // Load all categories to show names
+      const todasCategorias = (categoriasRes.data.results || categoriasRes.data).filter(
+        c => c.activa
+      );
       setCategorias(todasCategorias);
 
-      // Filtrar categorías disponibles (sin deducible asignado)
-      const deduciblesToIds = new Set(deduciblesData.map(d => d.categoria));
+      // Filter available categories (without assigned deductible)
+      const deduciblesToIds = new Set(deduciblesData.filter(d => d.activo).map(d => d.categoria));
       const categoriasDisp = todasCategorias.filter(c => !deduciblesToIds.has(c.id));
       setCategoriasDisponibles(categoriasDisp);
       setPaginaActual(1);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error al cargar datos:', error);
       toast.error('Error al cargar deducibles');
       setDeducibles([]);
@@ -77,9 +81,26 @@ const Deducibles = () => {
     }
   };
 
+  // Apply search and status filters
+  let deduciblesFiltrados = deducibles;
+
+  if (busqueda.trim()) {
+    const searchLower = busqueda.toLowerCase();
+    deduciblesFiltrados = deduciblesFiltrados.filter(d => {
+      const nombre = d.categoria_nombre || getNombreCategoria(d.categoria);
+      return nombre.toLowerCase().includes(searchLower);
+    });
+  }
+
+  if (filtroEstado === 'activos') {
+    deduciblesFiltrados = deduciblesFiltrados.filter(d => d.activo === true);
+  } else if (filtroEstado === 'inactivos') {
+    deduciblesFiltrados = deduciblesFiltrados.filter(d => d.activo === false);
+  }
+
   const indiceInicio = (paginaActual - 1) * itemsPorPagina;
   const indiceFin = indiceInicio + itemsPorPagina;
-  const deduciblesPaginados = deducibles.slice(indiceInicio, indiceFin);
+  const deduciblesPaginados = deduciblesFiltrados.slice(indiceInicio, indiceFin);
 
   const handleInputChange = e => {
     const { name, value, type, checked } = e.target;
@@ -118,7 +139,6 @@ const Deducibles = () => {
       setMostrarModal(false);
       cargarDatos();
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error:', error);
       toast.error('Error al guardar deducible');
     }
@@ -135,6 +155,19 @@ const Deducibles = () => {
     setMostrarModal(true);
   };
 
+  // Toggle deductible active/inactive status via the desactivar endpoint
+  const handleToggleEstado = async deducible => {
+    try {
+      await api.post(`/gastos/deducibles/${deducible.id}/desactivar/`);
+      const accion = deducible.activo ? 'desactivado' : 'activado';
+      toast.success(`Deducible ${accion} exitosamente`);
+      cargarDatos();
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Error al cambiar estado');
+    }
+  };
+
   const handleEliminar = id => {
     setIdAEliminar(id);
     setMostrarConfirmacion(true);
@@ -143,12 +176,11 @@ const Deducibles = () => {
   const handleConfirmarEliminar = async () => {
     try {
       await api.delete(`/gastos/deducibles/${idAEliminar}/`);
-      toast.success('Deducible eliminado');
+      toast.success('Deducible eliminado permanentemente');
       setMostrarConfirmacion(false);
       setIdAEliminar(null);
       cargarDatos();
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error:', error);
       toast.error('Error al eliminar');
       setMostrarConfirmacion(false);
@@ -169,6 +201,12 @@ const Deducibles = () => {
     return TIPOS.find(t => t.value === tipo)?.label || tipo;
   };
 
+  const handleLimpiarBusqueda = () => {
+    setBusqueda('');
+    setFiltroEstado('todos');
+    setPaginaActual(1);
+  };
+
   if (loading) {
     return (
       <div className="loading-container">
@@ -184,9 +222,62 @@ const Deducibles = () => {
           <h1>Gastos Deducibles</h1>
           <p>Categorías que aunque se registran como gastos, representan ingresos o ahorros</p>
         </div>
-        <button onClick={() => setMostrarModal(true)} className="btn btn-primary">
-          + Nuevo Deducible
-        </button>
+        {!mostrarModal && (
+          <button onClick={() => setMostrarModal(true)} className="btn btn-primary">
+            + Nuevo Deducible
+          </button>
+        )}
+      </div>
+
+      {/* Search and Filter Controls */}
+      <div className="filter-section">
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Buscar por categoría..."
+            value={busqueda}
+            onChange={e => {
+              setBusqueda(e.target.value);
+              setPaginaActual(1);
+            }}
+            className="search-input"
+          />
+        </div>
+
+        <div className="filter-buttons">
+          <button
+            className={`filter-btn ${filtroEstado === 'todos' ? 'active' : ''}`}
+            onClick={() => {
+              setFiltroEstado('todos');
+              setPaginaActual(1);
+            }}
+          >
+            Todos
+          </button>
+          <button
+            className={`filter-btn ${filtroEstado === 'activos' ? 'active' : ''}`}
+            onClick={() => {
+              setFiltroEstado('activos');
+              setPaginaActual(1);
+            }}
+          >
+            Activos
+          </button>
+          <button
+            className={`filter-btn ${filtroEstado === 'inactivos' ? 'active' : ''}`}
+            onClick={() => {
+              setFiltroEstado('inactivos');
+              setPaginaActual(1);
+            }}
+          >
+            Inactivos
+          </button>
+          {(busqueda || filtroEstado !== 'todos') && (
+            <button className="filter-btn reset" onClick={handleLimpiarBusqueda}>
+              Limpiar
+            </button>
+          )}
+        </div>
       </div>
 
       <FormModal
@@ -217,13 +308,7 @@ const Deducibles = () => {
 
         <div className="form-group">
           <label htmlFor="tipo">Tipo de Deducible *</label>
-          <select
-            id="tipo"
-            name="tipo"
-            value={formData.tipo}
-            onChange={handleInputChange}
-            required
-          >
+          <select id="tipo" name="tipo" value={formData.tipo} onChange={handleInputChange} required>
             {TIPOS.map(tipo => (
               <option key={tipo.value} value={tipo.value}>
                 {tipo.label}
@@ -257,9 +342,13 @@ const Deducibles = () => {
         </div>
       </FormModal>
 
-      {deducibles.length === 0 ? ( 
+      {deduciblesFiltrados.length === 0 ? (
         <div className="empty-state">
-          <p>No hay deducibles configurados</p>
+          <p>
+            {busqueda || filtroEstado !== 'todos'
+              ? 'No se encontraron deducibles con los filtros aplicados'
+              : 'No hay deducibles configurados'}
+          </p>
         </div>
       ) : (
         <>
@@ -269,9 +358,7 @@ const Deducibles = () => {
                 <div className="card-content">
                   <h3>{deducible.categoria_nombre || getNombreCategoria(deducible.categoria)}</h3>
                   <p className="tipo">{getTipoLabel(deducible.tipo)}</p>
-                  {deducible.descripcion && (
-                    <p className="descripcion">{deducible.descripcion}</p>
-                  )}
+                  {deducible.descripcion && <p className="descripcion">{deducible.descripcion}</p>}
                   <span className={`badge badge-${deducible.tipo}`}>
                     {deducible.activo ? 'Activo' : 'Inactivo'}
                   </span>
@@ -286,6 +373,13 @@ const Deducibles = () => {
                     ✎
                   </button>
                   <button
+                    className={`btn btn-sm ${deducible.activo ? 'btn-warning' : 'btn-success'}`}
+                    onClick={() => handleToggleEstado(deducible)}
+                    title={deducible.activo ? 'Desactivar' : 'Activar'}
+                  >
+                    {deducible.activo ? '○' : '●'}
+                  </button>
+                  <button
                     className="btn btn-sm btn-danger"
                     onClick={() => handleEliminar(deducible.id)}
                     title="Eliminar"
@@ -297,10 +391,10 @@ const Deducibles = () => {
             ))}
           </div>
 
-          {deducibles.length > 0 && (
+          {deduciblesFiltrados.length > 0 && (
             <Pagination
               paginaActual={paginaActual}
-              totalItems={deducibles.length}
+              totalItems={deduciblesFiltrados.length}
               itemsPorPagina={itemsPorPagina}
               onPaginaChange={setPaginaActual}
             />
@@ -311,7 +405,7 @@ const Deducibles = () => {
       <ModalConfirmacion
         isOpen={mostrarConfirmacion}
         titulo="Eliminar Deducible"
-        mensaje="¿Estás seguro de que deseas eliminar este deducible? Esta acción no se puede deshacer."
+        mensaje="¿Estás seguro de que deseas eliminar este deducible permanentemente? Esta acción no se puede deshacer."
         confirmText="Sí, Eliminar"
         cancelText="Cancelar"
         isDanger={true}

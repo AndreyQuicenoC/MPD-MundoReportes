@@ -45,7 +45,17 @@ const productosService = {
   },
 
   /**
-   * Elimina un producto (soft delete).
+   * Desactiva o activa un producto.
+   * @param {number} id - ID del producto
+   * @returns {Promise<Object>} Respuesta del servidor
+   */
+  toggleProductoEstado: async id => {
+    const response = await api.post(`/productos/${id}/desactivar/`);
+    return response.data;
+  },
+
+  /**
+   * Elimina un producto (hard delete).
    * @param {number} id - ID del producto
    * @returns {Promise<void>}
    */

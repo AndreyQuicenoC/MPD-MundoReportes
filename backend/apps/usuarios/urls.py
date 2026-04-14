@@ -23,7 +23,7 @@ from .views_admin import (
 )
 
 # Router para viewsets
-router = DefaultRouter()
+router = DefaultRouter(trailing_slash=True)
 router.register(r"admin/usuarios", AdminUsuarioViewSet, basename="admin-usuarios")
 
 app_name = "usuarios"

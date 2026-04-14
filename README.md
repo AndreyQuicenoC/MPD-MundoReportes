@@ -1,59 +1,65 @@
 # Mundo Reporte
 
-Sistema web de reporte diario de ventas y gastos para almacén de pinturas.
+![Version](https://img.shields.io/badge/version-1.2.2-blue.svg)
+![Python](https://img.shields.io/badge/Python-3.10%2B-green.svg)
+![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)
+![React](https://img.shields.io/badge/React-18%2B-61dafb.svg)
+![Django](https://img.shields.io/badge/Django-5.0%2B-092e20.svg)
 
-## 📋 Descripción
+Daily sales and expense reporting system for paint warehouse management.
 
-Mundo Reporte es un sistema diseñado para reemplazar el uso manual de hojas de cálculo (Excel) en el registro y análisis de ventas y gastos diarios de un almacén de pinturas. El sistema permite:
+## Description
 
-- ✅ Registro diario de base, ventas, gastos, entregas y base del día siguiente
-- ✅ Registro de cantidades vendidas por producto
-- ✅ Clasificación de gastos por categorías reutilizables
-- ✅ **Gastos automáticos predefinidos para inserción rápida**
-- ✅ **Marcado de categorías como deducibles (transferencia/ahorro/ingreso)**
-- ✅ Generación de estadísticas confiables por periodos
-- ✅ **Filtrado de reportes por mes o rango personalizado**
-- ✅ **Paginación en todas las tablas principales**
-- ✅ **Exportación de reportes y estadísticas en PDF**
-- ✅ Acceso seguro mediante autenticación
+Mundo Reporte is a web system designed to replace manual Excel spreadsheets for recording and analyzing daily sales and expenses in a paint warehouse. The system enables:
 
-## 🎯 Usuario Objetivo
+- Daily registration of opening balance, sales, expenses, deliveries and closing balance
+- Quantity tracking of products sold
+- Expense classification by reusable categories
+- **Automatic predefined expenses for quick insertion**
+- **Marking categories as deductible (transfer/savings/income)**
+- Generation of reliable statistics by periods
+- **Report filtering by month or custom date range**
+- **Pagination in all main tables**
+- **PDF export for reports and statistics**
+- Secure access through authentication
 
-Sistema diseñado especialmente para adultos mayores y usuarios no técnicos, priorizando:
+## Target User
 
-- Claridad y simplicidad en la interfaz
-- Facilidad de uso
-- Formularios intuitivos
-- Feedback inmediato
+System specially designed for elderly adults and non-technical users, prioritizing:
 
-## 🛠️ Tecnologías
+- Clarity and simplicity in the interface
+- Ease of use
+- Intuitive forms
+- Immediate feedback
+
+## Technologies
 
 ### Backend
 
-- **Django 5.0+**: Framework web principal
-- **Django REST Framework**: API REST
-- **PostgreSQL**: Base de datos
-- **Gunicorn**: Servidor WSGI para producción
+- **Django 5.0+**: Main web framework
+- **Django REST Framework**: REST API
+- **PostgreSQL**: Database
+- **Gunicorn**: WSGI server for production
 
 ### Frontend
 
-- **React 18+**: Librería de interfaz de usuario
-- **JavaScript/TypeScript**: Lenguaje de programación
-- **Axios**: Cliente HTTP
-- **Chart.js**: Gráficos y visualizaciones
+- **React 18+**: User interface library
+- **JavaScript/TypeScript**: Programming language
+- **Axios**: HTTP client
+- **Chart.js**: Charts and visualizations
 
-### Herramientas de Calidad
+### Quality Tools
 
-- **Black**: Formateador de código Python
-- **Flake8**: Linter Python
-- **ESLint**: Linter JavaScript/TypeScript
-- **Prettier**: Formateador de código frontend
-- **Pytest**: Testing backend
-- **Jest**: Testing frontend
+- **Black**: Python code formatter
+- **Flake8**: Python linter
+- **ESLint**: JavaScript/TypeScript linter
+- **Prettier**: Frontend code formatter
+- **Pytest**: Backend testing
+- **Jest**: Frontend testing
 
-## 🏗️ Arquitectura
+## Architecture
 
-El proyecto sigue una arquitectura cliente-servidor desacoplada:
+The project follows a decoupled client-server architecture:
 
 ```
 ┌─────────────────┐         HTTP/JSON          ┌──────────────────┐
@@ -68,51 +74,54 @@ El proyecto sigue una arquitectura cliente-servidor desacoplada:
                                                  └──────────────┘
 ```
 
-### Capas del Backend
+### Backend Layers
 
-1. **Capa de presentación**: Django REST Framework (API)
-2. **Capa de aplicación**: Orquestación de casos de uso
-3. **Capa de dominio**: Servicios con lógica de negocio
-4. **Capa de persistencia**: Modelos Django y base de datos
+1. **Presentation Layer**: Django REST Framework (API)
+2. **Application Layer**: Use case orchestration
+3. **Domain Layer**: Services with business logic
+4. **Persistence Layer**: Django models and database
 
-## 📁 Estructura del Proyecto
+## Project Structure
 
 ```
 MPD-MundoReportes/
-├── backend/                    # Aplicación Django
-│   ├── config/                 # Configuración del proyecto
+├── backend/                    # Django application
+│   ├── config/                 # Project configuration
 │   │   ├── settings.py
 │   │   ├── urls.py
 │   │   └── wsgi.py
-│   ├── apps/                   # Aplicaciones Django
-│   │   ├── usuarios/           # Gestión de usuarios
-│   │   ├── reportes/           # Reportes diarios
-│   │   ├── gastos/             # Gastos y categorías
-│   │   ├── productos/          # Productos del catálogo
-│   │   └── estadisticas/       # Métricas y análisis
-│   ├── requirements.txt        # Dependencias Python
+│   ├── apps/                   # Django applications
+│   │   ├── usuarios/           # User management
+│   │   ├── reportes/           # Daily reports
+│   │   ├── gastos/             # Expenses and categories
+│   │   ├── productos/          # Product catalog
+│   │   └── estadisticas/       # Metrics and analysis
+│   ├── requirements.txt        # Python dependencies
 │   └── manage.py
-├── frontend/                   # Aplicación React
+├── frontend/                   # React application
 │   ├── public/
 │   ├── src/
-│   │   ├── components/         # Componentes reutilizables
-│   │   ├── pages/              # Vistas principales
-│   │   ├── services/           # Servicios API
+│   │   ├── components/         # Reusable components
+│   │   ├── pages/              # Main views
+│   │   │   ├── common/         # Public pages (Login, Profile)
+│   │   │   ├── operator/       # Operator pages
+│   │   │   └── admin/          # Admin pages
+│   │   ├── services/           # API services
 │   │   ├── hooks/              # Custom hooks
-│   │   └── styles/             # Estilos globales
+│   │   └── styles/             # Global styles
 │   ├── package.json
 │   └── README.md
-├── docs/                       # Documentación
-│   └── guidelines/             # Lineamientos del proyecto
+├── docs/                       # Documentation
 ├── .github/                    # GitHub Actions (CI/CD)
 │   └── workflows/
 ├── .gitignore
-└── README.md
+├── README.md
+└── CHANGELOG.md
 ```
 
-## 🚀 Instalación y Ejecución
+## Installation and Usage
 
-### Requisitos Previos
+### Prerequisites
 
 - Python 3.10+
 - Node.js 18+
@@ -122,70 +131,70 @@ MPD-MundoReportes/
 ### Backend (Django)
 
 ```bash
-# Navegar al directorio backend
+# Navigate to backend directory
 cd backend
 
-# Crear entorno virtual
+# Create virtual environment
 python -m venv venv
 
-# Activar entorno virtual
+# Activate virtual environment
 # Windows:
 venv\Scripts\activate
 # Linux/Mac:
 source venv/bin/activate
 
-# Instalar dependencias
+# Install dependencies
 pip install -r requirements.txt
 
-# Configurar variables de entorno
+# Configure environment variables
 cp .env.example .env
-# Editar .env con tus configuraciones
+# Edit .env with your settings
 
-# Ejecutar migraciones
+# Run migrations
 python manage.py migrate
 
-# Crear superusuario
+# Create superuser
 python manage.py createsuperuser
 
-# Ejecutar servidor de desarrollo
+# Run development server
 python manage.py runserver
 ```
 
-El backend estará disponible en `http://localhost:8000`
+Backend will be available at `http://localhost:8000`
 
 ### Frontend (React)
 
 ```bash
-# Navegar al directorio frontend
+# Navigate to frontend directory
 cd frontend
 
-# Instalar dependencias
+# Install dependencies
 npm install
 
-# Configurar variables de entorno
+# Configure environment variables
 cp .env.example .env
-# Editar .env con la URL del backend
+# Edit .env with backend URL
 
-# Ejecutar servidor de desarrollo con Vite
+# Run development server with Vite
 npm run dev
 
-# Compilar para producción
+# Build for production
 npm run build
 
-# Preview de la compilación
+# Preview production build
 npm run preview
 ```
 
-El frontend estará disponible en `http://localhost:5173` (desarrollo) o `http://localhost:4173` (preview)
+Frontend will be available at `http://localhost:5173` (development) or `http://localhost:4173` (preview)
 
-## 🧪 Testing
+## Testing
 
 ### Backend
 
 ```bash
 cd backend
 pytest
-pytest --cov=apps  # Con cobertura
+pytest --cov=apps  # With coverage
 ```
 
 ### Frontend
@@ -193,241 +202,240 @@ pytest --cov=apps  # Con cobertura
 ```bash
 cd frontend
 npm test
-npm test -- --coverage  # Con cobertura
+npm test -- --coverage  # With coverage
 ```
 
-## 🔍 Calidad de Código
+## Code Quality
 
 ### Backend
 
 ```bash
-# Formatear código
+# Format code
 black .
 
-# Verificar linting
+# Verify linting
 flake8
 ```
 
 ### Frontend
 
 ```bash
-# Formatear código
+# Format code
 npm run format
 
-# Verificar linting
+# Verify linting
 npm run lint
 ```
 
-## 🎨 Identidad Visual
+## Visual Identity
 
-### Color Principal
+### Primary Color
 
-- **Verde Oliva**: `#9B933B`
-- Uso: Navbar, botones primarios, elementos de identidad
+- **Olive Green**: `#9B933B`
+- Usage: Navbar, primary buttons, identity elements
 
-### Colores Complementarios
+### Complementary Colors
 
-- Blanco: `#FFFFFF`
-- Gris claro: `#F5F5F5`
-- Gris oscuro: `#333333`
-- Verde oscuro: `#6F6A2A` (hover)
-- Rojo suave: `#C94A4A` (errores)
-- Amarillo suave: `#E0C65A` (advertencias)
+- White: `#FFFFFF`
+- Light gray: `#F5F5F5`
+- Dark gray: `#333333`
+- Dark green: `#6F6A2A` (hover)
+- Soft red: `#C94A4A` (errors)
+- Soft yellow: `#E0C65A` (warnings)
 
-## 📊 Modelos Principales
+## Main Models
 
-### ReporteDiario
+### DailyReport
 
-- Registro diario de ventas y gastos
-- Cálculo automático de base siguiente
-- Relación con gastos y productos vendidos
+- Daily sales and expense registration
+- Automatic calculation of next day balance
+- Relationship with expenses and sold products
 
-### Gasto
+### Expense
 
-- Descripción, valor y categoría opcional
-- Asociado a un reporte diario
+- Description, amount and optional category
+- Associated with daily report
 
-### Producto
+### Product
 
-- Catálogo de productos con precio unitario
-- Estado activo/inactivo
+- Product catalog with unit price
+- Active/inactive status
 
-### VentaProducto
+### SoldProduct
 
-- Cantidad vendida por producto
-- Asociada a reporte diario
+- Quantity sold per product
+- Associated with daily report
 
-### CategoriaGasto
+### ExpenseCategory
 
-- Categorías reutilizables para clasificar gastos
-- Estado activo/inactivo
+- Reusable categories to classify expenses
+- Active/inactive status
 
-### GastoAutomatico
+### AutomaticExpense
 
-- Gastos predefinidos configurables por administrador
-- Se pueden insertar rápidamente en reportes diarios
-- Incluye descripción, valor y categoría opcional
+- Predefined expenses configurable by administrator
+- Can be quickly inserted in daily reports
+- Includes description, amount and optional category
 
-### GastoDeducible
+### DeductibleExpense
 
-- Marcado especial de categorías como deducibles
-- Tipos: transferencia, ahorro, ingreso
-- Permite análisis separado de gastos deducibles
+- Special marking of categories as deductible
+- Types: transfer, savings, income
+- Allows separate analysis of deductible expenses
 
-## ✨ Características Principales (v1.1.0+)
+## Main Features (v1.2.2+)
 
-### Paginación Inteligente
+### Smart Pagination
 
-- Todas las tablas (Reportes, Productos, Categorías, Usuarios) usan paginación de 10 items
-- Navigation buttons con disabled state en límites
-- Reseteo automático al cargar nuevos datos
+- All tables (Reports, Products, Categories, Users) use 10-item pagination
+- Navigation buttons with disabled state at limits
+- Automatic reset when loading new data
 
-### Filtrado Avanzado de Reportes
+### Advanced Report Filtering
 
-- **Filtro por mes actual**: Muestra solo reportes del mes actual
-- **Filtro por rango**: Selecciona fecha inicio y fin personalizado
-- **Sin filtro**: Muestra todos los reportes
-- Aplicable tanto en cliente como en servidor
+- **Current month filter**: Shows only reports from current month
+- **Range filter**: Select custom start and end dates
+- **No filter**: Shows all reports
+- Applicable on both client and server side
 
-### Gastos Automáticos
+### Automatic Expenses
 
-- Panel de administración para crear gastos reutilizables
-- Botones rápidos en formulario de reporte para insertar gastos predefinidos
-- Propago automático de descripción, valor y categoría
+- Administration panel to create reusable expenses
+- Quick buttons in report form to insert predefined expenses
+- Automatic propagation of description, amount and category
 
-### Exportación a PDF
+### PDF Export
 
-- **Reportes**: Exporta detalles completos del reporte en formato factura (A4 vertical)
-- **Estadísticas**: Exporta gráficos y métricas en formato horizontal (A4 landscape)
-- Soporte automático para múltiples páginas
+- **Reports**: Export complete report details in invoice format (A4 portrait)
+- **Statistics**: Export charts and metrics in horizontal format (A4 landscape)
+- Automatic support for multiple pages
 
-### Mejoras en Estadísticas
+### Statistics Improvements
 
-- Paleta de colores expandida (8 colores variados vs solo oliva)
-- Gráficos con mejor contraste y legibilidad
-- Filtros por rango de fechas
+- Expanded color palette (8 varied colors vs single olive)
+- Charts with better contrast and readability
+- Filters by date range
 
-### Seguridad Mejorada
+### Enhanced Security
 
-- Validación preventiva de reportes duplicados con mesaje claro
-- Campos administrativos protegidos contra edición de usuarios
-- Control de acceso por rol mejorado
+- Preventive validation of duplicate reports with clear messaging
+- Admin fields protected against user editing
+- Improved role-based access control
 
-## 🔒 Seguridad
+## Security
 
-- ✅ Autenticación JWT
-- ✅ Validación de entradas en backend
-- ✅ Protección CSRF
-- ✅ CORS configurado correctamente
-- ✅ Variables sensibles en entorno
-- ✅ HTTPS obligatorio en producción
+- ✅ JWT authentication
+- ✅ Backend input validation
+- ✅ CSRF protection
+- ✅ CORS properly configured
+- ✅ Sensitive variables in environment
+- ✅ HTTPS mandatory in production
 
-## 📈 Métricas y Estadísticas
+## Metrics and Statistics
 
-El sistema genera métricas automáticas sobre:
+The system automatically generates metrics about:
 
-- Ventas totales (diarias, mensuales, anuales)
-- Gastos totales por periodo
-- Gastos por categoría
-- Productos más vendidos
-- Rentabilidad básica (ventas - gastos)
+- Total sales (daily, monthly, annual)
+- Total expenses by period
+- Expenses by category
+- Most sold products
+- Basic profitability (sales - expenses)
 
-## 🚢 Despliegue
+## Deployment
 
-### Recomendaciones
+### Recommendations
 
-**Backend**: Railway o Render
+**Backend**: Railway or Render
 
-- Configuración sencilla
-- HTTPS automático
-- PostgreSQL gestionado
+- Simple configuration
+- Automatic HTTPS
+- Managed PostgreSQL
 
-**Frontend**: Vercel o Netlify
+**Frontend**: Vercel or Netlify
 
-- Deploy automático desde Git
-- CDN incluido
-- Gratis para proyectos pequeños
+- Automatic deploy from Git
+- Included CDN
+- Free for small projects
 
-### Variables de Entorno Requeridas
+### Required Environment Variables
 
 **Backend**:
 
-- `SECRET_KEY`: Clave secreta Django
-- `DATABASE_URL`: URL de conexión PostgreSQL
-- `DEBUG`: False en producción
-- `ALLOWED_HOSTS`: Dominios permitidos
+- `SECRET_KEY`: Django secret key
+- `DATABASE_URL`: PostgreSQL connection URL
+- `DEBUG`: False in production
+- `ALLOWED_HOSTS`: Allowed domains
 
 **Frontend**:
 
-- `REACT_APP_API_URL`: URL del backend
+- `VITE_API_URL`: Backend URL
 
-## 📝 Convenciones de Commits
+## Commit Conventions
 
-Los commits siguen el formato:
-
-```
-tipo(ámbito): descripción breve
-
-Descripción detallada si es necesaria
-```
-
-**Tipos**:
-
-- `feat`: Nueva funcionalidad
-- `fix`: Corrección de bug
-- `docs`: Documentación
-- `style`: Formato, sin cambios de código
-- `refactor`: Refactorización
-- `test`: Agregar o modificar tests
-- `chore`: Tareas de mantenimiento
-
-**Ejemplo**:
+Commits follow the format:
 
 ```
-feat(reportes): agregar cálculo automático de base siguiente
+type(scope): brief description
 
-Implementa la lógica de negocio para calcular automáticamente
-la base del día siguiente usando la fórmula:
-base_siguiente = base_inicial + venta - gastos - entrega
+Detailed description if necessary
 ```
 
-## 👥 Roles de Usuario
+**Types**:
 
-### Administrador
+- `feat`: New functionality
+- `fix`: Bug fix
+- `docs`: Documentation
+- `style`: Format, no code changes
+- `refactor`: Refactoring
+- `test`: Add or modify tests
+- `chore`: Maintenance tasks
 
-- Gestiona usuarios
-- Crea y edita categorías de gastos
-- Crea y edita productos con precio
-- Consulta estadísticas globales
+**Example**:
 
-### Usuario Operativo
+```
+feat(reports): add automatic calculation of next day balance
 
-- Registra reportes diarios
-- Consulta reportes históricos
-- Exporta información
+Implements the business logic to automatically calculate
+the next day balance using the formula:
+next_balance = opening_balance + sales - expenses - delivery
+```
 
-## 📖 Documentación Adicional
+## User Roles
 
-- [Lineamientos del Proyecto](docs/guidelines/)
-- [Arquitectura](docs/guidelines/ARQUITECTURA.txt)
-- [Seguridad](docs/guidelines/SEGURIDAD.txt)
-- [Calidad de Código](docs/guidelines/CALIDADDECODIGO.txt)
-- [UI/UX](docs/guidelines/CALIDADUIUX.txt)
+### Administrator
 
-## 📄 Licencia
+- Manages users
+- Creates and edits expense categories
+- Creates and edits products with price
+- Views global statistics
 
-Este proyecto es privado y de uso exclusivo para el almacén de pinturas.
+### Operational User
 
-## 👨‍💻 Desarrollo
+- Registers daily reports
+- Consults historical reports
+- Exports information
 
-El proyecto se desarrolla siguiendo metodologías ágiles con ramas feature:
+## Additional Documentation
 
-- `main`: Rama principal (producción)
-- `feature/nombre`: Funcionalidades nuevas
-- `fix/nombre`: Correcciones
+- [Project Guidelines](docs/)
+- [Installation Guide](docs/INSTRUCCIONES_INICIO.md)
+- [Deployment Solutions](docs/SOLUCION_DESPLIEGUE.md)
+- [Supabase Setup](docs/SUPABASE_SETUP.md)
 
-Cada rama debe tener commits profesionales y descriptivos en español.
+## License
+
+This project is private and exclusively for use by the paint warehouse.
+
+## Development
+
+The project is developed following agile methodologies with feature branches:
+
+- `main`: Main branch (production)
+- `feature/name`: New features
+- `fix/name`: Bug fixes
+
+Each branch should have professional and descriptive commits in English.
 
 ---
 
-**Mundo Reporte** - Sistema de gestión diario para almacenes de pinturas
+**Mundo Reporte** - Daily management system for paint warehouses
