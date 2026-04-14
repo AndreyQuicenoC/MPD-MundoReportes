@@ -24,14 +24,12 @@ def pytest_configure():
     # Monkey-patch Django's make_view_atomic to safely handle database settings
     # This prevents KeyError when accessing ATOMIC_REQUESTS during tests
     from django.core import handlers
-    from copy import deepcopy
 
     _original_make_view_atomic = handlers.base.BaseHandler.make_view_atomic
 
     def _patched_make_view_atomic(self, view):
         """Safely handle atomic requests by using .get() instead of direct access."""
         from django.db import connections
-        from django.views.decorators.http import condition
 
         non_atomic_requests = getattr(view, "_non_atomic_requests", set())
         for alias, settings_dict in connections.settings.items():

@@ -7,7 +7,7 @@ y que el dashboard muestre información completa.
 
 from decimal import Decimal
 import pytest
-from django.test import TestCase, TransactionTestCase
+from django.test import TransactionTestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status

@@ -5,7 +5,7 @@ Prueba que operarios pueden crear productos y categorías correctamente.
 """
 
 import pytest
-from django.test import TestCase, TransactionTestCase
+from django.test import TransactionTestCase
 from rest_framework.test import APIClient
 from rest_framework import status
 from apps.usuarios.models import Usuario
