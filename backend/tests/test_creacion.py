@@ -4,6 +4,7 @@ Tests para verificar creación de productos y categorías.
 Prueba que operarios pueden crear productos y categorías correctamente.
 """
 
+import pytest
 from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework import status
@@ -12,6 +13,7 @@ from apps.productos.models import Producto
 from apps.gastos.models import CategoriaGasto
 
 
+@pytest.mark.django_db
 class ProductoCategoriaCreacionTests(TestCase):
     """Tests de creación de productos y categorías."""
 

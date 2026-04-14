@@ -6,6 +6,7 @@ y que el dashboard muestre información completa.
 """
 
 from decimal import Decimal
+import pytest
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
@@ -18,6 +19,7 @@ from apps.productos.models import Producto
 from apps.gastos.models import CategoriaGasto, Gasto
 
 
+@pytest.mark.django_db
 class EstadisticasTests(TestCase):
     """Tests para verificar endpoints de estadísticas."""
 
