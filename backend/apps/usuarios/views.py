@@ -43,7 +43,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         logger = logging.getLogger(__name__)
 
-        email_or_username = attrs.get('email', attrs.get('username', 'N/A'))
+        email_or_username = attrs.get("email", attrs.get("username", "N/A"))
         logger.info(f"[LOGIN] Intento de login con email: {email_or_username}")
 
         try:
