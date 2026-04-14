@@ -8,6 +8,7 @@ y gastos deducibles. Los gastos individuales se gestionan a través de reportes.
 from rest_framework import generics, status, filters, viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import CategoriaGasto, GastoAutomatico, GastoDeducible
@@ -27,7 +28,7 @@ class ListaCategoriasView(generics.ListAPIView):
     Permite filtrar por estado activo y buscar por nombre.
     """
 
-    queryset = CategoriaGasto.objects.all()
+    queryset = CategoriaGasto.objects.filter(deleted=False)
     serializer_class = CategoriaGastoSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -79,7 +80,7 @@ class DetalleCategoriaView(generics.RetrieveUpdateDestroyAPIView):
     Administradores y operarios pueden modificar o eliminar.
     """
 
-    queryset = CategoriaGasto.objects.all()
+    queryset = CategoriaGasto.objects.filter(deleted=False)
     serializer_class = CategoriaGastoSerializer
     permission_classes = [IsAuthenticated]
 
@@ -96,7 +97,7 @@ class DetalleCategoriaView(generics.RetrieveUpdateDestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         """
-        Desactivar categoría en lugar de eliminarla.
+        Eliminar permanentemente una categoría.
 
         Args:
             request: Request HTTP
@@ -105,11 +106,34 @@ class DetalleCategoriaView(generics.RetrieveUpdateDestroyAPIView):
             Response: Confirmación
         """
         instance = self.get_object()
-        instance.activa = False
+        instance.deleted = True
         instance.save()
 
         return Response(
-            {"mensaje": "Categoría desactivada exitosamente"},
+            {"mensaje": "Categoría eliminada permanentemente"},
+            status=status.HTTP_200_OK,
+        )
+
+    @action(detail=True, methods=["post"])
+    def desactivar(self, request, pk=None):
+        """
+        Desactivar o activar una categoría.
+
+        Args:
+            request: Request HTTP
+            pk: Category ID
+
+        Returns:
+            Response: Confirmación
+        """
+        categoria = self.get_object()
+        nuevo_estado = not categoria.activa
+        categoria.activa = nuevo_estado
+        categoria.save()
+
+        accion = "Desactivada" if not nuevo_estado else "Activada"
+        return Response(
+            {"mensaje": f"Categoría {accion.lower()} exitosamente"},
             status=status.HTTP_200_OK,
         )
 
@@ -122,7 +146,7 @@ class CategoriasActivasView(generics.ListAPIView):
     categorías disponibles.
     """
 
-    queryset = CategoriaGasto.objects.filter(activa=True)
+    queryset = CategoriaGasto.objects.filter(activa=True, deleted=False)
     serializer_class = CategoriaGastoListaSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
@@ -143,7 +167,7 @@ class GastoAutomaticoViewSet(viewsets.ModelViewSet):
     - DELETE /api/gastos-automaticos/{id}/ - Eliminar
     """
 
-    queryset = GastoAutomatico.objects.filter(activo=True)
+    queryset = GastoAutomatico.objects.filter(deleted=False)
     serializer_class = GastoAutomaticoSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -157,6 +181,48 @@ class GastoAutomaticoViewSet(viewsets.ModelViewSet):
         if self.request.method in ["POST", "PUT", "PATCH", "DELETE"]:
             return [IsAuthenticated(), EsOperarioOAdmin()]
         return [IsAuthenticated()]
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Eliminar permanentemente un gasto automático.
+
+        Args:
+            request: Request HTTP
+
+        Returns:
+            Response: Confirmación
+        """
+        instance = self.get_object()
+        instance.deleted = True
+        instance.save()
+
+        return Response(
+            {"mensaje": "Gasto automático eliminado permanentemente"},
+            status=status.HTTP_200_OK,
+        )
+
+    @action(detail=True, methods=["post"])
+    def desactivar(self, request, pk=None):
+        """
+        Desactivar o activar un gasto automático.
+
+        Args:
+            request: Request HTTP
+            pk: GastoAutomatico ID
+
+        Returns:
+            Response: Confirmación
+        """
+        gasto = self.get_object()
+        nuevo_estado = not gasto.activo
+        gasto.activo = nuevo_estado
+        gasto.save()
+
+        accion = "Desactivado" if not nuevo_estado else "Activado"
+        return Response(
+            {"mensaje": f"Gasto automático {accion.lower()} exitosamente"},
+            status=status.HTTP_200_OK,
+        )
 
 
 class GastoDeducibleViewSet(viewsets.ModelViewSet):
@@ -174,7 +240,7 @@ class GastoDeducibleViewSet(viewsets.ModelViewSet):
     - DELETE /api/gastos-deducibles/{id}/ - Eliminar
     """
 
-    queryset = GastoDeducible.objects.filter(activo=True)
+    queryset = GastoDeducible.objects.filter(deleted=False)
     serializer_class = GastoDeducibleSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -188,3 +254,45 @@ class GastoDeducibleViewSet(viewsets.ModelViewSet):
         if self.request.method in ["POST", "PUT", "PATCH", "DELETE"]:
             return [IsAuthenticated(), EsOperarioOAdmin()]
         return [IsAuthenticated()]
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Eliminar permanentemente un gasto deducible.
+
+        Args:
+            request: Request HTTP
+
+        Returns:
+            Response: Confirmación
+        """
+        instance = self.get_object()
+        instance.deleted = True
+        instance.save()
+
+        return Response(
+            {"mensaje": "Gasto deducible eliminado permanentemente"},
+            status=status.HTTP_200_OK,
+        )
+
+    @action(detail=True, methods=["post"])
+    def desactivar(self, request, pk=None):
+        """
+        Desactivar o activar un gasto deducible.
+
+        Args:
+            request: Request HTTP
+            pk: GastoDeducible ID
+
+        Returns:
+            Response: Confirmación
+        """
+        deducible = self.get_object()
+        nuevo_estado = not deducible.activo
+        deducible.activo = nuevo_estado
+        deducible.save()
+
+        accion = "Desactivado" if not nuevo_estado else "Activado"
+        return Response(
+            {"mensaje": f"Gasto deducible {accion.lower()} exitosamente"},
+            status=status.HTTP_200_OK,
+        )
