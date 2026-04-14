@@ -119,15 +119,12 @@ const Productos = () => {
     setMostrarForm(true);
   };
 
-  // Toggle product active/inactive status
+  // Toggle product active/inactive status via the desactivar endpoint
   const handleToggleEstado = async producto => {
     try {
-      const nuevoEstado = !producto.activo;
-      await productosService.actualizarProducto(producto.id, {
-        ...producto,
-        activo: nuevoEstado,
-      });
-      toast.success(nuevoEstado ? 'Producto activado' : 'Producto desactivado');
+      await productosService.toggleProductoEstado(producto.id);
+      const accion = producto.activo ? 'desactivado' : 'activado';
+      toast.success(`Producto ${accion} exitosamente`);
       cargarProductos();
     } catch (error) {
       toast.error('Error al cambiar estado');
@@ -143,7 +140,7 @@ const Productos = () => {
   const handleConfirmarEliminar = async () => {
     try {
       await productosService.eliminarProducto(idAEliminar);
-      toast.success('Producto eliminado');
+      toast.success('Producto eliminado permanentemente');
       setMostrarConfirmacion(false);
       setIdAEliminar(null);
       cargarProductos();
@@ -352,7 +349,7 @@ const Productos = () => {
       <ModalConfirmacion
         isOpen={mostrarConfirmacion}
         titulo="Eliminar Producto"
-        mensaje="¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer."
+        mensaje="¿Estás seguro de que deseas eliminar este producto permanentemente? Esta acción no se puede deshacer."
         confirmText="Sí, Eliminar"
         cancelText="Cancelar"
         isDanger={true}

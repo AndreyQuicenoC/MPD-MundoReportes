@@ -45,6 +45,16 @@ const categoriasService = {
   },
 
   /**
+   * Desactiva o activa una categoría.
+   * @param {number} id - ID de la categoría
+   * @returns {Promise<Object>} Respuesta del servidor
+   */
+  toggleCategoriaEstado: async id => {
+    const response = await api.post(`/gastos/categorias/${id}/desactivar/`);
+    return response.data;
+  },
+
+  /**
    * Elimina una categoría.
    * @param {number} id - ID de la categoría
    * @returns {Promise<void>}

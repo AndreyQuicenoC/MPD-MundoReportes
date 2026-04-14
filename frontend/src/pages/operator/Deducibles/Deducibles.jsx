@@ -155,15 +155,12 @@ const Deducibles = () => {
     setMostrarModal(true);
   };
 
-  // Toggle deductible active/inactive status
+  // Toggle deductible active/inactive status via the desactivar endpoint
   const handleToggleEstado = async deducible => {
     try {
-      const nuevoEstado = !deducible.activo;
-      await api.patch(`/gastos/deducibles/${deducible.id}/`, {
-        ...deducible,
-        activo: nuevoEstado,
-      });
-      toast.success(nuevoEstado ? 'Deducible activado' : 'Deducible desactivado');
+      await api.post(`/gastos/deducibles/${deducible.id}/desactivar/`);
+      const accion = deducible.activo ? 'desactivado' : 'activado';
+      toast.success(`Deducible ${accion} exitosamente`);
       cargarDatos();
     } catch (error) {
       console.error('Error:', error);
@@ -179,7 +176,7 @@ const Deducibles = () => {
   const handleConfirmarEliminar = async () => {
     try {
       await api.delete(`/gastos/deducibles/${idAEliminar}/`);
-      toast.success('Deducible eliminado');
+      toast.success('Deducible eliminado permanentemente');
       setMostrarConfirmacion(false);
       setIdAEliminar(null);
       cargarDatos();
@@ -408,7 +405,7 @@ const Deducibles = () => {
       <ModalConfirmacion
         isOpen={mostrarConfirmacion}
         titulo="Eliminar Deducible"
-        mensaje="¿Estás seguro de que deseas eliminar este deducible? Esta acción no se puede deshacer."
+        mensaje="¿Estás seguro de que deseas eliminar este deducible permanentemente? Esta acción no se puede deshacer."
         confirmText="Sí, Eliminar"
         cancelText="Cancelar"
         isDanger={true}

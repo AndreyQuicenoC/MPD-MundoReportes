@@ -130,15 +130,12 @@ const Automatico = () => {
     setMostrarForm(true);
   };
 
-  // Toggle expense active/inactive status
+  // Toggle expense active/inactive status via the desactivar endpoint
   const handleToggleEstado = async gasto => {
     try {
-      const nuevoEstado = !gasto.activo;
-      await api.patch(`/gastos/automaticos/${gasto.id}/`, {
-        ...gasto,
-        activo: nuevoEstado,
-      });
-      toast.success(nuevoEstado ? 'Gasto activado' : 'Gasto desactivado');
+      await api.post(`/gastos/automaticos/${gasto.id}/desactivar/`);
+      const accion = gasto.activo ? 'desactivado' : 'activado';
+      toast.success(`Gasto ${accion} exitosamente`);
       cargarDatos();
     } catch (error) {
       console.error('Error:', error);
@@ -154,7 +151,7 @@ const Automatico = () => {
   const handleConfirmarEliminar = async () => {
     try {
       await api.delete(`/gastos/automaticos/${idAEliminar}/`);
-      toast.success('Gasto automático eliminado');
+      toast.success('Gasto automático eliminado permanentemente');
       setMostrarConfirmacion(false);
       setIdAEliminar(null);
       cargarDatos();
@@ -383,7 +380,7 @@ const Automatico = () => {
       <ModalConfirmacion
         isOpen={mostrarConfirmacion}
         titulo="Eliminar Gasto Automático"
-        mensaje="¿Estás seguro de que deseas eliminar este gasto automático? Esta acción no se puede deshacer."
+        mensaje="¿Estás seguro de que deseas eliminar este gasto automático permanentemente? Esta acción no se puede deshacer."
         confirmText="Sí, Eliminar"
         cancelText="Cancelar"
         isDanger={true}

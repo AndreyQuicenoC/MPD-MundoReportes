@@ -113,15 +113,12 @@ const Categorias = () => {
     setMostrarForm(true);
   };
 
-  // Toggle category active/inactive status
+  // Toggle category active/inactive status via the desactivar endpoint
   const handleToggleEstado = async categoria => {
     try {
-      const nuevoEstado = !categoria.activa;
-      await categoriasService.actualizarCategoria(categoria.id, {
-        ...categoria,
-        activa: nuevoEstado,
-      });
-      toast.success(nuevoEstado ? 'Categoría activada' : 'Categoría desactivada');
+      await categoriasService.toggleCategoriaEstado(categoria.id);
+      const accion = categoria.activa ? 'desactivada' : 'activada';
+      toast.success(`Categoría ${accion} exitosamente`);
       cargarCategorias();
     } catch (error) {
       toast.error('Error al cambiar estado');
@@ -137,7 +134,7 @@ const Categorias = () => {
   const handleConfirmarEliminar = async () => {
     try {
       await categoriasService.eliminarCategoria(idAEliminar);
-      toast.success('Categoría eliminada');
+      toast.success('Categoría eliminada permanentemente');
       setMostrarConfirmacion(false);
       setIdAEliminar(null);
       cargarCategorias();
@@ -341,7 +338,7 @@ const Categorias = () => {
       <ModalConfirmacion
         isOpen={mostrarConfirmacion}
         titulo="Eliminar Categoría"
-        mensaje="¿Estás seguro de que deseas eliminar esta categoría?"
+        mensaje="¿Estás seguro de que deseas eliminar esta categoría permanentemente? Esta acción no se puede deshacer."
         onConfirm={handleConfirmarEliminar}
         onCancel={() => setMostrarConfirmacion(false)}
         isDanger={true}
