@@ -59,7 +59,7 @@ class ProductoCategoriaCreacionTests(TransactionTestCase):
         self.assertEqual(Producto.objects.count(), 1)
         self.assertEqual(Producto.objects.get().nombre, "Producto Test")
 
-        print("✓ Test operario_puede_crear_producto: PASÓ")
+        print("Test operario_puede_crear_producto: PASSED")
 
     def test_operario_puede_crear_categoria(self):
         """Verificar que un operario puede crear una categoría."""
@@ -77,7 +77,7 @@ class ProductoCategoriaCreacionTests(TransactionTestCase):
         self.assertEqual(CategoriaGasto.objects.count(), 1)
         self.assertEqual(CategoriaGasto.objects.get().nombre, "Categoría Test")
 
-        print("✓ Test operario_puede_crear_categoria: PASÓ")
+        print("Test operario_puede_crear_categoria: PASSED")
 
     def test_admin_puede_crear_producto(self):
         """Verificar que un admin puede crear un producto."""
@@ -100,7 +100,7 @@ class ProductoCategoriaCreacionTests(TransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Producto.objects.count(), 1)
 
-        print("✓ Test admin_puede_crear_producto: PASÓ")
+        print("Test admin_puede_crear_producto: PASSED")
 
     def test_admin_puede_crear_categoria(self):
         """Verificar que un admin puede crear una categoría."""
@@ -121,7 +121,7 @@ class ProductoCategoriaCreacionTests(TransactionTestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(CategoriaGasto.objects.count(), 1)
 
-        print("✓ Test admin_puede_crear_categoria: PASÓ")
+        print("Test admin_puede_crear_categoria: PASSED")
 
     def test_sin_autenticacion_no_puede_crear(self):
         """Verificar que sin autenticación no se puede crear."""
@@ -138,7 +138,7 @@ class ProductoCategoriaCreacionTests(TransactionTestCase):
         # Debe devolver 401 Unauthorized
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-        print("✓ Test sin_autenticacion_no_puede_crear: PASÓ")
+        print("Test sin_autenticacion_no_puede_crear: PASSED")
 
 
 def run_tests():
@@ -152,12 +152,12 @@ def run_tests():
     try:
         call_command("test", "tests.test_creacion", verbosity=2)
         print("\n" + "=" * 60)
-        print("✓ TODOS LOS TESTS PASARON EXITOSAMENTE")
+        print("All tests passed successfully")
         print("=" * 60 + "\n")
         return True
     except Exception as e:
         print("\n" + "=" * 60)
-        print(f"✗ ERROR EN TESTS: {e}")
+        print(f"ERROR EN TESTS: {e}")
         print("=" * 60 + "\n")
         return False
 

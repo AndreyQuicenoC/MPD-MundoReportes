@@ -102,7 +102,7 @@ class EstadisticasTests(TransactionTestCase):
         url = reverse("estadisticas:dashboard")
         response = self.client.get(url)
 
-        print("\n✓ Test dashboard_devuelve_datos_correctos:")
+        print("Test dashboard_devuelve_datos_correctos:")
         print(f"  Status: {response.status_code}")
         print(f"  Data: {response.data}")
 
@@ -122,7 +122,7 @@ class EstadisticasTests(TransactionTestCase):
         url = reverse("estadisticas:estadisticas_ventas")
         response = self.client.get(url)
 
-        print("\n✓ Test estadisticas_ventas_incluye_todos_campos:")
+        print("Test estadisticas_ventas_incluye_todos_campos:")
         print(f"  Status: {response.status_code}")
         print(f"  Data: {response.data}")
 
@@ -142,7 +142,7 @@ class EstadisticasTests(TransactionTestCase):
         url = reverse("estadisticas:gastos_por_categoria")
         response = self.client.get(url)
 
-        print("\n✓ Test gastos_por_categoria_devuelve_datos:")
+        print("Test gastos_por_categoria_devuelve_datos:")
         print(f"  Status: {response.status_code}")
         print(f"  Data: {response.data}")
 
@@ -161,7 +161,7 @@ class EstadisticasTests(TransactionTestCase):
         url = reverse("estadisticas:productos_mas_vendidos")
         response = self.client.get(url)
 
-        print("\n✓ Test productos_mas_vendidos_devuelve_datos:")
+        print("Test productos_mas_vendidos_devuelve_datos:")
         print(f"  Status: {response.status_code}")
         print(f"  Data: {response.data}")
 
@@ -179,7 +179,7 @@ class EstadisticasTests(TransactionTestCase):
         url = reverse("estadisticas:ventas_por_mes")
         response = self.client.get(url)
 
-        print("\n✓ Test ventas_mensuales_formato_correcto:")
+        print("Test ventas_mensuales_formato_correcto:")
         print(f"  Status: {response.status_code}")
         print(f"  Data: {response.data}")
 
@@ -199,7 +199,7 @@ class EstadisticasTests(TransactionTestCase):
         url = reverse("reportes:lista_reportes")
         response = self.client.get(url)
 
-        print("\n✓ Test reporte_lista_incluye_base_inicial:")
+        print("Test reporte_lista_incluye_base_inicial:")
         print(f"  Status: {response.status_code}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
