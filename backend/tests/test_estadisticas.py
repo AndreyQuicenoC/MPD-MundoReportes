@@ -7,7 +7,7 @@ y que el dashboard muestre información completa.
 
 from decimal import Decimal
 import pytest
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
@@ -19,8 +19,8 @@ from apps.productos.models import Producto
 from apps.gastos.models import CategoriaGasto, Gasto
 
 
-@pytest.mark.django_db
-class EstadisticasTests(TestCase):
+@pytest.mark.django_db(transaction=True)
+class EstadisticasTests(TransactionTestCase):
     """Tests para verificar endpoints de estadísticas."""
 
     def setUp(self):

@@ -5,7 +5,7 @@ Prueba que operarios pueden crear productos y categorías correctamente.
 """
 
 import pytest
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from rest_framework.test import APIClient
 from rest_framework import status
 from apps.usuarios.models import Usuario
@@ -13,8 +13,8 @@ from apps.productos.models import Producto
 from apps.gastos.models import CategoriaGasto
 
 
-@pytest.mark.django_db
-class ProductoCategoriaCreacionTests(TestCase):
+@pytest.mark.django_db(transaction=True)
+class ProductoCategoriaCreacionTests(TransactionTestCase):
     """Tests de creación de productos y categorías."""
 
     def setUp(self):

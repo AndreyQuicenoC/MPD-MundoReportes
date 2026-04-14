@@ -182,13 +182,13 @@ const Reportes = () => {
       {/* Header with new report button */}
       <div className="reportes-header">
         <div>
-          <h1>Daily Reports</h1>
+          <h1>Reportes Diarios</h1>
           {dashboard && (
-            <p className="reportes-subtitle">Month Summary: {dashboard.mes_actual}</p>
+            <p className="reportes-subtitle">Resumen del Mes: {dashboard.mes_actual}</p>
           )}
         </div>
         <button className="btn btn-primary" onClick={() => navigate('/reportes/nuevo')}>
-          + New Report
+          + Nuevo Reporte
         </button>
       </div>
 
@@ -196,23 +196,23 @@ const Reportes = () => {
       <div className="filtros-section">
         <div className="filtros-group">
           <div className="filtro-item">
-            <label htmlFor="filtroMes">Filter by:</label>
+            <label htmlFor="filtroMes">Filtrar por:</label>
             <select
               id="filtroMes"
               value={filtroMes}
               onChange={e => setFiltroMes(e.target.value)}
               className="filtro-select"
             >
-              <option value="actual">Current Month</option>
-              <option value="todos">All Reports</option>
-              <option value="personalizado">Custom Range</option>
+              <option value="actual">Mes Actual</option>
+              <option value="todos">Todos los Reportes</option>
+              <option value="personalizado">Rango Personalizado</option>
             </select>
           </div>
 
           {filtroMes === 'personalizado' && (
             <>
               <div className="filtro-item">
-                <label htmlFor="fechaInicio">Start Date:</label>
+                <label htmlFor="fechaInicio">Fecha de Inicio:</label>
                 <input
                   type="date"
                   id="fechaInicio"
@@ -223,7 +223,7 @@ const Reportes = () => {
               </div>
 
               <div className="filtro-item">
-                <label htmlFor="fechaFin">End Date:</label>
+                <label htmlFor="fechaFin">Fecha Final:</label>
                 <input
                   type="date"
                   id="fechaFin"
@@ -237,11 +237,11 @@ const Reportes = () => {
 
           <div className="filtros-acciones">
             <button onClick={aplicarFiltros} className="btn btn-sm btn-primary">
-              Apply Filter
+              Aplicar Filtro
             </button>
             {filtroActivo && (
               <button onClick={limpiarFiltros} className="btn btn-sm btn-secondary">
-                Clear
+                Limpiar
               </button>
             )}
           </div>
@@ -253,28 +253,28 @@ const Reportes = () => {
         <>
           <div className="dashboard-grid">
             <div className="dashboard-card">
-              <h3>Monthly Sales</h3>
+              <h3>Ventas Mensuales</h3>
               <p className="dashboard-value">
                 ${Number(dashboard.total_ventas_mes).toLocaleString('es-CO')}
               </p>
             </div>
 
             <div className="dashboard-card">
-              <h3>Monthly Expenses</h3>
+              <h3>Gastos Mensuales</h3>
               <p className="dashboard-value">
                 ${Number(dashboard.total_gastos_mes).toLocaleString('es-CO')}
               </p>
             </div>
 
             <div className="dashboard-card">
-              <h3>Daily Average</h3>
+              <h3>Promedio Diario</h3>
               <p className="dashboard-value">
                 ${Math.round(Number(dashboard.promedio_ventas_diarias)).toLocaleString('es-CO')}
               </p>
             </div>
 
             <div className="dashboard-card">
-              <h3>Registered Reports</h3>
+              <h3>Reportes Registrados</h3>
               <p className="dashboard-value">{dashboard.cantidad_reportes}</p>
             </div>
           </div>
@@ -282,25 +282,25 @@ const Reportes = () => {
           {/* Deductibles Summary */}
           <div className="dashboard-grid">
             <div className="dashboard-card">
-              <h3>Income (Non-Expenses)</h3>
+              <h3>Ingresos (No Gastos)</h3>
               <p className="dashboard-value">
                 ${Number(gastosParaDeducir.ingreso).toLocaleString('es-CO')}
               </p>
             </div>
             <div className="dashboard-card">
-              <h3>Savings (Non-Expenses)</h3>
+              <h3>Ahorros (No Gastos)</h3>
               <p className="dashboard-value">
                 ${Number(gastosParaDeducir.ahorro).toLocaleString('es-CO')}
               </p>
             </div>
             <div className="dashboard-card">
-              <h3>Transfers (Non-Expenses)</h3>
+              <h3>Transferencias (No Gastos)</h3>
               <p className="dashboard-value">
                 ${Number(gastosParaDeducir.transferencia).toLocaleString('es-CO')}
               </p>
             </div>
             <div className="dashboard-card">
-              <h3>Adjusted Expenses</h3>
+              <h3>Gastos Ajustados</h3>
               <p className="dashboard-value">
                 ${(Number(dashboard.total_gastos_mes) - (gastosParaDeducir.ingreso + gastosParaDeducir.ahorro + gastosParaDeducir.transferencia)).toLocaleString('es-CO')}
               </p>
@@ -311,24 +311,24 @@ const Reportes = () => {
 
       {/* Reports Table */}
       <div className="reportes-tabla-section">
-        <h2>Report History</h2>
+        <h2>Historial de Reportes</h2>
         <div className="productos-tabla-container">
           <table className="productos-tabla">
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Initial Balance</th>
-                <th>Total Sales</th>
-                <th>Expenses</th>
-                <th>Next Balance</th>
-                <th>Actions</th>
+                <th>Fecha</th>
+                <th>Saldo Inicial</th>
+                <th>Ventas Totales</th>
+                <th>Gastos</th>
+                <th>Siguiente Saldo</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {reportes.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="text-center">
-                    No reports registered
+                    Sin reportes registrados
                   </td>
                 </tr>
               ) : (
@@ -343,8 +343,8 @@ const Reportes = () => {
                       <button
                         className="btn btn-sm btn-info"
                         onClick={() => handleVistaPreviaReporte(reporte)}
-                        title="View report preview"
-                        aria-label="View preview"
+                        title="Ver vista previa del reporte"
+                        aria-label="Ver vista previa"
                       >
                         <svg className="icon-eye" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
@@ -353,16 +353,16 @@ const Reportes = () => {
                       <button
                         className="btn btn-sm btn-secondary"
                         onClick={() => handleEditar(reporte.id)}
-                        title="Edit this report"
+                        title="Editar este reporte"
                       >
-                        Edit
+                        Editar
                       </button>
                       <button
                         className="btn btn-sm btn-danger"
                         onClick={() => handleEliminar(reporte.id)}
-                        title="Delete this report"
+                        title="Eliminar este reporte"
                       >
-                        Delete
+                        Eliminar
                       </button>
                     </td>
                   </tr>
@@ -390,10 +390,10 @@ const Reportes = () => {
 
       <ModalConfirmacion
         isOpen={mostrarConfirmacion}
-        titulo="Delete Report"
-        mensaje="Are you sure you want to delete this report? This action cannot be undone."
-        confirmText="Yes, Delete"
-        cancelText="Cancel"
+        titulo="Eliminar Reporte"
+        mensaje="¿Está seguro de que desea eliminar este reporte? Esta acción no se puede deshacer."
+        confirmText="Sí, Eliminar"
+        cancelText="Cancelar"
         isDanger={true}
         onConfirm={handleConfirmarEliminar}
         onCancel={() => {
