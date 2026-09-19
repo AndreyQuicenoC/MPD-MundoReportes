@@ -13,12 +13,38 @@ const reportesService = {
    * @param {Object} params - Parámetros de filtro (fecha_inicio, fecha_fin, etc.)
    * @returns {Promise} Lista de reportes
    */
-  getReportes: async (params = {}) => {
-    // Agregar limit alto para obtener todos los reportes sin paginación del backend
-    const fullParams = { limit: 9999, ...params };
-    const response = await apiClient.get('/reportes/', { params: fullParams });
-    return response.data;
-  },
+ getReportes: async (params = {}) => {
+  let todosLosReportes = [];
+  let pagina = 1;
+  let hayMas = true;
+
+  while (hayMas) {
+    const response = await apiClient.get('/reportes/', {
+      params: {
+        ...params,
+        limit: 9999,
+        page: pagina,
+      },
+    });
+
+    const data = response.data;
+
+    if (Array.isArray(data)) {
+      todosLosReportes = [...todosLosReportes, ...data];
+      hayMas = false;
+    } else {
+      todosLosReportes = [
+        ...todosLosReportes,
+        ...(data.results || []),
+      ];
+
+      hayMas = Boolean(data.next);
+      pagina++;
+    }
+  }
+
+  return todosLosReportes;
+},
 
   /**
    * Obtener detalle de un reporte específico.
