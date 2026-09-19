@@ -29,7 +29,7 @@ const Reportes = () => {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [idAEliminar, setIdAEliminar] = useState(null);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
-  const itemsPorPagina = 10;
+  const itemsPorPagina = 15;
 
   // Filter states
   const [filtroMes, setFiltroMes] = useState('todos'); // 'actual' or 'todos' - DEFAULT: todos
